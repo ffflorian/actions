@@ -9,23 +9,17 @@
 # - GIT_EMAIL: An email address for writing commits (default is <GH_USER>@users.noreply.github.com)
 # - GIT_NAME: A name for writing commits (default is <GH_USER>)
 
-GIT_NAME="${GIT_NAME:-"${GH_USER}"}"
-
 if [ -z "${GH_TOKEN}" ]; then
   echo "No GitHub token set."
   exit 1
 fi
 
-if [ -z "${GIT_NAME}" ]; then
-  echo "No git name and no GitHub user set."
+if [ -z "${GH_USER}" ]; then
+  echo "No GitHub user set."
   exit 1
 fi
 
-if [ -z "${GIT_EMAIL}" ] && [ -z "${GH_USER}" ]; then
-  echo "No git email address and no GitHub user set."
-  exit 1
-fi
-
+GIT_NAME="${GIT_NAME:-"${GH_USER}"}"
 GIT_EMAIL="${GIT_EMAIL:-"${GH_USER}@users.noreply.github.com"}"
 
 echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > "${HOME}/.npmrc"
