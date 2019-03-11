@@ -18,9 +18,9 @@ action "Publish with lerna" {
   args = "publish"
   env = {
     # required
-    GITHUB_USER = "<GitHub username>"
+    GH_USER = "<GitHub username>"
 
-    # if you don't specify <GIT_NAME>, it will use <GITHUB_USER>
+    # if you don't specify <GIT_NAME>, it will use <GH_USER>
     # as git name
     GIT_NAME = "<name>"
 
@@ -28,7 +28,6 @@ action "Publish with lerna" {
     # no-reply email address for the specified username
     GIT_EMAIL = "<email address>"
   }
-  # you can also use "GITHUB_TOKEN" instead of "GH_TOKEN"
   secrets = ["NPM_AUTH_TOKEN", "GH_TOKEN"]
 }
 ```
