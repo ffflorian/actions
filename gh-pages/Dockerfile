@@ -12,4 +12,6 @@ LABEL com.github.actions.color="yellow"
 
 RUN yarn global add gh-pages@~2.0
 
+COPY "entrypoint.sh" "/entrypoint.sh"
+
 ENTRYPOINT ["/entrypoint.sh"]
