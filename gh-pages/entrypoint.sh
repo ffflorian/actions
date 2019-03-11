@@ -32,7 +32,7 @@ git remote set-url origin "${REPO}"
 
 sh -c "gh-pages $*"
 
-"${HOME}/.gitconfig"
+rm "${HOME}/.gitconfig"
 
 unset REPO
 unset GH_TOKEN
