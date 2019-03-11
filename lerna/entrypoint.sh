@@ -9,6 +9,8 @@
 # - GIT_EMAIL: An email address for writing commits (default is <GH_USER>@users.noreply.github.com)
 # - GIT_NAME: A name for writing commits (default is <GH_USER>)
 
+set -e
+
 if [ -z "${GH_TOKEN}" ]; then
   echo "No GitHub token set."
   exit 1

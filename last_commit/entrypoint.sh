@@ -2,6 +2,8 @@
 
 # All arguments are used as pattern for grep.
 
+set -e
+
 PATTERN="$*"
 LAST_COMMIT="$(git log -1 --pretty=%B)"
 
