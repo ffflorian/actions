@@ -17,10 +17,16 @@ action "Publish with lerna" {
   uses = "ffflorian/actions/lerna@master"
   args = "publish"
   env = {
-    GIT_USER = "<git username>"
-    # if you don't specify GIT_EMAIL, it will use GitHub's default
+    # required
+    GITHUB_USER = "<GitHub username>"
+
+    # if you don't specify <GIT_NAME>, it will use <GITHUB_USER>
+    # as git name
+    GIT_NAME = "<name>"
+
+    # if you don't specify <GIT_EMAIL>, it will use GitHub's default
     # no-reply email address for the specified username
-    GIT_EMAIL = "<git email address>"
+    GIT_EMAIL = "<email address>"
   }
   # you can also use "GITHUB_TOKEN" instead of "GH_TOKEN"
   secrets = ["NPM_AUTH_TOKEN", "GH_TOKEN"]

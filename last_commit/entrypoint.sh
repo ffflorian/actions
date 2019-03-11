@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# All arguments are used as pattern for grep.
+
 PATTERN="$*"
 LAST_COMMIT="$(git log -1 --pretty=%B)"
 
