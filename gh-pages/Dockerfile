@@ -10,6 +10,12 @@ LABEL com.github.actions.description="Wraps the gh-pages CLI to enable common gh
 LABEL com.github.actions.icon="package"
 LABEL com.github.actions.color="yellow"
 
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+        git && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN yarn global add gh-pages@~2.0
 
 COPY "entrypoint.sh" "/entrypoint.sh"
