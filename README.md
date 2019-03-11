@@ -3,17 +3,17 @@
 ### Example actions
 
 ```workflow
-action "Last Commit does not include '[skip ci']" {
+action "Last commit does not include '[skip ci']" {
   uses = "ffflorian/actions/last_commit@master"
   args = "^(?:(?!\\[(ci skip|skip ci)\\]).)*$"
 }
 
-action "Last Commit does include 'fix(*):'" {
+action "Last commit does include 'fix(*):'" {
   uses = "ffflorian/actions/last_commit@master"
   args = "^fix([^)]+):.*"
 }
 
-action "Publish with lerna" {
+action "Publish with Lerna" {
   uses = "ffflorian/actions/lerna@master"
   args = "publish"
   env = {
