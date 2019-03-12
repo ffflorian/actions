@@ -47,5 +47,21 @@ action "Publish with gh-pages" {
     GIT_EMAIL = "<email address>"
   }
   secrets = ["GH_TOKEN"]
+
+action "Publish with semantic-release" {
+  uses = "ffflorian/actions/semantic-release@master"
+  env = {
+    # required
+    GH_USER = "<GitHub username>"
+
+    # if you don't specify <GIT_NAME>, it will use <GH_USER>
+    # as git name
+    GIT_NAME = "<name>"
+
+    # if you don't specify <GIT_EMAIL>, it will use GitHub's default
+    # no-reply email address for the specified username
+    GIT_EMAIL = "<email address>"
+  }
+  secrets = ["NPM_AUTH_TOKEN", "GH_TOKEN"]
 }
 ```
