@@ -5,9 +5,9 @@
 set -e
 
 PATTERN="$*"
-LAST_COMMIT="$(git log -1 --pretty=%B)"
+LAST_COMMIT="$(git log -1 --pretty=%B | head -n 1)"
 
-if echo "$LAST_COMMIT" | head -n 1 | grep -qP "$PATTERN"; then
+if echo "$LAST_COMMIT" | grep -qP "$PATTERN"; then
   echo "\"$LAST_COMMIT\" matches \"$PATTERN\""
   exit 0
 fi
