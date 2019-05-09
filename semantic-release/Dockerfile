@@ -10,7 +10,7 @@ LABEL com.github.actions.description="Wraps the semantic-release CLI to enable c
 LABEL com.github.actions.icon="package"
 LABEL com.github.actions.color="yellow"
 
-RUN apk add --no-cache git
+RUN apk add --no-cache git bash
 
 COPY "entrypoint.sh" "/entrypoint.sh"
 
