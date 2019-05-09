@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM node:12-alpine
 
 LABEL version="1.0.0"
 LABEL repository="https://github.com/ffflorian/actions/tree/master/git-node"
@@ -10,11 +10,7 @@ LABEL com.github.actions.description="Sets up an environment with Node.js and gi
 LABEL com.github.actions.icon="package"
 LABEL com.github.actions.color="yellow"
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-        git && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache git
 
 COPY "entrypoint.sh" "/entrypoint.sh"
 

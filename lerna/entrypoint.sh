@@ -32,6 +32,8 @@ REPO="$(git config remote.origin.url)"
 REPO="${REPO/https:\/\/github.com\//https:\/\/${GH_USER}:${GH_TOKEN}@github.com\/}"
 git remote set-url origin "${REPO}"
 
+yarn global add lerna@~3.13
+
 sh -c "lerna $*"
 
 rm "${HOME}/.npmrc" "${HOME}/.gitconfig"
