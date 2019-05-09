@@ -8,5 +8,6 @@ action "Don't skip CI" {
 }
 
 action "Test projects" {
+  needs = "Don't skip CI"
   uses = "./.github/actions/check-all-projects"
 }
