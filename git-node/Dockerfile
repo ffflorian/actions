@@ -10,7 +10,7 @@ LABEL com.github.actions.description="Sets up an environment with Node.js and gi
 LABEL com.github.actions.icon="package"
 LABEL com.github.actions.color="yellow"
 
-RUN apk add --no-cache git
+RUN apk add --no-cache git bash
 
 COPY "entrypoint.sh" "/entrypoint.sh"
 
