@@ -3,7 +3,7 @@
 ### Example actions
 
 ```workflow
-action "Last commit does not include '[skip ci']" {
+action "Last commit does not include '[skip ci]'" {
   uses = "ffflorian/actions/last_commit@master"
   args = "^(?:(?!\\[(ci skip|skip ci)\\]).)*$"
 }
