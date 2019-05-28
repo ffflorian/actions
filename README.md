@@ -1,4 +1,4 @@
-# @ffflorian/actions
+# @ffflorian/actions [![Build Status](https://action-badges.now.sh/ffflorian/actions)](https://github.com/ffflorian/actions/actions/)
 
 ### Example actions
 
