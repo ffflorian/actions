@@ -2,6 +2,26 @@
 
 ### Example actions
 
+```yml
+on: push
+
+jobs:
+  build_test_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ffflorian/actions/skip-ci-check@master
+        env:
+          EVENT_COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - run: |
+          yarn
+          yarn lint
+          yarn build:ts
+```
+
 ```workflow
 action "Last commit does not include '[skip ci]'" {
   uses = "ffflorian/actions/last_commit@master"
