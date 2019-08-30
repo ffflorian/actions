@@ -3,12 +3,12 @@ name: Check scripts with Shellcheck
 on: [push, pull_request]
 
 jobs:
-  shellcheck:
+  check_scripts:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
-      - name: Shellcheck
+      - name: Run Shellcheck
         run: shellcheck **/*.sh
         if: |
           contains(github.event.commits[0].message, '[skip ci]') == false &&
