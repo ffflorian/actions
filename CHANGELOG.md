@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/ffflorian/actions/compare/v1.1.0...v1.1.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* **github-release-action:** Force pushing major tag ([814a46c](https://github.com/ffflorian/actions/commit/814a46c674f7e8cc2d752d5e3979c9c3201f6832))
+
 # [1.1.0](https://github.com/ffflorian/actions/compare/v1.0.0...v1.1.0) (2026-03-31)
 
 
