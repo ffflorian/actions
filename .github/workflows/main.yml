@@ -21,4 +21,4 @@ jobs:
         with:
           git_author: Florian Imdahl
           git_email: git@ffflorian.de
-        uses: ./github-release-action/
+        uses: ./github-action-release/

@@ -42,7 +42,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: ffflorian/actions/github-release-action@v1
+      - uses: ffflorian/actions/github-action-release@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           git_author: Florian Imdahl

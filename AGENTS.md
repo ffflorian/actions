@@ -7,14 +7,14 @@ This file contains conventions for AI agents and contributors working in this re
 This repository contains reusable composite GitHub Actions:
 
 - `git-mirror`: Mirror repository refs to GitLab and/or Codeberg.
-- `github-release-action`: Create semantic releases and maintain major/latest tags.
+- `github-action-release`: Create semantic releases and maintain major/latest tags.
 - `yarn-update`: Update Yarn and open an automated pull request.
 
 ## Repository Structure
 
 - `.github/workflows/main.yml`: Release workflow for this repository.
 - `git-mirror/action.yml`: Mirror action definition.
-- `github-release-action/action.yml`: Release action definition.
+- `github-action-release/action.yml`: Release action definition.
 - `yarn-update/action.yml`: Yarn update action definition.
 - Each action directory should include a matching `README.md`.
 
@@ -67,10 +67,10 @@ refactor/<short-description>
 Current workflow (`.github/workflows/main.yml`):
 
 1. Runs on push to `main`.
-2. Uses the local `github-release-action` composite action.
+2. Uses the local `github-action-release` composite action.
 3. Requires `GITHUB_TOKEN` and write access to repository contents.
 
-When changing release behavior, keep workflow and `github-release-action/action.yml` aligned.
+When changing release behavior, keep workflow and `github-action-release/action.yml` aligned.
 
 ## PR Guidelines
 

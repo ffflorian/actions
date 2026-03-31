@@ -10,8 +10,8 @@
 
 ### Bug Fixes
 
-* **github-release-action:** Make git author configurable ([a601343](https://github.com/ffflorian/actions/commit/a601343014ca77366c1ff770c94fdcb2f5e82644))
-* **github-release-action:** Update author email ([eb59eee](https://github.com/ffflorian/actions/commit/eb59eee110d0cb092d55fb0469ba8a37dd96158c))
+* **github-action-release:** Make git author configurable ([a601343](https://github.com/ffflorian/actions/commit/a601343014ca77366c1ff770c94fdcb2f5e82644))
+* **github-action-release:** Update author email ([eb59eee](https://github.com/ffflorian/actions/commit/eb59eee110d0cb092d55fb0469ba8a37dd96158c))
 
 
 ### Features
