@@ -24,8 +24,7 @@ jobs:
       - name: Run prettier
         run: |
           yarn init -y
-          yarn add -D -E @ffflorian/prettier-config prettier json
-          npx json -I -f package.json -e "this.prettier='@ffflorian/prettier-config'"
+          yarn add -D -E @ffflorian/prettier-config@0.7.0 prettier@3.8.1
           npx prettier --list-different .
 
       - name: Publish all actions
