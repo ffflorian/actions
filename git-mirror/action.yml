@@ -1,0 +1,56 @@
+---
+name: Create GitHub Action Release
+description: Create a GitHub Action release and tag it
+author: 'Florian Imdahl <git@ffflorian.de>'
+branding: { icon: 'git-branch', color: 'blue' }
+
+inputs:
+  GITLAB_REMOTE:
+    description: 'The GitLab remote URL to mirror to.'
+    required: false
+  GITLAB_SECRET:
+    description: 'GitLab secret to authenticate the mirror.'
+    required: false
+  GITLAB_PUSH_ALL_REFS:
+    description: 'Whether to push all refs to GitLab. Default is false.'
+    required: false
+    default: 'false'
+  CODEBERG_SECRET:
+    description: 'Codeberg secret to authenticate the mirror.'
+    required: false
+  CODEBERG_REMOTE:
+    description: 'The Codeberg remote URL to mirror to.'
+    required: false
+  CODEBERG_PUSH_ALL_REFS:
+    description: 'Whether to push all refs to Codeberg. Default is false.'
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        fetch-depth: 0
+
+    - name: Mirror to GitLab
+      if: ${{ inputs.GITLAB_SECRET }}
+      uses: cynicsketch/mirror-action@b1e3c960aead673763e5ccb22007129401a15917
+      with:
+        REMOTE: ${{ inputs.GITLAB_REMOTE }}
+        REMOTE_NAME: 'gitlab-mirror'
+        GIT_SSH_KNOWN_HOSTS: 'gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf'
+        GIT_SSH_PRIVATE_KEY: ${{ inputs.GITLAB_SECRET }}
+        PUSH_ALL_REFS: ${{ inputs.GITLAB_PUSH_ALL_REFS }}
+
+    - name: Mirror to Codeberg
+      if: ${{ inputs.CODEBERG_SECRET }}
+      uses: cynicsketch/mirror-action@b1e3c960aead673763e5ccb22007129401a15917
+      with:
+        REMOTE: ${{ inputs.CODEBERG_REMOTE }}
+        REMOTE_NAME: 'codeberg-mirror'
+        GIT_SSH_KNOWN_HOSTS: 'codeberg.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIVIC02vnjFyL+I4RHfvIGNtOgJMe769VTF1VR4EB3ZB'
+        GIT_SSH_PRIVATE_KEY: ${{ inputs.CODEBERG_SECRET }}
+        PUSH_ALL_REFS: ${{ inputs.CODEBERG_PUSH_ALL_REFS }}
