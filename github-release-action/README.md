@@ -1,6 +1,6 @@
-# GitHub Release Action
+# GitHub Action Release
 
-Creates a release using semantic-release, updates `CHANGELOG.md`, and maintains major/latest tags.
+Creates a GitHub Actions release using semantic-release, updates `CHANGELOG.md`, and maintains major/latest tags.
 
 ## What It Does
 
@@ -22,7 +22,7 @@ Creates a release using semantic-release, updates `CHANGELOG.md`, and maintains 
 
 None
 
-## Recommended permissions
+## Recommended Permissions
 
 ```yaml
 permissions:

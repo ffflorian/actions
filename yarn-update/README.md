@@ -19,7 +19,7 @@ Checks whether a newer stable yarn version is available and creates a pull reque
 
 None
 
-## Recommended permissions
+## Recommended Permissions
 
 ```yaml
 permissions:

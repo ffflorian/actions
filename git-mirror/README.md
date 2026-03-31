@@ -24,7 +24,7 @@ Mirrors the current repository to GitLab and/or Codeberg via SSH.
 
 None
 
-## Recommended permissions
+## Recommended Permissions
 
 ```yaml
 permissions:
