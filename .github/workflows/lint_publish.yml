@@ -27,9 +27,9 @@ jobs:
           npx prettier --list-different .
 
       - name: Publish all actions
+        uses: ./github-action-release/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           git_author: Florian Imdahl
           git_email: git@ffflorian.de
-        uses: ./github-action-release/
