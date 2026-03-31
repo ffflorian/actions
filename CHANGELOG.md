@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ffflorian/actions/compare/v1.1.1...v1.2.0) (2026-03-31)
+
+
+### Features
+
+* **github-action-release:** Rename to github-action-release ([6f27c76](https://github.com/ffflorian/actions/commit/6f27c76b9eae9ce383477efeb3d0df43b1e79652))
+
 ## [1.1.1](https://github.com/ffflorian/actions/compare/v1.1.0...v1.1.1) (2026-03-31)
 
 
