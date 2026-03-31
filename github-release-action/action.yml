@@ -109,6 +109,5 @@ runs:
           exit 0
         fi
 
-        git push origin tag "${NEW_MAJOR_TAG}"
-
+        git push origin tag "${NEW_MAJOR_TAG}" --force
         git push origin tag latest --force
