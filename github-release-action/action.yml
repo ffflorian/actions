@@ -1,8 +1,8 @@
 ---
 name: Create GitHub Action Release
 description: Create a GitHub Action release and tag it
-author: "Florian Imdahl <git@ffflorian.dev>"
-branding: { icon: "life-buoy", color: "green" }
+author: 'Florian Imdahl <git@ffflorian.dev>'
+branding: { icon: 'check', color: 'green' }
 
 inputs:
   dry_run:
@@ -11,6 +11,12 @@ inputs:
     default: 'false'
   GITHUB_TOKEN:
     description: 'GitHub token to create the release.'
+    required: true
+  git_author:
+    description: 'The author to use for the release commit.'
+    required: true
+  git_email:
+    description: 'The email to use for the release commit.'
     required: true
 
 runs:
@@ -67,10 +73,10 @@ runs:
     - name: Create Release
       id: semantic
       env:
-        GIT_AUTHOR_NAME: "Florian Imdahl"
-        GIT_AUTHOR_EMAIL: "git@ffflorian.dev"
-        GIT_COMMITTER_NAME: "Florian Imdahl"
-        GIT_COMMITTER_EMAIL: "git@ffflorian.dev"
+        GIT_AUTHOR_NAME: ${{ inputs.git_author }}
+        GIT_AUTHOR_EMAIL: ${{ inputs.git_email }}
+        GIT_COMMITTER_NAME: ${{ inputs.git_author }}
+        GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
       with:
         dry_run: ${{ inputs.dry_run }}
@@ -79,10 +85,10 @@ runs:
       shell: bash
       if: steps.semantic.outputs.new_release_published == 'true'
       env:
-        GIT_AUTHOR_NAME: "Florian Imdahl"
-        GIT_AUTHOR_EMAIL: "git@ffflorian.dev"
-        GIT_COMMITTER_NAME: "Florian Imdahl"
-        GIT_COMMITTER_EMAIL: "git@ffflorian.dev"
+        GIT_AUTHOR_NAME: ${{ inputs.git_author }}
+        GIT_AUTHOR_EMAIL: ${{ inputs.git_email }}
+        GIT_COMMITTER_NAME: ${{ inputs.git_author }}
+        GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
       run: |
         git config "user.email" "${GIT_AUTHOR_EMAIL}"
         git config "user.name" "${GIT_AUTHOR_NAME}"
