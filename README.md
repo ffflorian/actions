@@ -16,10 +16,10 @@ Use any action from this repository in your workflow jobs:
 
 ```yaml
 jobs:
-	example:
-		runs-on: ubuntu-latest
-		steps:
-			- uses: ffflorian/actions/<action-name>@v1
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ffflorian/actions/<action-name>@v1
 ```
 
 Replace `<action-name>` with one of:

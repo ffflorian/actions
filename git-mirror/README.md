@@ -11,14 +11,14 @@ Mirrors the current repository to GitLab and/or Codeberg via SSH.
 
 ## Inputs
 
-| Name | Required | Default | Description |
-| --- | --- | --- | --- |
-| `GITLAB_REMOTE` | No | - | GitLab remote URL to mirror to. |
-| `GITLAB_SECRET` | No | - | SSH private key for GitLab authentication. |
-| `GITLAB_PUSH_ALL_REFS` | No | `false` | Whether to push all refs to GitLab. |
-| `CODEBERG_REMOTE` | No | - | Codeberg remote URL to mirror to. |
-| `CODEBERG_SECRET` | No | - | SSH private key for Codeberg authentication. |
-| `CODEBERG_PUSH_ALL_REFS` | No | `false` | Whether to push all refs to Codeberg. |
+| Name                     | Required | Default | Description                                  |
+| ------------------------ | -------- | ------- | -------------------------------------------- |
+| `GITLAB_REMOTE`          | No       | -       | GitLab remote URL to mirror to.              |
+| `GITLAB_SECRET`          | No       | -       | SSH private key for GitLab authentication.   |
+| `GITLAB_PUSH_ALL_REFS`   | No       | `false` | Whether to push all refs to GitLab.          |
+| `CODEBERG_REMOTE`        | No       | -       | Codeberg remote URL to mirror to.            |
+| `CODEBERG_SECRET`        | No       | -       | SSH private key for Codeberg authentication. |
+| `CODEBERG_PUSH_ALL_REFS` | No       | `false` | Whether to push all refs to Codeberg.        |
 
 ## Outputs
 
@@ -48,7 +48,7 @@ jobs:
         with:
           GITLAB_REMOTE: git@gitlab.com:your-group/your-repo.git
           GITLAB_SECRET: ${{ secrets.GITLAB_SSH_KEY }}
-          GITLAB_PUSH_ALL_REFS: "true"
+          GITLAB_PUSH_ALL_REFS: 'true'
           CODEBERG_REMOTE: git@codeberg.org:your-org/your-repo.git
           CODEBERG_SECRET: ${{ secrets.CODEBERG_SSH_KEY }}
 ```
