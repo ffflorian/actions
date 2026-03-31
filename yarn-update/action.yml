@@ -2,7 +2,7 @@
 name: Check for yarn updates
 description: Check for yarn updates and create a pull request if updates are available
 author: 'Florian Imdahl <git@ffflorian.de>'
-branding: { icon: 'fast-forward', color: 'yellow' }
+branding: {icon: 'fast-forward', color: 'yellow'}
 
 inputs:
   git_authorship:

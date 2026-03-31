@@ -15,6 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: 24
+
+      - name: Run prettier
+        run: |
+          yarn init -y
+          yarn add -D -E @ffflorian/prettier-config prettier json
+          npx json -I -f package.json -e "this.prettier='@ffflorian/prettier-config'"
+          npx prettier --list-different .
+
       - name: Create GitHub action release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

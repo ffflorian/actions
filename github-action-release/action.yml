@@ -2,7 +2,7 @@
 name: Create GitHub Action Release
 description: Create a GitHub Action release and tag it
 author: 'Florian Imdahl <git@ffflorian.de>'
-branding: { icon: 'check', color: 'green' }
+branding: {icon: 'check', color: 'green'}
 
 inputs:
   dry_run:
