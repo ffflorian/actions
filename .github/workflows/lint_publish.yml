@@ -1,5 +1,5 @@
 ---
-name: Release
+name: Lint and Publish
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  lint_publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
         with:
           node-version: 24
+          cache: yarn
 
       - name: Run prettier
         run: |
@@ -27,7 +28,7 @@ jobs:
           npx json -I -f package.json -e "this.prettier='@ffflorian/prettier-config'"
           npx prettier --list-different .
 
-      - name: Create GitHub action release
+      - name: Publish all actions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
