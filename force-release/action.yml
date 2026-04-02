@@ -1,0 +1,48 @@
+---
+name: Force Release
+description: Force a release by creating an empty commit and pushing it to the repository
+author: 'Florian Imdahl <git@ffflorian.de>'
+branding: {icon: 'git-commit', color: 'blue'}
+
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token used to push the release commit.'
+    required: true
+  commit_message:
+    description: 'The commit message to use for the empty release commit.'
+    required: false
+    default: 'fix: Force release'
+  git_authorship:
+    description: 'The authorship to use for the commit. Format: "Name <email>".'
+    required: false
+    default: 'Florian Imdahl <git@ffflorian.de>'
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        token: ${{ inputs.GITHUB_TOKEN }}
+
+    - name: Force release
+      shell: bash
+      env:
+        COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
+      run: |
+        if ! echo "${GIT_AUTHORSHIP}" | grep -qE '^.+ <[^>]+>$'; then
+          echo "Error: git_authorship must be in the format 'Name <email>'."
+          exit 1
+        fi
+
+        AUTHOR_NAME="$(echo "${GIT_AUTHORSHIP}" | sed 's/ <.*//')"
+        AUTHOR_EMAIL="$(echo "${GIT_AUTHORSHIP}" | sed 's/.*<\(.*\)>/\1/')"
+
+        git config user.name "${AUTHOR_NAME}"
+        git config user.email "${AUTHOR_EMAIL}"
+
+        git commit --allow-empty -m "${COMMIT_MESSAGE}"
+        git push origin HEAD
