@@ -8,6 +8,10 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub token used to push the release commit.'
     required: true
+  commit_message:
+    description: 'The commit message to use for the empty release commit.'
+    required: false
+    default: 'fix: Force release'
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: false
@@ -25,6 +29,7 @@ runs:
     - name: Force release
       shell: bash
       env:
+        COMMIT_MESSAGE: ${{ inputs.commit_message }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
       run: |
@@ -39,5 +44,5 @@ runs:
         git config user.name "${AUTHOR_NAME}"
         git config user.email "${AUTHOR_EMAIL}"
 
-        git commit --allow-empty -m "fix: Force release"
+        git commit --allow-empty -m "${COMMIT_MESSAGE}"
         git push origin HEAD

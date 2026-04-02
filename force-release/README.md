@@ -6,15 +6,16 @@ Forces a release by creating an empty commit and pushing it to the repository.
 
 - Checks out the repository.
 - Configures the git author and committer.
-- Creates an empty commit with the message `fix: Force release`.
+- Creates an empty commit with a configurable message (default: `fix: Force release`).
 - Pushes the commit to the current branch, triggering a release pipeline.
 
 ## Inputs
 
-| Name             | Required | Default                             | Description                                       |
-| ---------------- | -------- | ----------------------------------- | ------------------------------------------------- |
-| `GITHUB_TOKEN`   | Yes      | -                                   | GitHub token used to push the release commit.     |
-| `git_authorship` | No       | `Florian Imdahl <git@ffflorian.de>` | Commit author/committer in format `Name <email>`. |
+| Name               | Required | Default                             | Description                                       |
+| ------------------ | -------- | ----------------------------------- | ------------------------------------------------- |
+| `GITHUB_TOKEN`     | Yes      | -                                   | GitHub token used to push the release commit.     |
+| `commit_message`   | No       | `fix: Force release`                | The commit message for the empty release commit.  |
+| `git_authorship`   | No       | `Florian Imdahl <git@ffflorian.de>` | Commit author/committer in format `Name <email>`. |
 
 ## Outputs
 
