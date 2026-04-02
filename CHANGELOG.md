@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/ffflorian/actions/compare/v1.2.0...v1.3.0) (2026-04-02)
+
+
+### Features
+
+* add force-release action ([#1](https://github.com/ffflorian/actions/issues/1)) ([237df11](https://github.com/ffflorian/actions/commit/237df11c7310258b5023bd3ae52f191723375a09))
+
 # [1.2.0](https://github.com/ffflorian/actions/compare/v1.1.1...v1.2.0) (2026-03-31)
 
 
