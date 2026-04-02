@@ -8,9 +8,6 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub token used to push the release commit.'
     required: true
-  commit_message:
-    description: 'The message for the release commit.'
-    required: true
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: false
@@ -30,7 +27,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
-        COMMIT_MESSAGE: ${{ inputs.commit_message }}
       run: |
         if ! echo "${GIT_AUTHORSHIP}" | grep -qE '^.+ <[^>]+>$'; then
           echo "Error: git_authorship must be in the format 'Name <email>'."
@@ -43,5 +39,5 @@ runs:
         git config user.name "${AUTHOR_NAME}"
         git config user.email "${AUTHOR_EMAIL}"
 
-        git commit --allow-empty -m "${COMMIT_MESSAGE}"
+        git commit --allow-empty -m "fix: Force release"
         git push origin HEAD
