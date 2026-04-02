@@ -11,11 +11,11 @@ Forces a release by creating an empty commit and pushing it to the repository.
 
 ## Inputs
 
-| Name | Required | Default | Description |
-| --- | --- | --- | --- |
-| `GITHUB_TOKEN` | Yes | - | GitHub token used to push the release commit. |
-| `commit_message` | No | `fix: Force release` | The commit message for the empty release commit. |
-| `git_authorship` | No | `Florian Imdahl <git@ffflorian.de>` | Commit author/committer in format `Name <email>`. |
+| Name             | Required | Default              | Description                                       |
+| ---------------- | -------- | -------------------- | ------------------------------------------------- |
+| `GITHUB_TOKEN`   | Yes      | -                    | GitHub token used to push the release commit.     |
+| `commit_message` | No       | `fix: Force release` | The commit message for the empty release commit.  |
+| `git_authorship` | Yes      | -                    | Commit author/committer in format `Name <email>`. |
 
 ## Outputs
 
@@ -45,4 +45,5 @@ jobs:
       - uses: ffflorian/actions/force-release@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git_authorship: 'Florian Imdahl <git@ffflorian.de>'
 ```

@@ -14,8 +14,7 @@ inputs:
     default: 'fix: Force release'
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
-    required: false
-    default: 'Florian Imdahl <git@ffflorian.de>'
+    required: true
 
 runs:
   using: composite
