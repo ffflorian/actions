@@ -29,9 +29,7 @@ jobs:
           npx --no prettier -- --list-different .
 
       - name: Publish all actions
-        if: |
-          github.event_name != 'pull_request' &&
-          !startsWith(github.event.head_commit.message, 'chore(deps')
+        if: github.event_name != 'pull_request'
         uses: ./github-action-release/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
