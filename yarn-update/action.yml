@@ -32,6 +32,8 @@ runs:
           echo "yarn is already up to date."
         else
           echo "yarn updated to version ${NEW_VERSION}."
+          echo "Running yarn install to update lockfile ..."
+          yarn install
           echo "YARN_VERSION=${NEW_VERSION}" >> $GITHUB_OUTPUT
         fi
 
