@@ -8,14 +8,14 @@ This repository contains reusable composite GitHub Actions:
 
 - `git-mirror`: Mirror repository refs to GitLab and/or Codeberg.
 - `github-action-release`: Create semantic releases and maintain major/latest tags.
-- `yarn-update`: Update Yarn and open an automated pull request.
+- `yarn-update`: Update yarn and open an automated pull request.
 
 ## Repository Structure
 
 - `.github/workflows/main.yml`: Release workflow for this repository.
 - `git-mirror/action.yml`: Mirror action definition.
 - `github-action-release/action.yml`: Release action definition.
-- `yarn-update/action.yml`: Yarn update action definition.
+- `yarn-update/action.yml`: yarn update action definition.
 - Each action directory should include a matching `README.md`.
 
 ## Code Style
