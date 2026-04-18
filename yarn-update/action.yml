@@ -50,13 +50,13 @@ runs:
             if [ -z "${TARGET_VERSION}" ]; then
               TARGET_VERSION="${NEW_VERSION}"
             elif [ "${TARGET_VERSION}" != "${NEW_VERSION}" ]; then
-              echo "::error::Expected all Yarn installations to update to the same stable version, but got ${TARGET_VERSION} and ${NEW_VERSION}."
+              echo "::error::Expected all yarn installations to update to the same stable version, but got ${TARGET_VERSION} and ${NEW_VERSION}."
               exit 1
             fi
           fi
 
           popd > /dev/null
-        done < <(find . -type d -name .yarn -not -path './.git/*' -print0)
+        done < <(find . -maxdepth 5 -type d -name .yarn -not -path './.git/*' -not -path '*/node_modules/*' -print0)
 
         if [ "${FOUND_YARN_DIR}" = false ]; then
           echo "No .yarn directories found."
@@ -74,7 +74,7 @@ runs:
         committer: ${{ inputs.git_authorship }}
         base: main
         body: |
-          This PR updates all Yarn installations in this repository to version **${{ steps.update-yarn.outputs.YARN_VERSION }}**.
+          This PR updates all yarn installations in this repository to version **${{ steps.update-yarn.outputs.YARN_VERSION }}**.
 
           See the [release notes](https://github.com/yarnpkg/berry/releases/tag/%40yarnpkg%2Fcli%2F${{ steps.update-yarn.outputs.YARN_VERSION }}) for more details.
         branch: 'chore/deps/yarn-${{ steps.update-yarn.outputs.YARN_VERSION }}'

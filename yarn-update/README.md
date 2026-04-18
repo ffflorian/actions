@@ -1,16 +1,16 @@
 # yarn Update Action
 
-Checks all Yarn installations in the repository and creates a pull request when updates are found.
+Checks all yarn installations in the repository and creates a pull request when updates are found.
 
 ## What It Does
 
 - Checks out the repository.
 - Installs Node.js.
 - Finds all `.yarn` directories in the repository.
-- Compares each Yarn installation with the latest stable version.
+- Compares each yarn installation with the latest stable version.
 - Runs `yarn install --mode=update-lockfile` for each updated installation.
-- Ensures all updated installations resolve to the same stable Yarn version.
-- Creates one update PR when any Yarn installation changes.
+- Ensures all updated installations resolve to the same stable yarn version.
+- Creates one update PR when any yarn installation changes.
 
 ## Inputs
 
