@@ -9,6 +9,7 @@ Checks all Yarn installations in the repository and creates a pull request when 
 - Finds all `.yarn` directories in the repository.
 - Compares each Yarn installation with the latest stable version.
 - Runs `yarn install --mode=update-lockfile` for each updated installation.
+- Ensures all updated installations resolve to the same stable Yarn version.
 - Creates one update PR using `peter-evans/create-pull-request` when any Yarn installation changes.
 
 ## Inputs

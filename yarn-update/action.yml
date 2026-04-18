@@ -26,7 +26,7 @@ runs:
       shell: bash
       run: |
         UPDATED=false
-        UPDATED_VERSIONS=''
+        TARGET_VERSION=''
         FOUND_YARN_DIR=false
 
         while IFS= read -r -d '' YARN_DIR; do
@@ -47,10 +47,11 @@ runs:
             echo "Running yarn install to update lockfile in ${PROJECT_DIR} ..."
             yarn install --mode=update-lockfile
             UPDATED=true
-            if [ -z "${UPDATED_VERSIONS}" ]; then
-              UPDATED_VERSIONS="${NEW_VERSION}"
-            else
-              UPDATED_VERSIONS="${UPDATED_VERSIONS}"$'\n'"${NEW_VERSION}"
+            if [ -z "${TARGET_VERSION}" ]; then
+              TARGET_VERSION="${NEW_VERSION}"
+            elif [ "${TARGET_VERSION}" != "${NEW_VERSION}" ]; then
+              echo "::error::Expected all Yarn installations to update to the same stable version, but got ${TARGET_VERSION} and ${NEW_VERSION}."
+              exit 1
             fi
           fi
 
@@ -62,31 +63,20 @@ runs:
         fi
 
         if [ "${UPDATED}" = true ]; then
-          UNIQUE_VERSIONS=$(printf '%s\n' "${UPDATED_VERSIONS}" | sort -u)
-          YARN_VERSIONS=$(printf '%s\n' "${UNIQUE_VERSIONS}" | paste -sd ',' -)
-          VERSION_COUNT=$(printf '%s\n' "${UNIQUE_VERSIONS}" | wc -l | tr -d '[:space:]')
-
-          if [ "${VERSION_COUNT}" = '1' ]; then
-            YARN_VERSION_REF="${YARN_VERSIONS}"
-          else
-            YARN_VERSION_REF='multiple-versions'
-          fi
-
-          echo "YARN_VERSIONS=${YARN_VERSIONS}" >> "${GITHUB_OUTPUT}"
-          echo "YARN_VERSION_REF=${YARN_VERSION_REF}" >> "${GITHUB_OUTPUT}"
+          echo "YARN_VERSION=${TARGET_VERSION}" >> "${GITHUB_OUTPUT}"
         fi
 
     - name: Create Pull Request
-      if: steps.update-yarn.outputs.YARN_VERSION_REF != ''
+      if: steps.update-yarn.outputs.YARN_VERSION != ''
       uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
       with:
         author: ${{ inputs.git_authorship }}
         committer: ${{ inputs.git_authorship }}
         base: main
         body: |
-          This PR updates all Yarn installations in this repository to version(s) **${{ steps.update-yarn.outputs.YARN_VERSIONS }}**.
+          This PR updates all Yarn installations in this repository to version **${{ steps.update-yarn.outputs.YARN_VERSION }}**.
 
-          See the [release notes](https://github.com/yarnpkg/berry/releases) for more details.
-        branch: 'chore/deps/yarn-${{ steps.update-yarn.outputs.YARN_VERSION_REF }}'
-        commit-message: 'chore(deps): bump yarn to version(s) ${{ steps.update-yarn.outputs.YARN_VERSIONS }}'
-        title: 'chore(deps): bump yarn to version(s) ${{ steps.update-yarn.outputs.YARN_VERSIONS }}'
+          See the [release notes](https://github.com/yarnpkg/berry/releases/tag/%40yarnpkg%2Fcli%2F${{ steps.update-yarn.outputs.YARN_VERSION }}) for more details.
+        branch: 'chore/deps/yarn-${{ steps.update-yarn.outputs.YARN_VERSION }}'
+        commit-message: 'chore(deps): bump yarn to version ${{ steps.update-yarn.outputs.YARN_VERSION }}'
+        title: 'chore(deps): bump yarn to version ${{ steps.update-yarn.outputs.YARN_VERSION }}'
