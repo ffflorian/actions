@@ -33,7 +33,7 @@ runs:
         else
           echo "yarn updated to version ${NEW_VERSION}."
           echo "Running yarn install to update lockfile ..."
-          yarn install
+          yarn install --mode=update-lockfile
           echo "YARN_VERSION=${NEW_VERSION}" >> $GITHUB_OUTPUT
         fi
 
