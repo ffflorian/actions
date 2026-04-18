@@ -49,8 +49,7 @@ runs:
             echo "Running yarn install to update lockfile in ${PROJECT_DIR} ..."
             yarn install --mode=update-lockfile
             UPDATED=true
-            UPDATED_VERSIONS="${UPDATED_VERSIONS}
-${NEW_VERSION}"
+            UPDATED_VERSIONS=$(printf '%s\n%s' "${UPDATED_VERSIONS}" "${NEW_VERSION}")
           fi
 
           popd > /dev/null
@@ -61,7 +60,7 @@ ${NEW_VERSION}"
         fi
 
         if [ "${UPDATED}" = true ]; then
-          YARN_VERSIONS=$(printf '%s\n' "${UPDATED_VERSIONS}" | sed '/^$/d' | sort -u | paste -sd ', ' -)
+          YARN_VERSIONS=$(printf '%s\n' "${UPDATED_VERSIONS}" | sed '/^$/d' | sort -u | paste -sd ',' -)
           VERSION_COUNT=$(printf '%s\n' "${UPDATED_VERSIONS}" | sed '/^$/d' | sort -u | wc -l | tr -d '[:space:]')
 
           if [ "${VERSION_COUNT}" = '1' ]; then
@@ -70,8 +69,8 @@ ${NEW_VERSION}"
             YARN_VERSION_REF='multiple-versions'
           fi
 
-          echo "YARN_VERSIONS=${YARN_VERSIONS}" >> $GITHUB_OUTPUT
-          echo "YARN_VERSION_REF=${YARN_VERSION_REF}" >> $GITHUB_OUTPUT
+          echo "YARN_VERSIONS=${YARN_VERSIONS}" >> "${GITHUB_OUTPUT}"
+          echo "YARN_VERSION_REF=${YARN_VERSION_REF}" >> "${GITHUB_OUTPUT}"
         fi
 
     - name: Create Pull Request
