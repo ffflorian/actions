@@ -27,8 +27,6 @@ runs:
       run: |
         UPDATED=false
         UPDATED_VERSIONS=''
-        YARN_VERSION_REF=''
-        YARN_VERSIONS=''
         FOUND_YARN_DIR=false
 
         while IFS= read -r -d '' YARN_DIR; do
@@ -49,7 +47,11 @@ runs:
             echo "Running yarn install to update lockfile in ${PROJECT_DIR} ..."
             yarn install --mode=update-lockfile
             UPDATED=true
-            UPDATED_VERSIONS=$(printf '%s\n%s' "${UPDATED_VERSIONS}" "${NEW_VERSION}")
+            if [ -z "${UPDATED_VERSIONS}" ]; then
+              UPDATED_VERSIONS="${NEW_VERSION}"
+            else
+              UPDATED_VERSIONS="${UPDATED_VERSIONS}"$'\n'"${NEW_VERSION}"
+            fi
           fi
 
           popd > /dev/null
@@ -60,8 +62,9 @@ runs:
         fi
 
         if [ "${UPDATED}" = true ]; then
-          YARN_VERSIONS=$(printf '%s\n' "${UPDATED_VERSIONS}" | sed '/^$/d' | sort -u | paste -sd ',' -)
-          VERSION_COUNT=$(printf '%s\n' "${UPDATED_VERSIONS}" | sed '/^$/d' | sort -u | wc -l | tr -d '[:space:]')
+          UNIQUE_VERSIONS=$(printf '%s\n' "${UPDATED_VERSIONS}" | sort -u)
+          YARN_VERSIONS=$(printf '%s\n' "${UNIQUE_VERSIONS}" | paste -sd ',' -)
+          VERSION_COUNT=$(printf '%s\n' "${UNIQUE_VERSIONS}" | wc -l | tr -d '[:space:]')
 
           if [ "${VERSION_COUNT}" = '1' ]; then
             YARN_VERSION_REF="${YARN_VERSIONS}"
