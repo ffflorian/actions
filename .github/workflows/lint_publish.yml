@@ -7,11 +7,11 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: write
-
+permissions: {}
 jobs:
   lint_publish:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
