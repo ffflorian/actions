@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/ffflorian/actions/compare/v1.3.3...v1.4.0) (2026-04-19)
+
+
+### Features
+
+* **yarn-update:** update all yarn installations in repository ([#3](https://github.com/ffflorian/actions/issues/3)) ([0e99318](https://github.com/ffflorian/actions/commit/0e993189a594b9a7abf36ec3cae68717643ef727))
+
 ## [1.3.3](https://github.com/ffflorian/actions/compare/v1.3.2...v1.3.3) (2026-04-18)
 
 
