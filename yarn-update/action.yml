@@ -25,16 +25,45 @@ runs:
       id: update-yarn
       shell: bash
       run: |
-        OLD_VERSION=$(yarn --version)
-        yarn set version stable
-        NEW_VERSION=$(yarn --version)
-        if [ "${OLD_VERSION}" == "${NEW_VERSION}" ]; then
-          echo "yarn is already up to date."
-        else
-          echo "yarn updated to version ${NEW_VERSION}."
-          echo "Running yarn install to update lockfile ..."
-          yarn install --mode=update-lockfile
-          echo "YARN_VERSION=${NEW_VERSION}" >> $GITHUB_OUTPUT
+        UPDATED=false
+        TARGET_VERSION=''
+        FOUND_YARN_DIR=false
+
+        while IFS= read -r -d '' YARN_DIR; do
+          FOUND_YARN_DIR=true
+          PROJECT_DIR=$(dirname "${YARN_DIR}")
+
+          echo "Checking yarn in ${PROJECT_DIR} ..."
+          pushd "${PROJECT_DIR}" > /dev/null
+
+          OLD_VERSION=$(yarn --version)
+          yarn set version stable
+          NEW_VERSION=$(yarn --version)
+
+          if [ "${OLD_VERSION}" = "${NEW_VERSION}" ]; then
+            echo "yarn is already up to date in ${PROJECT_DIR}."
+          else
+            echo "yarn updated from ${OLD_VERSION} to ${NEW_VERSION} in ${PROJECT_DIR}."
+            echo "Running yarn install to update lockfile in ${PROJECT_DIR} ..."
+            yarn install --mode=update-lockfile
+            UPDATED=true
+            if [ -z "${TARGET_VERSION}" ]; then
+              TARGET_VERSION="${NEW_VERSION}"
+            elif [ "${TARGET_VERSION}" != "${NEW_VERSION}" ]; then
+              echo "::error::Expected all yarn installations to update to the same stable version, but got ${TARGET_VERSION} and ${NEW_VERSION}."
+              exit 1
+            fi
+          fi
+
+          popd > /dev/null
+        done < <(find . -maxdepth 5 -type d -name .yarn -not -path './.git/*' -not -path '*/node_modules/*' -print0)
+
+        if [ "${FOUND_YARN_DIR}" = false ]; then
+          echo "No .yarn directories found."
+        fi
+
+        if [ "${UPDATED}" = true ]; then
+          echo "YARN_VERSION=${TARGET_VERSION}" >> "${GITHUB_OUTPUT}"
         fi
 
     - name: Create Pull Request
@@ -45,7 +74,7 @@ runs:
         committer: ${{ inputs.git_authorship }}
         base: main
         body: |
-          This PR updates yarn to version **${{ steps.update-yarn.outputs.YARN_VERSION }}**.
+          This PR updates all yarn installations in this repository to version **${{ steps.update-yarn.outputs.YARN_VERSION }}**.
 
           See the [release notes](https://github.com/yarnpkg/berry/releases/tag/%40yarnpkg%2Fcli%2F${{ steps.update-yarn.outputs.YARN_VERSION }}) for more details.
         branch: 'chore/deps/yarn-${{ steps.update-yarn.outputs.YARN_VERSION }}'

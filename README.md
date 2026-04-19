@@ -9,7 +9,7 @@ A collection of GitHub Actions for use in my projects.
 | `force-release` | Force a release by pushing an empty commit with the message `fix: Force release`. | [force-release/README.md](force-release/README.md) |
 | `git-mirror` | Mirror a repository to GitLab and/or Codeberg over SSH. | [git-mirror/README.md](git-mirror/README.md) |
 | `github-action-release` | Create semantic releases and maintain major/latest tags. | [github-action-release/README.md](github-action-release/README.md) |
-| `yarn-update` | Check for Yarn updates and open a pull request when needed. | [yarn-update/README.md](yarn-update/README.md) |
+| `yarn-update` | Check for yarn updates and open a pull request when needed. | [yarn-update/README.md](yarn-update/README.md) |
 
 ## Usage
 
