@@ -8,6 +8,10 @@ inputs:
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
+  release_cooldown_days:
+    description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 to disable.'
+    required: false
+    default: '0'
 
 runs:
   using: composite
@@ -23,6 +27,8 @@ runs:
 
     - name: Update yarn
       id: update-yarn
+      env:
+        RELEASE_COOLDOWN_DAYS: ${{ inputs.release_cooldown_days }}
       shell: bash
       run: |
         UPDATED=false
@@ -43,6 +49,36 @@ runs:
           if [ "${OLD_VERSION}" = "${NEW_VERSION}" ]; then
             echo "yarn is already up to date in ${PROJECT_DIR}."
           else
+            if ! [[ "${RELEASE_COOLDOWN_DAYS}" =~ ^[0-9]+$ ]]; then
+              echo "::error::release_cooldown_days must be a non-negative integer, got: '${RELEASE_COOLDOWN_DAYS}'."
+              exit 1
+            fi
+            if [ "${RELEASE_COOLDOWN_DAYS}" -gt 0 ]; then
+              ENCODED_TAG=$(python3 -c "import urllib.parse; print(urllib.parse.quote('@yarnpkg/cli/${NEW_VERSION}', safe=''))")
+              RELEASE_DATE=$(curl -fsSL \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/yarnpkg/berry/releases/tags/${ENCODED_TAG}" \
+                | python3 -c "import sys,json; print(json.load(sys.stdin).get('published_at',''))")
+              if [ -z "${RELEASE_DATE}" ]; then
+                echo "::warning::Could not determine release date for yarn ${NEW_VERSION}. Skipping cooldown check."
+              else
+                AGE_DAYS=$(python3 -c "
+from datetime import datetime, timezone
+published = datetime.fromisoformat('${RELEASE_DATE}'.replace('Z', '+00:00'))
+now = datetime.now(timezone.utc)
+print((now - published).days)
+")
+                if [ "${AGE_DAYS}" -lt "${RELEASE_COOLDOWN_DAYS}" ]; then
+                  echo "yarn ${NEW_VERSION} was released ${AGE_DAYS} days ago, which is within the cooldown period of ${RELEASE_COOLDOWN_DAYS} days. Skipping."
+                  git checkout -- .
+                  popd > /dev/null
+                  continue
+                fi
+                echo "yarn ${NEW_VERSION} is ${AGE_DAYS} days old (cooldown: ${RELEASE_COOLDOWN_DAYS} days). Proceeding with update."
+              fi
+            fi
+
             echo "yarn updated from ${OLD_VERSION} to ${NEW_VERSION} in ${PROJECT_DIR}."
             echo "Running yarn install to update lockfile in ${PROJECT_DIR} ..."
             yarn install --mode=update-lockfile

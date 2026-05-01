@@ -14,9 +14,10 @@ Checks all yarn installations in the repository and creates a pull request when 
 
 ## Inputs
 
-| Name             | Required | Default | Description                                       |
-| ---------------- | -------- | ------- | ------------------------------------------------- |
-| `git_authorship` | Yes      | -       | Commit author/committer in format `Name <email>`. |
+| Name                   | Required | Default | Description                                                                             |
+| ---------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
+| `git_authorship`       | Yes      | -       | Commit author/committer in format `Name <email>`.                                       |
+| `release_cooldown_days`| No       | `0`     | How many days a yarn release must be old before it is eligible for an update. Set to `0` to disable. |
 
 ## Outputs
 
@@ -46,4 +47,5 @@ jobs:
       - uses: ffflorian/actions/yarn-update@v1
         with:
           git_authorship: Florian Imdahl <git@ffflorian.de>
+          release_cooldown_days: 7
 ```
