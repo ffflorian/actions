@@ -9,7 +9,7 @@ inputs:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
   release_cooldown_days:
-    description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 to disable.'
+    description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 or leave unset to disable.'
     required: false
     default: '0'
 
@@ -49,11 +49,12 @@ runs:
           if [ "${OLD_VERSION}" = "${NEW_VERSION}" ]; then
             echo "yarn is already up to date in ${PROJECT_DIR}."
           else
-            if ! [[ "${RELEASE_COOLDOWN_DAYS}" =~ ^[0-9]+$ ]]; then
-              echo "::error::release_cooldown_days must be a non-negative integer, got: '${RELEASE_COOLDOWN_DAYS}'."
+            COOLDOWN="${RELEASE_COOLDOWN_DAYS:-0}"
+            if ! [[ "${COOLDOWN}" =~ ^[0-9]+$ ]]; then
+              echo "::error::release_cooldown_days must be a non-negative integer, got: '${COOLDOWN}'."
               exit 1
             fi
-            if [ "${RELEASE_COOLDOWN_DAYS}" -gt 0 ]; then
+            if [ "${COOLDOWN}" -gt 0 ]; then
               ENCODED_TAG=$(python3 -c "import urllib.parse; print(urllib.parse.quote('@yarnpkg/cli/${NEW_VERSION}', safe=''))")
               RELEASE_DATE=$(curl -fsSL \
                 -H "Accept: application/vnd.github+json" \
@@ -69,13 +70,13 @@ published = datetime.fromisoformat('${RELEASE_DATE}'.replace('Z', '+00:00'))
 now = datetime.now(timezone.utc)
 print((now - published).days)
 ")
-                if [ "${AGE_DAYS}" -lt "${RELEASE_COOLDOWN_DAYS}" ]; then
-                  echo "yarn ${NEW_VERSION} was released ${AGE_DAYS} days ago, which is within the cooldown period of ${RELEASE_COOLDOWN_DAYS} days. Skipping."
+                if [ "${AGE_DAYS}" -lt "${COOLDOWN}" ]; then
+                  echo "yarn ${NEW_VERSION} was released ${AGE_DAYS} days ago, which is within the cooldown period of ${COOLDOWN} days. Skipping."
                   git checkout -- .
                   popd > /dev/null
                   continue
                 fi
-                echo "yarn ${NEW_VERSION} is ${AGE_DAYS} days old (cooldown: ${RELEASE_COOLDOWN_DAYS} days). Proceeding with update."
+                echo "yarn ${NEW_VERSION} is ${AGE_DAYS} days old (cooldown: ${COOLDOWN} days). Proceeding with update."
               fi
             fi
 
