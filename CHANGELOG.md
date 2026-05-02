@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/ffflorian/actions/compare/v1.4.0...v1.5.0) (2026-05-02)
+
+
+### Features
+
+* **yarn-update:** add release_cooldown_days input ([#6](https://github.com/ffflorian/actions/issues/6)) ([869c59c](https://github.com/ffflorian/actions/commit/869c59ca88bb3ddf9ee70fc19a203a6d67c635d4))
+
 # [1.4.0](https://github.com/ffflorian/actions/compare/v1.3.3...v1.4.0) (2026-04-19)
 
 
