@@ -4,9 +4,7 @@ Checks all yarn installations in the repository and creates a pull request when 
 
 ## What It Does
 
-- Checks out the repository.
-- Installs Node.js.
-- Finds all `.yarn` directories in the repository.
+- Finds all `.yarn` directories in the workspace (up to 5 levels deep).
 - Compares each yarn installation with the latest stable version.
 - Runs `yarn install --mode=update-lockfile` for each updated installation.
 - Ensures all updated installations resolve to the same stable yarn version.
@@ -21,7 +19,9 @@ Checks all yarn installations in the repository and creates a pull request when 
 
 ## Outputs
 
-None
+| Name           | Description                                                                      |
+| -------------- | -------------------------------------------------------------------------------- |
+| `YARN_VERSION` | The yarn version that all installations were updated to, if any update occurred. |
 
 ## Recommended Permissions
 
@@ -43,7 +43,11 @@ on:
 jobs:
   update-yarn:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
+      - uses: actions/checkout@v4
       - uses: ffflorian/actions/yarn-update@v1
         with:
           git_authorship: Florian Imdahl <git@ffflorian.de>
