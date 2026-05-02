@@ -18,5 +18,5 @@ outputs:
     description: 'The yarn version that all installations were updated to, if any update occurred.'
 
 runs:
-  using: node20
+  using: node24
   main: dist/index.js
