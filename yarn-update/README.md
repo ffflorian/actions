@@ -14,10 +14,10 @@ Checks all yarn installations in the repository and creates a pull request when 
 
 ## Inputs
 
-| Name                   | Required | Default | Description                                                                             |
-| ---------------------- | -------- | ------- | --------------------------------------------------------------------------------------- |
-| `git_authorship`       | Yes      | -       | Commit author/committer in format `Name <email>`.                                       |
-| `release_cooldown_days`| No       | `0`     | How many days a yarn release must be old before it is eligible for an update. Set to `0` to disable. |
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
+| `release_cooldown_days` | No | `0` | Minimum age in days a yarn release must have before being considered for an update. When set, the action installs the newest release that is at least this many days old rather than the absolute latest. Set to `0` or leave unset to always use the latest stable release. |
 
 ## Outputs
 
