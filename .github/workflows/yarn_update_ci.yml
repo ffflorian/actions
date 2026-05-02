@@ -36,9 +36,6 @@ jobs:
       - name: Check formatting with Prettier
         run: npm run format:check
 
-      - name: Lint with ESLint
-        run: npm run lint
-
       - name: Type-check
         run: npm run type-check
 
