@@ -8,6 +8,10 @@ inputs:
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
+  release_cooldown_days:
+    description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 or leave unset to disable.'
+    required: false
+    default: '0'
 
 runs:
   using: composite
@@ -23,11 +27,19 @@ runs:
 
     - name: Update yarn
       id: update-yarn
+      env:
+        RELEASE_COOLDOWN_DAYS: ${{ inputs.release_cooldown_days }}
       shell: bash
       run: |
         UPDATED=false
         TARGET_VERSION=''
         FOUND_YARN_DIR=false
+        COOLDOWN="${RELEASE_COOLDOWN_DAYS:-0}"
+
+        if ! [[ "${COOLDOWN}" =~ ^[0-9]+$ ]]; then
+          echo "::error::release_cooldown_days must be a non-negative integer, got: '${COOLDOWN}'."
+          exit 1
+        fi
 
         while IFS= read -r -d '' YARN_DIR; do
           FOUND_YARN_DIR=true
@@ -37,7 +49,26 @@ runs:
           pushd "${PROJECT_DIR}" > /dev/null
 
           OLD_VERSION=$(yarn --version)
-          yarn set version stable
+
+          if [ "${COOLDOWN}" -gt 0 ]; then
+            CANDIDATE=$( \
+              (curl -fsSL \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                "https://api.github.com/repos/yarnpkg/berry/releases?per_page=100" \
+                2>/dev/null || echo '[]') \
+              | python3 -c "import sys,json; from datetime import datetime,timezone,timedelta; data=json.load(sys.stdin); releases=data if isinstance(data,list) else []; cutoff=datetime.now(timezone.utc)-timedelta(days=${COOLDOWN}); result=next((r['tag_name'][len('@yarnpkg/cli/'):] for r in releases if r.get('tag_name','').startswith('@yarnpkg/cli/') and not r.get('prerelease') and r.get('published_at') and datetime.fromisoformat(r['published_at'].replace('Z','+00:00'))<=cutoff),None); print(result or '')")
+            if [ -z "${CANDIDATE}" ]; then
+              echo "No yarn release is older than ${COOLDOWN} days. Skipping update."
+              popd > /dev/null
+              continue
+            fi
+            echo "Targeting yarn ${CANDIDATE} (latest release at least ${COOLDOWN} day(s) old)."
+            yarn set version "${CANDIDATE}"
+          else
+            yarn set version stable
+          fi
+
           NEW_VERSION=$(yarn --version)
 
           if [ "${OLD_VERSION}" = "${NEW_VERSION}" ]; then
