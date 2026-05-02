@@ -64,12 +64,7 @@ runs:
               if [ -z "${RELEASE_DATE}" ]; then
                 echo "::warning::Could not determine release date for yarn ${NEW_VERSION}. Skipping cooldown check."
               else
-                AGE_DAYS=$(python3 -c "
-from datetime import datetime, timezone
-published = datetime.fromisoformat('${RELEASE_DATE}'.replace('Z', '+00:00'))
-now = datetime.now(timezone.utc)
-print((now - published).days)
-")
+                AGE_DAYS=$(python3 -c "from datetime import datetime, timezone; published = datetime.fromisoformat('${RELEASE_DATE}'.replace('Z', '+00:00')); now = datetime.now(timezone.utc); print((now - published).days)")
                 if [ "${AGE_DAYS}" -lt "${COOLDOWN}" ]; then
                   echo "yarn ${NEW_VERSION} was released ${AGE_DAYS} days ago, which is within the cooldown period of ${COOLDOWN} days. Skipping."
                   git checkout -- .
