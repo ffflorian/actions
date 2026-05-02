@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
+import semver from 'semver';
 
 interface GitHubRelease {
   tag_name: string;
@@ -38,18 +39,8 @@ export function findYarnDirs(baseDir: string, maxDepth: number = 5): string[] {
   return results;
 }
 
-export function parseVersion(v: string): number[] {
-  return v.split('-')[0].split('.').map(Number);
-}
-
 export function compareVersions(a: string, b: string): number {
-  const va = parseVersion(a);
-  const vb = parseVersion(b);
-  for (let i = 0; i < Math.max(va.length, vb.length); i++) {
-    const diff = (va[i] ?? 0) - (vb[i] ?? 0);
-    if (diff !== 0) return diff;
-  }
-  return 0;
+  return semver.compare(semver.coerce(a) ?? a, semver.coerce(b) ?? b);
 }
 
 export async function fetchEligibleRelease(cooldownDays: number, token: string | undefined): Promise<string | null> {

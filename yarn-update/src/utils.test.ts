@@ -2,25 +2,11 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {compareVersions, fetchEligibleRelease, findYarnDirs, parseVersion} from './utils.js';
+import {compareVersions, fetchEligibleRelease, findYarnDirs} from './utils.js';
 
 vi.mock('@actions/core', () => ({
   warning: vi.fn(),
 }));
-
-describe('parseVersion', () => {
-  it('parses a simple semver string', () => {
-    expect(parseVersion('1.2.3')).toEqual([1, 2, 3]);
-  });
-
-  it('parses a two-part version', () => {
-    expect(parseVersion('4.0')).toEqual([4, 0]);
-  });
-
-  it('strips pre-release suffix before parsing', () => {
-    expect(parseVersion('4.5.0-rc.1')).toEqual([4, 5, 0]);
-  });
-});
 
 describe('compareVersions', () => {
   it('returns 0 for equal versions', () => {
@@ -39,11 +25,12 @@ describe('compareVersions', () => {
     expect(compareVersions('1.3.0', '1.2.9')).toBeGreaterThan(0);
   });
 
-  it('handles versions with different lengths', () => {
+  it('coerces partial versions', () => {
     expect(compareVersions('1.0', '1.0.0')).toBe(0);
   });
 
-  it('ignores pre-release suffixes when comparing', () => {
+  it('ignores pre-release suffixes when comparing via coerce', () => {
+    // semver.coerce strips pre-release, so 4.5.0-rc.1 coerces to 4.5.0
     expect(compareVersions('4.5.0-rc.1', '4.5.0')).toBe(0);
   });
 });
