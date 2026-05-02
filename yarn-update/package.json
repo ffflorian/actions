@@ -6,7 +6,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.js --minify",
+    "format:check": "prettier --list-different \"src/**/*.ts\"",
     "lint": "eslint src",
+    "test": "vitest run",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -15,12 +17,15 @@
     "@actions/github": "9.1.1"
   },
   "devDependencies": {
+    "@ffflorian/prettier-config": "0.7.0",
     "@types/node": "22.x",
     "@typescript-eslint/eslint-plugin": "8.59.1",
     "@typescript-eslint/parser": "8.59.1",
     "esbuild": "0.28.0",
     "eslint": "10.3.0",
-    "typescript": "6.0.3"
+    "prettier": "3.8.1",
+    "typescript": "6.0.3",
+    "vitest": "^3.2.0"
   },
   "engines": {
     "node": ">=20"
