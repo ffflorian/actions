@@ -64,6 +64,11 @@ runs:
               continue
             fi
             echo "Targeting yarn ${CANDIDATE} (latest release at least ${COOLDOWN} day(s) old)."
+            if python3 -c "import sys; v=lambda s: tuple(int(x) for x in s.split('-')[0].split('.')); sys.exit(0 if v('${OLD_VERSION}') >= v('${CANDIDATE}') else 1)"; then
+              echo "yarn ${OLD_VERSION} in ${PROJECT_DIR} is already at or newer than candidate ${CANDIDATE}. Skipping."
+              popd > /dev/null
+              continue
+            fi
             yarn set version "${CANDIDATE}"
           else
             yarn set version stable
