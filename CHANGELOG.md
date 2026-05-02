@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/ffflorian/actions/compare/v1.5.0...v1.5.1) (2026-05-02)
+
+
+### Bug Fixes
+
+* **yarn-update:** skip install when installed yarn >= cooldown candidate ([#8](https://github.com/ffflorian/actions/issues/8)) ([8e6f5e5](https://github.com/ffflorian/actions/commit/8e6f5e5afcd5127e1e1605d06dd59945c9547491))
+
 # [1.5.0](https://github.com/ffflorian/actions/compare/v1.4.0...v1.5.0) (2026-05-02)
 
 
