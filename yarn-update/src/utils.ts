@@ -13,7 +13,9 @@ export function findYarnDirs(baseDir: string, maxDepth: number = 5): string[] {
   const results: string[] = [];
 
   function scan(dir: string, depth: number): void {
-    if (depth > maxDepth) return;
+    if (depth > maxDepth) {
+      return;
+    }
 
     let entries: fs.Dirent[];
     try {
@@ -23,7 +25,9 @@ export function findYarnDirs(baseDir: string, maxDepth: number = 5): string[] {
     }
 
     for (const entry of entries) {
-      if (entry.name === '.git' || entry.name === 'node_modules') continue;
+      if (entry.name === '.git' || entry.name === 'node_modules') {
+        continue;
+      }
       if (entry.isDirectory()) {
         const fullPath = path.join(dir, entry.name);
         if (entry.name === '.yarn') {
@@ -48,7 +52,9 @@ export async function fetchEligibleRelease(cooldownDays: number, token: string |
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
   };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   let releases: GitHubRelease[] = [];
   try {
@@ -66,9 +72,15 @@ export async function fetchEligibleRelease(cooldownDays: number, token: string |
   const cutoff = new Date(Date.now() - cooldownDays * 24 * 60 * 60 * 1000);
 
   for (const release of releases) {
-    if (!release.tag_name.startsWith('@yarnpkg/cli/')) continue;
-    if (release.prerelease) continue;
-    if (!release.published_at) continue;
+    if (!release.tag_name.startsWith('@yarnpkg/cli/')) {
+      continue;
+    }
+    if (release.prerelease) {
+      continue;
+    }
+    if (!release.published_at) {
+      continue;
+    }
     if (new Date(release.published_at) <= cutoff) {
       return release.tag_name.slice('@yarnpkg/cli/'.length);
     }
