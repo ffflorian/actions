@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/ffflorian/actions/compare/v1.7.1...v1.8.0) (2026-05-03)
+
+
+### Features
+
+* build TypeScript actions and push dist files via semantic-release ([#12](https://github.com/ffflorian/actions/issues/12)) ([db28f3e](https://github.com/ffflorian/actions/commit/db28f3edb1a82a3248555e47d1543a09fbe41fff))
+
 ## [1.7.1](https://github.com/ffflorian/actions/compare/v1.7.0...v1.7.1) (2026-05-03)
 
 
