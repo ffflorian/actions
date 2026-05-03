@@ -1,32 +1,39 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import * as utils from '../utils';
 
-jest.mock('@actions/core');
-jest.mock('@actions/exec');
-jest.mock('@actions/github');
-jest.mock('../utils');
+vi.mock('@actions/core');
+vi.mock('@actions/exec');
+vi.mock('../utils');
 
-const mockGetInput = core.getInput as jest.MockedFunction<typeof core.getInput>;
-const mockSetFailed = core.setFailed as jest.MockedFunction<typeof core.setFailed>;
-const mockSetOutput = core.setOutput as jest.MockedFunction<typeof core.setOutput>;
-const mockInfo = core.info as jest.MockedFunction<typeof core.info>;
-const mockExec = exec.exec as jest.MockedFunction<typeof exec.exec>;
-const mockGetOctokit = github.getOctokit as jest.MockedFunction<typeof github.getOctokit>;
-const mockHasChanges = utils.hasChanges as jest.MockedFunction<typeof utils.hasChanges>;
-const mockGetLastUpdateDate = utils.getLastUpdateDate as jest.MockedFunction<
-  typeof utils.getLastUpdateDate
->;
-
-const mockOctokit = {
-  rest: {
-    pulls: {
-      create: jest.fn(),
-      list: jest.fn(),
+const {mockContext, mockOctokit} = vi.hoisted(() => {
+  const mockContext = {repo: {owner: 'test-owner', repo: 'test-repo'}};
+  const mockOctokit = {
+    rest: {
+      pulls: {
+        create: vi.fn(),
+        list: vi.fn(),
+      },
     },
-  },
-};
+  };
+  return {mockContext, mockOctokit};
+});
+
+vi.mock('@actions/github', () => ({
+  getOctokit: vi.fn(() => mockOctokit),
+  context: mockContext,
+}));
+
+const mockGetInput = vi.mocked(core.getInput);
+const mockSetFailed = vi.mocked(core.setFailed);
+const mockSetOutput = vi.mocked(core.setOutput);
+const mockInfo = vi.mocked(core.info);
+const mockExec = vi.mocked(exec.exec);
+const mockGetOctokit = vi.mocked(github.getOctokit);
+const mockHasChanges = vi.mocked(utils.hasChanges);
+const mockGetLastUpdateDate = vi.mocked(utils.getLastUpdateDate);
 
 function setupDefaultInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -38,14 +45,12 @@ function setupDefaultInputs(overrides: Record<string, string> = {}): void {
 }
 
 describe('run', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
     setupDefaultInputs();
     mockGetOctokit.mockReturnValue(mockOctokit as never);
-    (github.context as {repo: {owner: string; repo: string}}).repo = {
-      owner: 'test-owner',
-      repo: 'test-repo',
-    };
+    mockContext.repo = {owner: 'test-owner', repo: 'test-repo'};
     mockExec.mockResolvedValue(0);
     mockHasChanges.mockResolvedValue(true);
     mockGetLastUpdateDate.mockResolvedValue(null);
@@ -59,9 +64,7 @@ describe('run', () => {
     const {run} = await import('../main');
     await run();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(
-      expect.stringContaining('cooldown_days must be a non-negative integer')
-    );
+    expect(mockSetFailed).toHaveBeenCalledWith(expect.stringContaining('cooldown_days must be a non-negative integer'));
   });
 
   it('should fail when cooldown_days is negative', async () => {
@@ -69,9 +72,7 @@ describe('run', () => {
     const {run} = await import('../main');
     await run();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(
-      expect.stringContaining('cooldown_days must be a non-negative integer')
-    );
+    expect(mockSetFailed).toHaveBeenCalledWith(expect.stringContaining('cooldown_days must be a non-negative integer'));
   });
 
   it('should skip when last PR was created within the cooldown period', async () => {
@@ -100,9 +101,7 @@ describe('run', () => {
     const {run} = await import('../main');
     await run();
 
-    expect(mockInfo).toHaveBeenCalledWith(
-      'No changes detected after Hugo module update. Nothing to do.'
-    );
+    expect(mockInfo).toHaveBeenCalledWith('No changes detected after Hugo module update. Nothing to do.');
     expect(mockOctokit.rest.pulls.create).not.toHaveBeenCalled();
   });
 
@@ -111,9 +110,7 @@ describe('run', () => {
     const {run} = await import('../main');
     await run();
 
-    expect(mockSetFailed).toHaveBeenCalledWith(
-      'git_authorship must be in format "Name <email>"'
-    );
+    expect(mockSetFailed).toHaveBeenCalledWith('git_authorship must be in format "Name <email>"');
   });
 
   it('should create a PR and set outputs when changes are present', async () => {
@@ -131,10 +128,7 @@ describe('run', () => {
       })
     );
     expect(mockSetOutput).toHaveBeenCalledWith('pr_number', '42');
-    expect(mockSetOutput).toHaveBeenCalledWith(
-      'pr_url',
-      'https://github.com/test-owner/test-repo/pull/42'
-    );
+    expect(mockSetOutput).toHaveBeenCalledWith('pr_url', 'https://github.com/test-owner/test-repo/pull/42');
   });
 
   it('should configure git with the parsed name and email', async () => {

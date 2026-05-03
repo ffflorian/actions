@@ -1,12 +1,13 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {BRANCH_PREFIX, getCommandOutput, getLastUpdateDate, hasChanges} from '../utils';
 
-jest.mock('@actions/core');
-jest.mock('@actions/exec');
+vi.mock('@actions/core');
+vi.mock('@actions/exec');
 
-const mockExec = exec.exec as jest.MockedFunction<typeof exec.exec>;
-const mockWarning = core.warning as jest.MockedFunction<typeof core.warning>;
+const mockExec = vi.mocked(exec.exec);
+const mockWarning = vi.mocked(core.warning);
 
 describe('BRANCH_PREFIX', () => {
   it('should equal chore/deps/hugo-modules-', () => {
@@ -16,7 +17,7 @@ describe('BRANCH_PREFIX', () => {
 
 describe('getCommandOutput', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should capture and return trimmed stdout', async () => {
@@ -28,11 +29,7 @@ describe('getCommandOutput', () => {
     const result = await getCommandOutput('echo', ['hello world']);
 
     expect(result).toBe('hello world');
-    expect(mockExec).toHaveBeenCalledWith(
-      'echo',
-      ['hello world'],
-      expect.objectContaining({silent: true})
-    );
+    expect(mockExec).toHaveBeenCalledWith('echo', ['hello world'], expect.objectContaining({silent: true}));
   });
 
   it('should return empty string when command produces no output', async () => {
@@ -58,7 +55,7 @@ describe('getCommandOutput', () => {
 
 describe('hasChanges', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return true when git status has output', async () => {
@@ -81,13 +78,13 @@ describe('getLastUpdateDate', () => {
   const mockOctokit = {
     rest: {
       pulls: {
-        list: jest.fn(),
+        list: vi.fn(),
       },
     },
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return null when no matching PR is found', async () => {
