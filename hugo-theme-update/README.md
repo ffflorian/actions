@@ -22,10 +22,10 @@ Runs `hugo mod get -u ./...` and `hugo mod tidy` on a configurable schedule, and
 
 ## Outputs
 
-| Name | Description |
-| --- | --- |
+| Name        | Description                                                            |
+| ----------- | ---------------------------------------------------------------------- |
 | `pr_number` | The number of the created pull request, or empty if no PR was created. |
-| `pr_url` | The URL of the created pull request, or empty if no PR was created. |
+| `pr_url`    | The URL of the created pull request, or empty if no PR was created.    |
 
 ## Recommended Permissions
 
