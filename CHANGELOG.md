@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/ffflorian/actions/compare/v1.7.0...v1.7.1) (2026-05-03)
+
+
+### Bug Fixes
+
+* **hugo-theme-update:** update peaceiris/actions-hugo to v3.0.0 ([#11](https://github.com/ffflorian/actions/issues/11)) ([4c7af89](https://github.com/ffflorian/actions/commit/4c7af89b7df7898c83450b17725f4e710221a9ab))
+
 # [1.7.0](https://github.com/ffflorian/actions/compare/v1.6.0...v1.7.0) (2026-05-03)
 
 
