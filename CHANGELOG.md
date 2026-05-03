@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/ffflorian/actions/compare/v1.6.0...v1.7.0) (2026-05-03)
+
+
+### Features
+
+* **yarn-update:** convert action to real TypeScript action ([#9](https://github.com/ffflorian/actions/issues/9)) ([8151e4f](https://github.com/ffflorian/actions/commit/8151e4fd65d19e2a6afbaa4c22cd36dc5c23a5a4))
+
 # [1.6.0](https://github.com/ffflorian/actions/compare/v1.5.1...v1.6.0) (2026-05-03)
 
 
