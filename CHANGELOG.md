@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/ffflorian/actions/compare/v1.5.1...v1.6.0) (2026-05-03)
+
+
+### Features
+
+* **hugo-theme-update:** add Hugo Theme Update action ([#10](https://github.com/ffflorian/actions/issues/10)) ([9633d7e](https://github.com/ffflorian/actions/commit/9633d7ec762a88181525e63ac501973f104c4ed9))
+
 ## [1.5.1](https://github.com/ffflorian/actions/compare/v1.5.0...v1.5.1) (2026-05-02)
 
 
