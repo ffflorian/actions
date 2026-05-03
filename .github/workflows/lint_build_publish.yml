@@ -1,5 +1,5 @@
 ---
-name: Lint and Publish
+name: Lint, Build and Publish
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 permissions: {}
 jobs:
-  lint_publish:
+  lint_build_publish:
     permissions:
       contents: write
     runs-on: ubuntu-latest
