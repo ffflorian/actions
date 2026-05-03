@@ -38,7 +38,7 @@ Actions that require Node.js logic are written in TypeScript:
 - Use `yarn` for dependency management — do **not** use npm.
 - Commit both `package.json` and `yarn.lock`; do not add them to `.gitignore`.
 - Pin all dependencies to exact versions (no `^` or `~` ranges).
-- Build script: `esbuild src/main.ts --bundle --platform=node --target=node20 --outfile=dist/index.js`.
+- Build script: `esbuild src/main.ts --bundle --platform=node --target=node24 --outfile=dist/index.js`.
 - The composite action invokes the bundled script via `node "${{ github.action_path }}/dist/index.js"`.
 - Environment inputs are passed as `INPUT_<NAME>` env vars and read with `@actions/core` `getInput()`.
 
