@@ -2,6 +2,8 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
 
+const BRANCH_PREFIX = 'chore/deps/hugo-modules-';
+
 async function getLastUpdateDate(
   octokit: ReturnType<typeof github.getOctokit>,
   owner: string,
@@ -17,7 +19,7 @@ async function getLastUpdateDate(
       direction: 'desc',
     });
 
-    const hugoPR = prs.find((pr: {head: {ref: string}}) => pr.head.ref.startsWith('chore/deps/hugo-modules-'));
+    const hugoPR = prs.find((pr: {head: {ref: string}}) => pr.head.ref.startsWith(BRANCH_PREFIX));
     if (hugoPR) {
       return new Date(hugoPR.created_at);
     }
@@ -101,7 +103,7 @@ async function run(): Promise<void> {
 
   // Create branch
   const dateSuffix = new Date().toISOString().slice(0, 10);
-  const branchName = `chore/deps/hugo-modules-${dateSuffix}`;
+  const branchName = `${BRANCH_PREFIX}${dateSuffix}`;
   await exec.exec('git', ['checkout', '-b', branchName]);
 
   // Commit all changes

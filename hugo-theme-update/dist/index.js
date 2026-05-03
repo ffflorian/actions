@@ -24443,6 +24443,7 @@ function getOctokit(token, options, ...additionalPlugins) {
 }
 
 // src/main.ts
+var BRANCH_PREFIX = "chore/deps/hugo-modules-";
 async function getLastUpdateDate(octokit, owner, repo) {
   try {
     const { data: prs } = await octokit.rest.pulls.list({
@@ -24453,7 +24454,7 @@ async function getLastUpdateDate(octokit, owner, repo) {
       sort: "created",
       direction: "desc"
     });
-    const hugoPR = prs.find((pr) => pr.head.ref.startsWith("chore/deps/hugo-modules-"));
+    const hugoPR = prs.find((pr) => pr.head.ref.startsWith(BRANCH_PREFIX));
     if (hugoPR) {
       return new Date(hugoPR.created_at);
     }
@@ -24518,7 +24519,7 @@ async function run() {
   await exec("git", ["config", "user.name", authorName]);
   await exec("git", ["config", "user.email", authorEmail]);
   const dateSuffix = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
-  const branchName = `chore/deps/hugo-modules-${dateSuffix}`;
+  const branchName = `${BRANCH_PREFIX}${dateSuffix}`;
   await exec("git", ["checkout", "-b", branchName]);
   await exec("git", ["add", "--all"]);
   await exec("git", ["commit", "-m", "chore(deps): update Hugo modules"]);
