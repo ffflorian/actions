@@ -8,6 +8,7 @@ This repository contains reusable composite GitHub Actions:
 
 - `git-mirror`: Mirror repository refs to GitLab and/or Codeberg.
 - `github-action-release`: Create semantic releases and maintain major/latest tags.
+- `hugo-theme-update`: Update Hugo modules and open an automated pull request.
 - `yarn-update`: Update yarn and open an automated pull request.
 
 ## Repository Structure
@@ -15,8 +16,10 @@ This repository contains reusable composite GitHub Actions:
 - `.github/workflows/main.yml`: Release workflow for this repository.
 - `git-mirror/action.yml`: Mirror action definition.
 - `github-action-release/action.yml`: Release action definition.
+- `hugo-theme-update/action.yml`: Hugo module update action definition.
 - `yarn-update/action.yml`: yarn update action definition.
 - Each action directory should include a matching `README.md`.
+- TypeScript-based actions keep source in `src/main.ts`, bundle with esbuild into `dist/index.js`, and commit `dist/index.js` to the repository.
 
 ## Code Style
 
@@ -25,6 +28,19 @@ This repository contains reusable composite GitHub Actions:
 - Keep shell snippets POSIX/Bash-safe and quote variables.
 - Keep documentation concise and actionable; each action README must document inputs and usage.
 - Prefer minimal, focused changes; avoid unrelated refactors.
+
+## TypeScript Actions
+
+Actions that require Node.js logic are written in TypeScript:
+
+- Source lives in `<action-dir>/src/main.ts`.
+- Bundled with `esbuild` into `<action-dir>/dist/index.js` (committed to the repo).
+- Use `yarn` for dependency management — do **not** use npm.
+- Commit both `package.json` and `yarn.lock`; do not add them to `.gitignore`.
+- Pin all dependencies to exact versions (no `^` or `~` ranges).
+- Build script: `esbuild src/main.ts --bundle --platform=node --target=node24 --outfile=dist/index.js`.
+- The composite action invokes the bundled script via `node "${{ github.action_path }}/dist/index.js"`.
+- Environment inputs are passed as `INPUT_<NAME>` env vars and read with `@actions/core` `getInput()`.
 
 ## Development Conventions
 
