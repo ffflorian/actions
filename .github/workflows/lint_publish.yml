@@ -28,6 +28,12 @@ jobs:
           yarn add -D -E @ffflorian/prettier-config@0.7.0 prettier@3.8.1
           npx --no prettier -- --list-different .
 
+      - name: Build TypeScript actions
+        run: |
+          for dir in hugo-theme-update yarn-update; do
+            (cd "$dir" && yarn install --frozen-lockfile && yarn build)
+          done
+
       - name: Publish all actions
         if: github.event_name != 'pull_request'
         uses: ./github-action-release/

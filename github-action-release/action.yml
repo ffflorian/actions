@@ -26,6 +26,18 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
+    - name: Setup Node.js
+      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+      with:
+        node-version: 24
+
+    - name: Build TypeScript actions
+      shell: bash
+      run: |
+        for dir in hugo-theme-update yarn-update; do
+          (cd "$dir" && yarn install --frozen-lockfile && yarn build)
+        done
+
     - name: Create release config file
       shell: bash
       run: |
@@ -62,7 +74,7 @@ runs:
             [
               "@semantic-release/git",
               {
-                "assets": ["CHANGELOG.md"],
+                "assets": ["CHANGELOG.md", "hugo-theme-update/dist/index.js", "yarn-update/dist/index.js"],
                 "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
               }
             ]
