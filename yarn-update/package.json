@@ -1,22 +1,11 @@
 {
-  "name": "yarn-update",
-  "version": "1.0.0",
-  "private": true,
-  "description": "GitHub Action: check for yarn updates and create a pull request",
-  "main": "dist/index.js",
-  "packageManager": "yarn@1.22.22",
-  "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --format=cjs --outfile=dist/index.js --minify",
-    "format:check": "prettier --list-different \"src/**/*.ts\"",
-    "test": "vitest run",
-    "type-check": "tsc --noEmit"
-  },
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0",
     "@actions/github": "9.1.1",
     "semver": "7.7.4"
   },
+  "description": "GitHub Action: check for yarn updates and create a pull request",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
     "@types/node": "24.12.2",
@@ -28,5 +17,17 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "main": "dist/index.js",
+  "name": "yarn-update-action",
+  "packageManager": "yarn@1.22.22",
+  "prettier": "@ffflorian/prettier-config",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --format=cjs --outfile=dist/index.js --minify",
+    "format:check": "prettier --list-different \"src/**/*.ts\"",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
+  },
+  "version": "1.0.0"
 }
