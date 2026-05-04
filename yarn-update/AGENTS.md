@@ -33,7 +33,7 @@ yarn-update/
 ### Prerequisites
 
 - Node.js ≥ 20
-- Yarn 1.x (`yarn install`)
+- yarn
 
 ### Install dependencies
 

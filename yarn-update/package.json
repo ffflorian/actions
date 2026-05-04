@@ -5,7 +5,7 @@
     "@actions/github": "9.1.1",
     "semver": "7.7.4"
   },
-  "description": "GitHub Action: check for yarn updates and create a pull request",
+  "description": "GitHub Action which checks for yarn updates and creates a pull request",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
     "@types/node": "24.12.2",
@@ -20,7 +20,7 @@
   },
   "main": "dist/index.js",
   "name": "yarn-update-action",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.14.1",
   "prettier": "@ffflorian/prettier-config",
   "private": true,
   "scripts": {
