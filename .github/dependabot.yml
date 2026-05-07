@@ -20,7 +20,7 @@ updates:
       - ffflorian
     ignore:
       - dependency-name: '@types/node'
-        versions: ['>=25']
+        versions: ['>26']
   - package-ecosystem: 'npm'
     directory: '/yarn-update'
     schedule:
@@ -30,4 +30,4 @@ updates:
       - ffflorian
     ignore:
       - dependency-name: '@types/node'
-        versions: ['>=25']
+        versions: ['>26']

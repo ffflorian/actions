@@ -7,7 +7,7 @@
   "description": "GitHub Action which updates Hugo modules and creates a pull request",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
-    "@types/node": "24.12.2",
+    "@types/node": "~25",
     "esbuild": "0.28.0",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
@@ -17,7 +17,7 @@
   "prettier": "@ffflorian/prettier-config",
   "private": true,
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --platform=node --target=node24 --outfile=dist/index.js",
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node26 --outfile=dist/index.js",
     "format": "prettier --write src/",
     "lint": "prettier --check src/",
     "test": "vitest run"
