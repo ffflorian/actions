@@ -1,6 +1,6 @@
 ---
 name: Force Release
-description: Force a release by creating an empty commit and pushing it to the repository
+description: Force a release by committing to the repository
 author: 'Florian Imdahl <git@ffflorian.de>'
 branding: {icon: 'git-commit', color: 'blue'}
 
@@ -9,7 +9,7 @@ inputs:
     description: 'GitHub token used to push the release commit.'
     required: true
   commit_message:
-    description: 'The commit message to use for the empty release commit.'
+    description: 'The commit message to use for the release commit.'
     required: false
     default: 'fix: Force release'
   git_authorship:
@@ -43,5 +43,23 @@ runs:
         git config user.name "${AUTHOR_NAME}"
         git config user.email "${AUTHOR_EMAIL}"
 
-        git commit --allow-empty -m "${COMMIT_MESSAGE}"
+        while IFS= read -r pkg_json; do
+          pkg_dir="$(dirname "${pkg_json}")"
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${pkg_dir}/.force-release"
+          git add "${pkg_dir}/.force-release"
+        done < <(find . -name 'package.json' -not -path '*/node_modules/*')
+
+        if git diff --cached --quiet; then
+          echo "Error: no package.json files found; nothing to commit."
+          exit 1
+        fi
+
+        git commit -m "${COMMIT_MESSAGE}"
+
+        while IFS= read -r pkg_json; do
+          pkg_dir="$(dirname "${pkg_json}")"
+          git rm --force "${pkg_dir}/.force-release"
+        done < <(find . -name 'package.json' -not -path '*/node_modules/*')
+
+        git commit -m "chore: Remove force-release files"
         git push origin HEAD
