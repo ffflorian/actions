@@ -16,9 +16,8 @@ inputs:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
   packages:
-    description: 'Space-separated list of package directories to touch for multi-semantic-release. When set, a .force-release file is updated in each directory so multi-semantic-release detects per-package changes.'
+    description: 'Space-separated list of package directories to touch for multi-semantic-release. When set, a .force-release file is created or updated in each directory so multi-semantic-release detects per-package changes.'
     required: false
-    default: ''
 
 runs:
   using: composite
