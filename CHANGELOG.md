@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/ffflorian/actions/compare/v1.9.0...v1.10.0) (2026-05-07)
+
+
+### Features
+
+* Use Node.js 26 ([#15](https://github.com/ffflorian/actions/issues/15)) ([a86b7af](https://github.com/ffflorian/actions/commit/a86b7afbd9aa7bbe862b128569c976dc0294f39e))
+
 # [1.9.0](https://github.com/ffflorian/actions/compare/v1.8.0...v1.9.0) (2026-05-07)
 
 
