@@ -4,7 +4,7 @@ This file contains conventions for AI agents and contributors working on the `ya
 
 ## Overview
 
-`yarn-update` is a GitHub TypeScript action (runtime: `node24`) that:
+`yarn-update` is a GitHub TypeScript action (runtime: `node26`) that:
 
 1. Scans the repository workspace for `.yarn` directories (up to 5 levels deep).
 2. Fetches the latest stable yarn release from the GitHub API, optionally applying a cooldown period.
@@ -15,7 +15,7 @@ This file contains conventions for AI agents and contributors working on the `ya
 
 ```
 yarn-update/
-├── action.yml          # Action metadata (using: node24, runs: dist/index.js)
+├── action.yml          # Action metadata (using: node26, runs: dist/index.js)
 ├── dist/index.js       # Bundled output — always regenerate with `yarn build` after src changes
 ├── src/
 │   ├── index.ts        # Action entry point (run() + createPullRequest())
