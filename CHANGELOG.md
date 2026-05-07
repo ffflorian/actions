@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/ffflorian/actions/compare/v1.8.0...v1.9.0) (2026-05-07)
+
+
+### Features
+
+* **force-release:** support multi-semantic-release ([#14](https://github.com/ffflorian/actions/issues/14)) ([a6d155c](https://github.com/ffflorian/actions/commit/a6d155caba0cfef1adec47136c8bd07ba9f30753))
+
 # [1.8.0](https://github.com/ffflorian/actions/compare/v1.7.1...v1.8.0) (2026-05-03)
 
 
