@@ -55,4 +55,11 @@ runs:
         fi
 
         git commit -m "${COMMIT_MESSAGE}"
+
+        while IFS= read -r pkg_json; do
+          pkg_dir="$(dirname "${pkg_json}")"
+          git rm --force "${pkg_dir}/.force-release"
+        done < <(find . -name 'package.json' -not -path '*/node_modules/*')
+
+        git commit -m "chore: Remove force-release files"
         git push origin HEAD

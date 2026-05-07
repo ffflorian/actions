@@ -7,7 +7,8 @@ Forces a release by committing to the repository.
 - Checks out the repository.
 - Configures the git author and committer.
 - Finds all `package.json` files in the repository (excluding `node_modules`) and writes a `.force-release` timestamp file into each package directory. This ensures `multi-semantic-release` detects per-package changes and triggers a release for every package.
-- Pushes the commit to the current branch, triggering the release pipeline.
+- Pushes the release commit to the current branch, triggering the release pipeline.
+- Immediately follows up with a second `chore:` commit that removes all `.force-release` files, so they don't stay in the repository long-term. The `chore:` prefix ensures this cleanup commit does not trigger another release.
 
 ## Inputs
 
