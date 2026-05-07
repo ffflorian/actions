@@ -9,15 +9,12 @@ inputs:
     description: 'GitHub token used to push the release commit.'
     required: true
   commit_message:
-    description: 'The commit message to use for the empty release commit.'
+    description: 'The commit message to use for the release commit.'
     required: false
     default: 'fix: Force release'
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
-  packages:
-    description: 'Space-separated list of package directories to touch for multi-semantic-release. When set, a .force-release file is created or updated in each directory so multi-semantic-release detects per-package changes.'
-    required: false
 
 runs:
   using: composite
@@ -34,7 +31,6 @@ runs:
         COMMIT_MESSAGE: ${{ inputs.commit_message }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
-        PACKAGES: ${{ inputs.packages }}
       run: |
         if ! echo "${GIT_AUTHORSHIP}" | grep -qE '^.+ <[^>]+>$'; then
           echo "Error: git_authorship must be in the format 'Name <email>'."
@@ -47,19 +43,16 @@ runs:
         git config user.name "${AUTHOR_NAME}"
         git config user.email "${AUTHOR_EMAIL}"
 
-        if [ -n "${PACKAGES}" ]; then
-          IFS=' ' read -ra pkg_list <<< "${PACKAGES}"
-          for pkg in "${pkg_list[@]}"; do
-            if [ ! -d "${pkg}" ]; then
-              echo "Error: package directory '${pkg}' does not exist."
-              exit 1
-            fi
-            echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${pkg}/.force-release"
-            git add "${pkg}/.force-release"
-          done
-          git commit -m "${COMMIT_MESSAGE}"
-        else
-          git commit --allow-empty -m "${COMMIT_MESSAGE}"
+        while IFS= read -r pkg_json; do
+          pkg_dir="$(dirname "${pkg_json}")"
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${pkg_dir}/.force-release"
+          git add "${pkg_dir}/.force-release"
+        done < <(find . -name 'package.json' -not -path '*/node_modules/*')
+
+        if git diff --cached --quiet; then
+          echo "Error: no package.json files found; nothing to commit."
+          exit 1
         fi
 
+        git commit -m "${COMMIT_MESSAGE}"
         git push origin HEAD
