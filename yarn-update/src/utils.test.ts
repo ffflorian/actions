@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {fetchEligibleRelease, findYarnDirs} from './utils.js';
+import {fetchEligibleRelease, findYarnDirs, hasGitRepository} from './utils.js';
 
 vi.mock('@actions/core', () => ({
   warning: vi.fn(),
@@ -115,5 +115,37 @@ describe('fetchEligibleRelease', () => {
     await fetchEligibleRelease(5, 'my-token');
     const [, options] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect((options.headers as Record<string, string>)['Authorization']).toBe('Bearer my-token');
+  });
+});
+
+describe('hasGitRepository', () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'yarn-update-git-test-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, {force: true, recursive: true});
+  });
+
+  it('returns false when no .git directories exist', () => {
+    fs.mkdirSync(path.join(tmpDir, 'src'));
+    expect(hasGitRepository(tmpDir)).toBe(false);
+  });
+
+  it('finds a top-level .git directory', () => {
+    fs.mkdirSync(path.join(tmpDir, '.git'));
+    expect(hasGitRepository(tmpDir)).toBe(true);
+  });
+
+  it('finds nested .git directories', () => {
+    fs.mkdirSync(path.join(tmpDir, 'packages', 'foo', '.git'), {recursive: true});
+    expect(hasGitRepository(tmpDir)).toBe(true);
+  });
+
+  it('skips node_modules directories', () => {
+    fs.mkdirSync(path.join(tmpDir, 'node_modules', '.git'), {recursive: true});
+    expect(hasGitRepository(tmpDir)).toBe(false);
   });
 });

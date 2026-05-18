@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
 import * as path from 'path';
-import {compareVersions, fetchEligibleRelease, findYarnDirs} from './utils.js';
+import {compareVersions, fetchEligibleRelease, findYarnDirs, hasGitRepository} from './utils.js';
 
 async function getOutput(cmd: string, args: string[], cwd: string): Promise<string> {
   let output = '';
@@ -72,9 +72,16 @@ async function run(): Promise<void> {
   const token = process.env['GITHUB_TOKEN'];
   const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
 
+  const hasRepository = hasGitRepository(workspace);
   const yarnDirs = findYarnDirs(workspace);
 
   if (yarnDirs.length === 0) {
+    if (!hasRepository) {
+      core.setFailed(
+        `No .yarn directories found because no Git repository checkout was detected in ${workspace}. Add an actions/checkout step before running this action.`
+      );
+      return;
+    }
     core.info('No .yarn directories found.');
     return;
   }

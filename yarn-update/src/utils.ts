@@ -43,6 +43,37 @@ export function findYarnDirs(baseDir: string, maxDepth: number = 5): string[] {
   return results;
 }
 
+export function hasGitRepository(baseDir: string, maxDepth: number = 5): boolean {
+  function scan(dir: string, depth: number): boolean {
+    if (depth > maxDepth) {
+      return false;
+    }
+
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(dir, {withFileTypes: true});
+    } catch {
+      return false;
+    }
+
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name === 'node_modules') {
+        continue;
+      }
+      if (entry.name === '.git') {
+        return true;
+      }
+      if (scan(path.join(dir, entry.name), depth + 1)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  return scan(baseDir, 1);
+}
+
 export function compareVersions(a: string, b: string): number {
   return semver.compare(semver.coerce(a) ?? a, semver.coerce(b) ?? b);
 }

@@ -5,6 +5,7 @@ Checks all yarn installations in the repository and creates a pull request when 
 ## What It Does
 
 - Finds all `.yarn` directories in the workspace (up to 5 levels deep).
+- Fails with a clear error if no repository checkout is detected in the workspace.
 - Compares each yarn installation with the latest stable version.
 - Runs `yarn install --mode=update-lockfile` for each updated installation.
 - Ensures all updated installations resolve to the same stable yarn version.
