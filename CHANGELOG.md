@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/ffflorian/actions/compare/v1.10.1...v1.10.2) (2026-05-18)
+
+
+### Bug Fixes
+
+* fail yarn-update when repository checkout is missing ([#21](https://github.com/ffflorian/actions/issues/21)) ([9899dbc](https://github.com/ffflorian/actions/commit/9899dbcbc003a9c542a4e920b773902a74eee32b))
+
 ## [1.10.1](https://github.com/ffflorian/actions/compare/v1.10.0...v1.10.1) (2026-05-18)
 
 
