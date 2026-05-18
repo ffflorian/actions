@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 99
     assignees:
       - ffflorian
@@ -14,20 +14,22 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/hugo-theme-update'
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 99
     assignees:
       - ffflorian
     ignore:
       - dependency-name: '@types/node'
-        versions: ['>26']
+        versions:
+          - '>26'
   - package-ecosystem: 'npm'
     directory: '/yarn-update'
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 99
     assignees:
       - ffflorian
     ignore:
       - dependency-name: '@types/node'
-        versions: ['>26']
+        versions:
+          - '>26'
