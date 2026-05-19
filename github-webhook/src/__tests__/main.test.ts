@@ -1,4 +1,5 @@
 import * as core from '@actions/core';
+import {createHmac} from 'node:crypto';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {buildHeaders, run} from '../main';
 
@@ -7,7 +8,10 @@ vi.mock('@actions/core');
 const {mockContext} = vi.hoisted(() => ({
   mockContext: {
     eventName: 'push',
-    payload: {ref: 'refs/heads/main', repository: {full_name: 'ffflorian/actions'}},
+    payload: {
+      ref: 'refs/heads/main',
+      repository: {full_name: 'ffflorian/actions', id: 207300990},
+    },
   },
 }));
 
@@ -17,13 +21,31 @@ vi.mock('@actions/github', () => ({
 
 describe('buildHeaders', () => {
   it('creates required GitHub-style headers', () => {
-    const headers = buildHeaders('push', 'delivery-id');
+    const payloadBody = JSON.stringify(mockContext.payload);
+    const headers = buildHeaders({
+      eventType: 'push',
+      deliveryId: '1a57e472-537d-11f1-8e9b-7bc2ead18eb0',
+      payloadBody,
+      secret: 'super-secret',
+      hookId: '605961050',
+      installationTargetId: '207300990',
+      installationTargetType: 'repository',
+    });
 
+    expect(headers.Accept).toBe('*/*');
     expect(headers['Content-Type']).toBe('application/json');
-    expect(headers['User-Agent']).toBe('GitHub-Hookshot/actions-webhook');
-    expect(headers['X-GitHub-Event']).toBe('push');
-    expect(headers['X-GitHub-Delivery']).toBe('delivery-id');
-    expect(headers['X-Hub-Signature-256']).toBeUndefined();
+    expect(headers['User-Agent']).toBe('GitHub-Hookshot/1a57e472');
+    expect(headers['X-Github-Delivery']).toBe('1a57e472-537d-11f1-8e9b-7bc2ead18eb0');
+    expect(headers['X-Github-Event']).toBe('push');
+    expect(headers['X-Github-Hook-Id']).toBe('605961050');
+    expect(headers['X-Github-Hook-Installation-Target-Id']).toBe('207300990');
+    expect(headers['X-Github-Hook-Installation-Target-Type']).toBe('repository');
+    expect(headers['X-Hub-Signature']).toBe(
+      `sha1=${createHmac('sha1', 'super-secret').update(payloadBody).digest('hex')}`
+    );
+    expect(headers['X-Hub-Signature-256']).toBe(
+      `sha256=${createHmac('sha256', 'super-secret').update(payloadBody).digest('hex')}`
+    );
   });
 });
 
@@ -40,7 +62,9 @@ describe('run', () => {
   function setupInputs(overrides: Record<string, string> = {}): void {
     const defaults: Record<string, string> = {
       webhook_url: 'https://example.invalid/webhook',
+      secret: '',
       event_type: 'workflow_dispatch',
+      hook_id: '',
       timeout_ms: '10000',
     };
 
@@ -60,11 +84,35 @@ describe('run', () => {
     expect(url).toBe('https://example.invalid/webhook');
     expect(options.method).toBe('POST');
     expect(options.body).toBe(JSON.stringify(mockContext.payload));
-    expect(headers['X-GitHub-Event']).toBe('workflow_dispatch');
+    expect(headers.Accept).toBe('*/*');
+    expect(headers['User-Agent']).toMatch(/^GitHub-Hookshot\/[0-9a-f]{8}$/);
+    expect(headers['X-Github-Event']).toBe('workflow_dispatch');
+    expect(headers['X-Github-Delivery']).toEqual(expect.any(String));
+    expect(headers['X-Github-Hook-Installation-Target-Id']).toBe('207300990');
+    expect(headers['X-Github-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature-256']).toBeUndefined();
     expect(mockSetOutput).toHaveBeenCalledWith('status_code', '202');
     expect(mockSetOutput).toHaveBeenCalledWith('delivery_id', expect.any(String));
     expect(mockInfo).toHaveBeenCalledWith(expect.stringContaining('Webhook delivered as'));
+  });
+
+  it('signs the payload when a secret is provided', async () => {
+    setupInputs({secret: 'super-secret', hook_id: '605961050'});
+    vi.mocked(fetch).mockResolvedValue({ok: true, status: 202, text: async () => ''} as Response);
+
+    await run();
+
+    const [, options] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    const headers = options.headers as Record<string, string>;
+    const payloadBody = JSON.stringify(mockContext.payload);
+
+    expect(headers['X-Github-Hook-Id']).toBe('605961050');
+    expect(headers['X-Hub-Signature']).toBe(
+      `sha1=${createHmac('sha1', 'super-secret').update(payloadBody).digest('hex')}`
+    );
+    expect(headers['X-Hub-Signature-256']).toBe(
+      `sha256=${createHmac('sha256', 'super-secret').update(payloadBody).digest('hex')}`
+    );
   });
 
   it('throws for invalid timeout value', async () => {

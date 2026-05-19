@@ -4,17 +4,20 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 
 ## What It Does
 
-- Uses the current GitHub event payload by default.
-- Sends GitHub-style headers (`X-GitHub-Event`, `X-GitHub-Delivery`, `User-Agent`).
+- Uses the current GitHub event payload as the JSON request body.
+- Sends GitHub-style webhook headers such as `Accept`, `User-Agent`, `X-Github-Delivery`, `X-Github-Event`, and installation target headers.
+- Optionally signs the payload with `X-Hub-Signature` and `X-Hub-Signature-256` when a secret is configured.
 - Fails the workflow when the webhook endpoint does not return a success status.
 
 ## Inputs
 
-| Name          | Required | Default             | Description                          |
-| ------------- | -------- | ------------------- | ------------------------------------ |
-| `webhook_url` | Yes      | -                   | Destination webhook URL.             |
-| `event_type`  | No       | `workflow_dispatch` | Event name sent as `X-GitHub-Event`. |
-| `timeout_ms`  | No       | `10000`             | Request timeout in milliseconds.     |
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| `webhook_url` | Yes | - | Destination webhook URL. |
+| `secret` | No | - | Shared secret used to add `X-Hub-Signature` and `X-Hub-Signature-256`. |
+| `event_type` | No | `workflow_dispatch` | Event name sent as `X-Github-Event`. |
+| `hook_id` | No | - | Optional webhook ID sent as `X-Github-Hook-Id`. |
+| `timeout_ms` | No | `10000` | Request timeout in milliseconds. |
 
 ## Outputs
 
@@ -22,6 +25,25 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 | ------------- | ------------------------------------------- |
 | `delivery_id` | UUID sent as `X-GitHub-Delivery`.           |
 | `status_code` | HTTP status code from the webhook response. |
+
+## GitHub-style request
+
+This action sends the current workflow event payload as JSON and adds GitHub-style webhook headers so receivers can process it like a GitHub webhook delivery. With `secret` configured, the payload is signed the same way GitHub signs webhook requests.
+
+Example header set sent by this action:
+
+```text
+Accept: */*
+Content-Type: application/json
+User-Agent: GitHub-Hookshot/1a57e472
+X-Github-Delivery: 1a57e472-537d-11f1-8e9b-7bc2ead18eb0
+X-Github-Event: push
+X-Github-Hook-Id: 605961050
+X-Github-Hook-Installation-Target-Id: 207300990
+X-Github-Hook-Installation-Target-Type: repository
+X-Hub-Signature: sha1=...
+X-Hub-Signature-256: sha256=...
+```
 
 ## Recommended Permissions
 
@@ -45,5 +67,7 @@ jobs:
       - uses: ffflorian/actions/github-webhook@v1
         with:
           webhook_url: ${{ secrets.EXTERNAL_WEBHOOK_URL }}
+          secret: ${{ secrets.EXTERNAL_WEBHOOK_SECRET }}
           event_type: workflow_dispatch
+          hook_id: '605961050'
 ```

@@ -23746,18 +23746,63 @@ var context2 = new Context();
 
 // src/main.ts
 var import_node_crypto = require("node:crypto");
-function buildHeaders(eventType, deliveryId) {
-  const headers = {
-    "Content-Type": "application/json",
-    "User-Agent": "GitHub-Hookshot/actions-webhook",
-    "X-GitHub-Delivery": deliveryId,
-    "X-GitHub-Event": eventType
+function buildHookshotUserAgent(deliveryId) {
+  return `GitHub-Hookshot/${deliveryId.replaceAll("-", "").slice(0, 8)}`;
+}
+function buildSignatureHeaders(payloadBody, secret) {
+  return {
+    "X-Hub-Signature": `sha1=${(0, import_node_crypto.createHmac)("sha1", secret).update(payloadBody).digest("hex")}`,
+    "X-Hub-Signature-256": `sha256=${(0, import_node_crypto.createHmac)("sha256", secret).update(payloadBody).digest("hex")}`
   };
+}
+function resolveInstallationTarget(payload) {
+  if (payload.repository?.id !== void 0) {
+    return {
+      installationTargetId: String(payload.repository.id),
+      installationTargetType: "repository"
+    };
+  }
+  if (payload.organization?.id !== void 0) {
+    return {
+      installationTargetId: String(payload.organization.id),
+      installationTargetType: "organization"
+    };
+  }
+  return {};
+}
+function buildHeaders({
+  eventType,
+  deliveryId,
+  payloadBody,
+  secret,
+  hookId,
+  installationTargetId,
+  installationTargetType
+}) {
+  const headers = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    "User-Agent": buildHookshotUserAgent(deliveryId),
+    "X-Github-Delivery": deliveryId,
+    "X-Github-Event": eventType
+  };
+  if (hookId) {
+    headers["X-Github-Hook-Id"] = hookId;
+  }
+  if (installationTargetId && installationTargetType) {
+    headers["X-Github-Hook-Installation-Target-Id"] = installationTargetId;
+    headers["X-Github-Hook-Installation-Target-Type"] = installationTargetType;
+  }
+  if (secret) {
+    Object.assign(headers, buildSignatureHeaders(payloadBody, secret));
+  }
   return headers;
 }
 async function run() {
   const webhookUrl = getInput("webhook_url", { required: true });
+  const secret = getInput("secret");
   const eventType = getInput("event_type") || context2.eventName || "workflow_dispatch";
+  const hookId = getInput("hook_id").trim();
   const timeoutInput = getInput("timeout_ms") || "10000";
   const timeoutMs = parseInt(timeoutInput, 10);
   if (!/^\d+$/.test(timeoutInput.trim()) || timeoutMs <= 0) {
@@ -23766,7 +23811,14 @@ async function run() {
   const payload = context2.payload;
   const payloadBody = JSON.stringify(payload);
   const deliveryId = (0, import_node_crypto.randomUUID)();
-  const headers = buildHeaders(eventType, deliveryId);
+  const headers = buildHeaders({
+    eventType,
+    deliveryId,
+    payloadBody,
+    secret,
+    hookId,
+    ...resolveInstallationTarget(payload)
+  });
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers,

@@ -8,10 +8,16 @@ inputs:
   webhook_url:
     description: 'Destination webhook URL that receives the POST request.'
     required: true
+  secret:
+    description: 'Optional webhook secret used to sign the payload with X-Hub-Signature and X-Hub-Signature-256.'
+    required: false
   event_type:
-    description: 'GitHub event name sent in the X-GitHub-Event header.'
+    description: 'GitHub event name sent in the X-Github-Event header.'
     required: false
     default: workflow_dispatch
+  hook_id:
+    description: 'Optional webhook ID sent in the X-Github-Hook-Id header.'
+    required: false
   timeout_ms:
     description: 'Request timeout in milliseconds.'
     required: false
@@ -19,7 +25,7 @@ inputs:
 
 outputs:
   delivery_id:
-    description: 'Delivery identifier sent in the X-GitHub-Delivery header.'
+    description: 'Delivery identifier sent in the X-Github-Delivery header.'
   status_code:
     description: 'HTTP response status code returned by the webhook endpoint.'
 
