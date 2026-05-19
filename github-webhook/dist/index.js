@@ -23802,7 +23802,7 @@ async function run() {
   const webhookUrl = getInput("webhook_url", { required: true });
   const secret = getInput("secret");
   const eventType = getInput("event_type") || context2.eventName || "workflow_dispatch";
-  const hookId = getInput("hook_id").trim();
+  const hookId = (getInput("hook_id") || "").trim();
   const timeoutInput = getInput("timeout_ms") || "10000";
   const timeoutMs = parseInt(timeoutInput, 10);
   if (!/^\d+$/.test(timeoutInput.trim()) || timeoutMs <= 0) {

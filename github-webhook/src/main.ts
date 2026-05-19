@@ -85,7 +85,7 @@ export async function run(): Promise<void> {
   const webhookUrl = core.getInput('webhook_url', {required: true});
   const secret = core.getInput('secret');
   const eventType = core.getInput('event_type') || github.context.eventName || 'workflow_dispatch';
-  const hookId = core.getInput('hook_id').trim();
+  const hookId = (core.getInput('hook_id') || '').trim();
   const timeoutInput = core.getInput('timeout_ms') || '10000';
   const timeoutMs = parseInt(timeoutInput, 10);
 
