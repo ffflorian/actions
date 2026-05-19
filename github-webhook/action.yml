@@ -1,0 +1,28 @@
+---
+name: GitHub-style Webhook
+description: Send GitHub-style webhook events to an arbitrary HTTP endpoint
+author: 'Florian Imdahl <git@ffflorian.de>'
+branding: {icon: 'send', color: 'blue'}
+
+inputs:
+  webhook_url:
+    description: 'Destination webhook URL that receives the POST request.'
+    required: true
+  event_type:
+    description: 'GitHub event name sent in the X-GitHub-Event header.'
+    required: false
+    default: workflow_dispatch
+  timeout_ms:
+    description: 'Request timeout in milliseconds.'
+    required: false
+    default: '10000'
+
+outputs:
+  delivery_id:
+    description: 'Delivery identifier sent in the X-GitHub-Delivery header.'
+  status_code:
+    description: 'HTTP response status code returned by the webhook endpoint.'
+
+runs:
+  using: node24
+  main: dist/index.js
