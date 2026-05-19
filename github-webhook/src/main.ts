@@ -20,6 +20,10 @@ function buildHookshotUserAgent(deliveryId: string): string {
   return `GitHub-Hookshot/${deliveryId.replaceAll('-', '').slice(0, 8)}`;
 }
 
+export function buildSyntheticHookId(deliveryId: string): string {
+  return BigInt(`0x${deliveryId.replaceAll('-', '').slice(0, 12)}`).toString();
+}
+
 function buildSignatureHeaders(payloadBody: string, secret: string): Record<string, string> {
   return {
     'X-Hub-Signature': `sha1=${createHmac('sha1', secret).update(payloadBody).digest('hex')}`,
@@ -61,6 +65,7 @@ export function buildHeaders({
     'User-Agent': buildHookshotUserAgent(deliveryId),
     'X-GitHub-Delivery': deliveryId,
     'X-GitHub-Event': eventType,
+    'X-GitHub-Hook-Id': buildSyntheticHookId(deliveryId),
   };
 
   if (installationTargetId && installationTargetType) {

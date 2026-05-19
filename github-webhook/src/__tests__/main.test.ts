@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import {createHmac} from 'node:crypto';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {buildHeaders, run} from '../main';
+import {buildHeaders, buildSyntheticHookId, run} from '../main';
 
 vi.mock('@actions/core');
 
@@ -36,6 +36,7 @@ describe('buildHeaders', () => {
     expect(headers['User-Agent']).toBe('GitHub-Hookshot/1a57e472');
     expect(headers['X-GitHub-Delivery']).toBe('1a57e472-537d-11f1-8e9b-7bc2ead18eb0');
     expect(headers['X-GitHub-Event']).toBe('push');
+    expect(headers['X-GitHub-Hook-Id']).toBe(buildSyntheticHookId('1a57e472-537d-11f1-8e9b-7bc2ead18eb0'));
     expect(headers['X-GitHub-Hook-Installation-Target-Id']).toBe('207300990');
     expect(headers['X-GitHub-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature']).toBe(
@@ -85,6 +86,7 @@ describe('run', () => {
     expect(headers['User-Agent']).toMatch(/^GitHub-Hookshot\/[0-9a-f]{8}$/);
     expect(headers['X-GitHub-Event']).toBe('workflow_dispatch');
     expect(headers['X-GitHub-Delivery']).toEqual(expect.any(String));
+    expect(headers['X-GitHub-Hook-Id']).toBe(buildSyntheticHookId(headers['X-GitHub-Delivery']));
     expect(headers['X-GitHub-Hook-Installation-Target-Id']).toBe('207300990');
     expect(headers['X-GitHub-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature-256']).toBeUndefined();

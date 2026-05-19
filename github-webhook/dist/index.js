@@ -19540,6 +19540,7 @@ var require_dist = __commonJS({
 var main_exports = {};
 __export(main_exports, {
   buildHeaders: () => buildHeaders,
+  buildSyntheticHookId: () => buildSyntheticHookId,
   run: () => run
 });
 module.exports = __toCommonJS(main_exports);
@@ -23749,6 +23750,9 @@ var import_node_crypto = require("node:crypto");
 function buildHookshotUserAgent(deliveryId) {
   return `GitHub-Hookshot/${deliveryId.replaceAll("-", "").slice(0, 8)}`;
 }
+function buildSyntheticHookId(deliveryId) {
+  return BigInt(`0x${deliveryId.replaceAll("-", "").slice(0, 12)}`).toString();
+}
 function buildSignatureHeaders(payloadBody, secret) {
   return {
     "X-Hub-Signature": `sha1=${(0, import_node_crypto.createHmac)("sha1", secret).update(payloadBody).digest("hex")}`,
@@ -23783,7 +23787,8 @@ function buildHeaders({
     "Content-Type": "application/json",
     "User-Agent": buildHookshotUserAgent(deliveryId),
     "X-GitHub-Delivery": deliveryId,
-    "X-GitHub-Event": eventType
+    "X-GitHub-Event": eventType,
+    "X-GitHub-Hook-Id": buildSyntheticHookId(deliveryId)
   };
   if (installationTargetId && installationTargetType) {
     headers["X-GitHub-Hook-Installation-Target-Id"] = installationTargetId;
@@ -23835,6 +23840,7 @@ if (require.main === module) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildHeaders,
+  buildSyntheticHookId,
   run
 });
 /*! Bundled license information:
