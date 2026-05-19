@@ -8,6 +8,9 @@ inputs:
   webhook_url:
     description: 'Destination webhook URL that receives the POST request.'
     required: true
+  secret:
+    description: 'Optional shared secret used to HMAC-sign the payload and add X-Hub-Signature and X-Hub-Signature-256.'
+    required: false
   event_type:
     description: 'GitHub event name sent in the X-GitHub-Event header.'
     required: false

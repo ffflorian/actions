@@ -19540,6 +19540,7 @@ var require_dist = __commonJS({
 var main_exports = {};
 __export(main_exports, {
   buildHeaders: () => buildHeaders,
+  buildSyntheticHookId: () => buildSyntheticHookId,
   run: () => run
 });
 module.exports = __toCommonJS(main_exports);
@@ -23746,17 +23747,61 @@ var context2 = new Context();
 
 // src/main.ts
 var import_node_crypto = require("node:crypto");
-function buildHeaders(eventType, deliveryId) {
-  const headers = {
-    "Content-Type": "application/json",
-    "User-Agent": "GitHub-Hookshot/actions-webhook",
-    "X-GitHub-Delivery": deliveryId,
-    "X-GitHub-Event": eventType
+function buildHookshotUserAgent(deliveryId) {
+  return `GitHub-Hookshot/${deliveryId.replaceAll("-", "").slice(0, 8)}`;
+}
+function buildSyntheticHookId(deliveryId) {
+  return BigInt(`0x${deliveryId.replaceAll("-", "").slice(0, 12)}`).toString();
+}
+function buildSignatureHeaders(payloadBody, secret) {
+  return {
+    "X-Hub-Signature": `sha1=${(0, import_node_crypto.createHmac)("sha1", secret).update(payloadBody).digest("hex")}`,
+    "X-Hub-Signature-256": `sha256=${(0, import_node_crypto.createHmac)("sha256", secret).update(payloadBody).digest("hex")}`
   };
+}
+function resolveInstallationTarget(payload) {
+  if (payload.repository?.id !== void 0) {
+    return {
+      installationTargetId: String(payload.repository.id),
+      installationTargetType: "repository"
+    };
+  }
+  if (payload.organization?.id !== void 0) {
+    return {
+      installationTargetId: String(payload.organization.id),
+      installationTargetType: "organization"
+    };
+  }
+  return {};
+}
+function buildHeaders({
+  eventType,
+  deliveryId,
+  payloadBody,
+  secret,
+  installationTargetId,
+  installationTargetType
+}) {
+  const headers = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    "User-Agent": buildHookshotUserAgent(deliveryId),
+    "X-GitHub-Delivery": deliveryId,
+    "X-GitHub-Event": eventType,
+    "X-GitHub-Hook-Id": buildSyntheticHookId(deliveryId)
+  };
+  if (installationTargetId && installationTargetType) {
+    headers["X-GitHub-Hook-Installation-Target-Id"] = installationTargetId;
+    headers["X-GitHub-Hook-Installation-Target-Type"] = installationTargetType;
+  }
+  if (secret) {
+    Object.assign(headers, buildSignatureHeaders(payloadBody, secret));
+  }
   return headers;
 }
 async function run() {
   const webhookUrl = getInput("webhook_url", { required: true });
+  const secret = getInput("secret");
   const eventType = getInput("event_type") || context2.eventName || "workflow_dispatch";
   const timeoutInput = getInput("timeout_ms") || "10000";
   const timeoutMs = parseInt(timeoutInput, 10);
@@ -23766,7 +23811,13 @@ async function run() {
   const payload = context2.payload;
   const payloadBody = JSON.stringify(payload);
   const deliveryId = (0, import_node_crypto.randomUUID)();
-  const headers = buildHeaders(eventType, deliveryId);
+  const headers = buildHeaders({
+    eventType,
+    deliveryId,
+    payloadBody,
+    secret,
+    ...resolveInstallationTarget(payload)
+  });
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers,
@@ -23789,6 +23840,7 @@ if (require.main === module) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildHeaders,
+  buildSyntheticHookId,
   run
 });
 /*! Bundled license information:
