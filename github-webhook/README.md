@@ -14,7 +14,7 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
 | `webhook_url` | Yes | - | Destination webhook URL. |
-| `secret` | No | - | Shared secret used to add `X-Hub-Signature` and `X-Hub-Signature-256`. |
+| `secret` | No | - | Shared secret used to HMAC-sign the payload and generate `X-Hub-Signature` and `X-Hub-Signature-256`. |
 | `event_type` | No | `workflow_dispatch` | Event name sent as `X-GitHub-Event`. |
 | `hook_id` | No | - | Optional webhook ID sent as `X-GitHub-Hook-Id`. |
 | `timeout_ms` | No | `10000` | Request timeout in milliseconds. |
@@ -28,7 +28,7 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 
 ## GitHub-style request
 
-This action sends the current workflow event payload as JSON and adds GitHub-style webhook headers so receivers can process it like a GitHub webhook delivery. With `secret` configured, the payload is signed the same way GitHub signs webhook requests.
+This action sends the current workflow event payload as JSON and adds GitHub-style webhook headers so receivers can process it like a GitHub webhook delivery. With `secret` configured, the payload is HMAC-signed the same way GitHub signs webhook requests. Prefer validating `X-Hub-Signature-256`; `X-Hub-Signature` is included for GitHub compatibility.
 
 Example header set sent by this action:
 
