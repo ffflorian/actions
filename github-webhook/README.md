@@ -16,7 +16,6 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 | `webhook_url` | Yes | - | Destination webhook URL. |
 | `secret` | No | - | Shared secret used to HMAC-sign the payload and generate `X-Hub-Signature` and `X-Hub-Signature-256`. |
 | `event_type` | No | `workflow_dispatch` | Event name sent as `X-GitHub-Event`. |
-| `hook_id` | No | - | Optional synthetic webhook ID sent as `X-GitHub-Hook-Id`; omit it unless your receiver expects a fixed value. |
 | `timeout_ms` | No | `10000` | Request timeout in milliseconds. |
 
 ## Outputs
@@ -30,8 +29,6 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 
 This action sends the current workflow event payload as JSON and adds GitHub-style webhook headers so receivers can process it like a GitHub webhook delivery. With `secret` configured, the payload is HMAC-signed the same way GitHub signs webhook requests. Prefer validating `X-Hub-Signature-256`; `X-Hub-Signature` is included for GitHub compatibility.
 
-`hook_id` is optional. Because this action sends a GitHub-style webhook rather than forwarding an existing GitHub webhook delivery, there is usually no real GitHub-assigned hook ID to send. Leave `hook_id` unset unless your receiver explicitly expects a fixed `X-GitHub-Hook-Id` value, in which case you can configure any stable identifier that your receiver recognizes.
-
 Example header set sent by this action:
 
 ```text
@@ -40,7 +37,6 @@ Content-Type: application/json
 User-Agent: GitHub-Hookshot/1a57e472
 X-GitHub-Delivery: 1a57e472-537d-11f1-8e9b-7bc2ead18eb0
 X-GitHub-Event: push
-X-GitHub-Hook-Id: 605961050
 X-GitHub-Hook-Installation-Target-Id: 207300990
 X-GitHub-Hook-Installation-Target-Type: repository
 X-Hub-Signature: sha1=...

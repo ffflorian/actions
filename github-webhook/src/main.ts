@@ -7,7 +7,6 @@ type HeaderOptions = {
   deliveryId: string;
   payloadBody: string;
   secret?: string;
-  hookId?: string;
   installationTargetId?: string;
   installationTargetType?: string;
 };
@@ -53,7 +52,6 @@ export function buildHeaders({
   deliveryId,
   payloadBody,
   secret,
-  hookId,
   installationTargetId,
   installationTargetType,
 }: HeaderOptions): Record<string, string> {
@@ -64,10 +62,6 @@ export function buildHeaders({
     'X-GitHub-Delivery': deliveryId,
     'X-GitHub-Event': eventType,
   };
-
-  if (hookId) {
-    headers['X-GitHub-Hook-Id'] = hookId;
-  }
 
   if (installationTargetId && installationTargetType) {
     headers['X-GitHub-Hook-Installation-Target-Id'] = installationTargetId;
@@ -85,7 +79,6 @@ export async function run(): Promise<void> {
   const webhookUrl = core.getInput('webhook_url', {required: true});
   const secret = core.getInput('secret');
   const eventType = core.getInput('event_type') || github.context.eventName || 'workflow_dispatch';
-  const hookId = (core.getInput('hook_id') || '').trim();
   const timeoutInput = core.getInput('timeout_ms') || '10000';
   const timeoutMs = parseInt(timeoutInput, 10);
 
@@ -101,7 +94,6 @@ export async function run(): Promise<void> {
     deliveryId,
     payloadBody,
     secret,
-    hookId,
     ...resolveInstallationTarget(payload as PayloadWithTargets),
   });
 

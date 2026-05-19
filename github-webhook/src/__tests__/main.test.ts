@@ -27,7 +27,6 @@ describe('buildHeaders', () => {
       deliveryId: '1a57e472-537d-11f1-8e9b-7bc2ead18eb0',
       payloadBody,
       secret: 'super-secret',
-      hookId: '605961050',
       installationTargetId: '207300990',
       installationTargetType: 'repository',
     });
@@ -37,7 +36,6 @@ describe('buildHeaders', () => {
     expect(headers['User-Agent']).toBe('GitHub-Hookshot/1a57e472');
     expect(headers['X-GitHub-Delivery']).toBe('1a57e472-537d-11f1-8e9b-7bc2ead18eb0');
     expect(headers['X-GitHub-Event']).toBe('push');
-    expect(headers['X-GitHub-Hook-Id']).toBe('605961050');
     expect(headers['X-GitHub-Hook-Installation-Target-Id']).toBe('207300990');
     expect(headers['X-GitHub-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature']).toBe(
@@ -64,7 +62,6 @@ describe('run', () => {
       webhook_url: 'https://example.invalid/webhook',
       secret: '',
       event_type: 'workflow_dispatch',
-      hook_id: '',
       timeout_ms: '10000',
     };
 
@@ -97,7 +94,7 @@ describe('run', () => {
   });
 
   it('signs the payload when a secret is provided', async () => {
-    setupInputs({secret: 'super-secret', hook_id: '605961050'});
+    setupInputs({secret: 'super-secret'});
     vi.mocked(fetch).mockResolvedValue({ok: true, status: 202, text: async () => ''} as Response);
 
     await run();
@@ -106,7 +103,6 @@ describe('run', () => {
     const headers = options.headers as Record<string, string>;
     const payloadBody = JSON.stringify(mockContext.payload);
 
-    expect(headers['X-GitHub-Hook-Id']).toBe('605961050');
     expect(headers['X-Hub-Signature']).toBe(
       `sha1=${createHmac('sha1', 'super-secret').update(payloadBody).digest('hex')}`
     );

@@ -23775,7 +23775,6 @@ function buildHeaders({
   deliveryId,
   payloadBody,
   secret,
-  hookId,
   installationTargetId,
   installationTargetType
 }) {
@@ -23786,9 +23785,6 @@ function buildHeaders({
     "X-GitHub-Delivery": deliveryId,
     "X-GitHub-Event": eventType
   };
-  if (hookId) {
-    headers["X-GitHub-Hook-Id"] = hookId;
-  }
   if (installationTargetId && installationTargetType) {
     headers["X-GitHub-Hook-Installation-Target-Id"] = installationTargetId;
     headers["X-GitHub-Hook-Installation-Target-Type"] = installationTargetType;
@@ -23802,7 +23798,6 @@ async function run() {
   const webhookUrl = getInput("webhook_url", { required: true });
   const secret = getInput("secret");
   const eventType = getInput("event_type") || context2.eventName || "workflow_dispatch";
-  const hookId = (getInput("hook_id") || "").trim();
   const timeoutInput = getInput("timeout_ms") || "10000";
   const timeoutMs = parseInt(timeoutInput, 10);
   if (!/^\d+$/.test(timeoutInput.trim()) || timeoutMs <= 0) {
@@ -23816,7 +23811,6 @@ async function run() {
     deliveryId,
     payloadBody,
     secret,
-    hookId,
     ...resolveInstallationTarget(payload)
   });
   const response = await fetch(webhookUrl, {

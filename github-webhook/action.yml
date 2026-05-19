@@ -15,9 +15,6 @@ inputs:
     description: 'GitHub event name sent in the X-GitHub-Event header.'
     required: false
     default: workflow_dispatch
-  hook_id:
-    description: 'Optional synthetic webhook ID for X-GitHub-Hook-Id; leave unset unless the receiver expects a fixed value.'
-    required: false
   timeout_ms:
     description: 'Request timeout in milliseconds.'
     required: false
