@@ -1,0 +1,26 @@
+{
+  "name": "github-webhook-action",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Send GitHub-style webhook requests from workflows",
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1"
+  },
+  "devDependencies": {
+    "@ffflorian/prettier-config": "0.8.2",
+    "@types/node": "25.0.0",
+    "esbuild": "0.28.0",
+    "prettier": "3.8.3",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  },
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node26 --outfile=dist/index.js",
+    "format": "prettier --write src/",
+    "lint": "prettier --check src/",
+    "test": "vitest run"
+  },
+  "prettier": "@ffflorian/prettier-config",
+  "packageManager": "yarn@4.14.1"
+}
