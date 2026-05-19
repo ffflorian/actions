@@ -61,17 +61,17 @@ export function buildHeaders({
     Accept: '*/*',
     'Content-Type': 'application/json',
     'User-Agent': buildHookshotUserAgent(deliveryId),
-    'X-Github-Delivery': deliveryId,
-    'X-Github-Event': eventType,
+    'X-GitHub-Delivery': deliveryId,
+    'X-GitHub-Event': eventType,
   };
 
   if (hookId) {
-    headers['X-Github-Hook-Id'] = hookId;
+    headers['X-GitHub-Hook-Id'] = hookId;
   }
 
   if (installationTargetId && installationTargetType) {
-    headers['X-Github-Hook-Installation-Target-Id'] = installationTargetId;
-    headers['X-Github-Hook-Installation-Target-Type'] = installationTargetType;
+    headers['X-GitHub-Hook-Installation-Target-Id'] = installationTargetId;
+    headers['X-GitHub-Hook-Installation-Target-Type'] = installationTargetType;
   }
 
   if (secret) {

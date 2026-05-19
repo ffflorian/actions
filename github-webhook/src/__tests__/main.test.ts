@@ -35,11 +35,11 @@ describe('buildHeaders', () => {
     expect(headers.Accept).toBe('*/*');
     expect(headers['Content-Type']).toBe('application/json');
     expect(headers['User-Agent']).toBe('GitHub-Hookshot/1a57e472');
-    expect(headers['X-Github-Delivery']).toBe('1a57e472-537d-11f1-8e9b-7bc2ead18eb0');
-    expect(headers['X-Github-Event']).toBe('push');
-    expect(headers['X-Github-Hook-Id']).toBe('605961050');
-    expect(headers['X-Github-Hook-Installation-Target-Id']).toBe('207300990');
-    expect(headers['X-Github-Hook-Installation-Target-Type']).toBe('repository');
+    expect(headers['X-GitHub-Delivery']).toBe('1a57e472-537d-11f1-8e9b-7bc2ead18eb0');
+    expect(headers['X-GitHub-Event']).toBe('push');
+    expect(headers['X-GitHub-Hook-Id']).toBe('605961050');
+    expect(headers['X-GitHub-Hook-Installation-Target-Id']).toBe('207300990');
+    expect(headers['X-GitHub-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature']).toBe(
       `sha1=${createHmac('sha1', 'super-secret').update(payloadBody).digest('hex')}`
     );
@@ -86,10 +86,10 @@ describe('run', () => {
     expect(options.body).toBe(JSON.stringify(mockContext.payload));
     expect(headers.Accept).toBe('*/*');
     expect(headers['User-Agent']).toMatch(/^GitHub-Hookshot\/[0-9a-f]{8}$/);
-    expect(headers['X-Github-Event']).toBe('workflow_dispatch');
-    expect(headers['X-Github-Delivery']).toEqual(expect.any(String));
-    expect(headers['X-Github-Hook-Installation-Target-Id']).toBe('207300990');
-    expect(headers['X-Github-Hook-Installation-Target-Type']).toBe('repository');
+    expect(headers['X-GitHub-Event']).toBe('workflow_dispatch');
+    expect(headers['X-GitHub-Delivery']).toEqual(expect.any(String));
+    expect(headers['X-GitHub-Hook-Installation-Target-Id']).toBe('207300990');
+    expect(headers['X-GitHub-Hook-Installation-Target-Type']).toBe('repository');
     expect(headers['X-Hub-Signature-256']).toBeUndefined();
     expect(mockSetOutput).toHaveBeenCalledWith('status_code', '202');
     expect(mockSetOutput).toHaveBeenCalledWith('delivery_id', expect.any(String));
@@ -106,7 +106,7 @@ describe('run', () => {
     const headers = options.headers as Record<string, string>;
     const payloadBody = JSON.stringify(mockContext.payload);
 
-    expect(headers['X-Github-Hook-Id']).toBe('605961050');
+    expect(headers['X-GitHub-Hook-Id']).toBe('605961050');
     expect(headers['X-Hub-Signature']).toBe(
       `sha1=${createHmac('sha1', 'super-secret').update(payloadBody).digest('hex')}`
     );

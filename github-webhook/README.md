@@ -5,7 +5,7 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 ## What It Does
 
 - Uses the current GitHub event payload as the JSON request body.
-- Sends GitHub-style webhook headers such as `Accept`, `User-Agent`, `X-Github-Delivery`, `X-Github-Event`, and installation target headers.
+- Sends GitHub-style webhook headers such as `Accept`, `User-Agent`, `X-GitHub-Delivery`, `X-GitHub-Event`, and installation target headers.
 - Optionally signs the payload with `X-Hub-Signature` and `X-Hub-Signature-256` when a secret is configured.
 - Fails the workflow when the webhook endpoint does not return a success status.
 
@@ -15,8 +15,8 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 | --- | --- | --- | --- |
 | `webhook_url` | Yes | - | Destination webhook URL. |
 | `secret` | No | - | Shared secret used to add `X-Hub-Signature` and `X-Hub-Signature-256`. |
-| `event_type` | No | `workflow_dispatch` | Event name sent as `X-Github-Event`. |
-| `hook_id` | No | - | Optional webhook ID sent as `X-Github-Hook-Id`. |
+| `event_type` | No | `workflow_dispatch` | Event name sent as `X-GitHub-Event`. |
+| `hook_id` | No | - | Optional webhook ID sent as `X-GitHub-Hook-Id`. |
 | `timeout_ms` | No | `10000` | Request timeout in milliseconds. |
 
 ## Outputs
@@ -36,11 +36,11 @@ Example header set sent by this action:
 Accept: */*
 Content-Type: application/json
 User-Agent: GitHub-Hookshot/1a57e472
-X-Github-Delivery: 1a57e472-537d-11f1-8e9b-7bc2ead18eb0
-X-Github-Event: push
-X-Github-Hook-Id: 605961050
-X-Github-Hook-Installation-Target-Id: 207300990
-X-Github-Hook-Installation-Target-Type: repository
+X-GitHub-Delivery: 1a57e472-537d-11f1-8e9b-7bc2ead18eb0
+X-GitHub-Event: push
+X-GitHub-Hook-Id: 605961050
+X-GitHub-Hook-Installation-Target-Id: 207300990
+X-GitHub-Hook-Installation-Target-Type: repository
 X-Hub-Signature: sha1=...
 X-Hub-Signature-256: sha256=...
 ```
