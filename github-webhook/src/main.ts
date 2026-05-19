@@ -69,6 +69,8 @@ export async function run(): Promise<void> {
   core.info(`Webhook delivered as ${deliveryId} with status ${response.status}.`);
 }
 
-run().catch(error => {
-  core.setFailed(error instanceof Error ? error.message : String(error));
-});
+if (require.main === module) {
+  run().catch(error => {
+    core.setFailed(error instanceof Error ? error.message : String(error));
+  });
+}
