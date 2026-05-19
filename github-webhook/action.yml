@@ -12,12 +12,6 @@ inputs:
     description: 'GitHub event name sent in the X-GitHub-Event header.'
     required: false
     default: workflow_dispatch
-  payload:
-    description: 'Optional JSON payload override. Defaults to the current GitHub event payload.'
-    required: false
-  webhook_secret:
-    description: 'Optional secret used to create an X-Hub-Signature-256 header.'
-    required: false
   timeout_ms:
     description: 'Request timeout in milliseconds.'
     required: false

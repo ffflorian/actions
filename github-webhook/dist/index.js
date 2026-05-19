@@ -19540,7 +19540,6 @@ var require_dist = __commonJS({
 var main_exports = {};
 __export(main_exports, {
   buildHeaders: () => buildHeaders,
-  buildPayload: () => buildPayload,
   run: () => run
 });
 module.exports = __toCommonJS(main_exports);
@@ -23747,42 +23746,27 @@ var context2 = new Context();
 
 // src/main.ts
 var import_node_crypto = require("node:crypto");
-function buildPayload(payloadInput) {
-  if (!payloadInput.trim()) {
-    return context2.payload;
-  }
-  try {
-    return JSON.parse(payloadInput);
-  } catch {
-    throw new Error("payload must be valid JSON when provided.");
-  }
-}
-function buildHeaders(eventType, deliveryId, payloadBody, webhookSecret) {
+function buildHeaders(eventType, deliveryId) {
   const headers = {
     "Content-Type": "application/json",
     "User-Agent": "GitHub-Hookshot/actions-webhook",
     "X-GitHub-Delivery": deliveryId,
     "X-GitHub-Event": eventType
   };
-  if (webhookSecret && webhookSecret.length > 0) {
-    headers["X-Hub-Signature-256"] = `sha256=${(0, import_node_crypto.createHmac)("sha256", webhookSecret).update(payloadBody).digest("hex")}`;
-  }
   return headers;
 }
 async function run() {
   const webhookUrl = getInput("webhook_url", { required: true });
   const eventType = getInput("event_type") || context2.eventName || "workflow_dispatch";
-  const payloadInput = getInput("payload");
-  const webhookSecret = getInput("webhook_secret");
   const timeoutInput = getInput("timeout_ms") || "10000";
   const timeoutMs = parseInt(timeoutInput, 10);
   if (!/^\d+$/.test(timeoutInput.trim()) || timeoutMs <= 0) {
     throw new Error(`timeout_ms must be a positive integer, got: '${timeoutInput}'.`);
   }
-  const payload = buildPayload(payloadInput);
+  const payload = context2.payload;
   const payloadBody = JSON.stringify(payload);
   const deliveryId = (0, import_node_crypto.randomUUID)();
-  const headers = buildHeaders(eventType, deliveryId, payloadBody, webhookSecret);
+  const headers = buildHeaders(eventType, deliveryId);
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers,
@@ -23805,7 +23789,6 @@ if (require.main === module) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildHeaders,
-  buildPayload,
   run
 });
 /*! Bundled license information:

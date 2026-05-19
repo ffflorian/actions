@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {buildHeaders, buildPayload, run} from '../main';
+import {buildHeaders, run} from '../main';
 
 vi.mock('@actions/core');
 
@@ -16,35 +15,15 @@ vi.mock('@actions/github', () => ({
   context: mockContext,
 }));
 
-describe('buildPayload', () => {
-  it('uses github context payload when payload input is empty', () => {
-    expect(buildPayload('')).toEqual(mockContext.payload);
-  });
-
-  it('parses payload input JSON when provided', () => {
-    expect(buildPayload('{"hello":"world"}')).toEqual({hello: 'world'});
-  });
-
-  it('throws for invalid payload JSON', () => {
-    expect(() => buildPayload('{invalid')).toThrow('payload must be valid JSON when provided.');
-  });
-});
-
 describe('buildHeaders', () => {
   it('creates required GitHub-style headers', () => {
-    const headers = buildHeaders('push', 'delivery-id', '{"foo":"bar"}');
+    const headers = buildHeaders('push', 'delivery-id');
 
     expect(headers['Content-Type']).toBe('application/json');
     expect(headers['User-Agent']).toBe('GitHub-Hookshot/actions-webhook');
     expect(headers['X-GitHub-Event']).toBe('push');
     expect(headers['X-GitHub-Delivery']).toBe('delivery-id');
     expect(headers['X-Hub-Signature-256']).toBeUndefined();
-  });
-
-  it('adds signature header when secret is provided', () => {
-    const headers = buildHeaders('push', 'delivery-id', '{"foo":"bar"}', 'my-secret');
-
-    expect(headers['X-Hub-Signature-256']).toMatch(/^sha256=[0-9a-f]{64}$/);
   });
 });
 
@@ -62,8 +41,6 @@ describe('run', () => {
     const defaults: Record<string, string> = {
       webhook_url: 'https://example.invalid/webhook',
       event_type: 'workflow_dispatch',
-      payload: '',
-      webhook_secret: '',
       timeout_ms: '10000',
     };
 
@@ -71,7 +48,7 @@ describe('run', () => {
   }
 
   it('sends webhook and sets outputs on success', async () => {
-    setupInputs({payload: '{"run":123}', webhook_secret: 'top-secret'});
+    setupInputs();
     vi.mocked(fetch).mockResolvedValue({ok: true, status: 202, text: async () => ''} as Response);
 
     await run();
@@ -82,9 +59,9 @@ describe('run', () => {
 
     expect(url).toBe('https://example.invalid/webhook');
     expect(options.method).toBe('POST');
-    expect(options.body).toBe('{"run":123}');
+    expect(options.body).toBe(JSON.stringify(mockContext.payload));
     expect(headers['X-GitHub-Event']).toBe('workflow_dispatch');
-    expect(headers['X-Hub-Signature-256']).toMatch(/^sha256=[0-9a-f]{64}$/);
+    expect(headers['X-Hub-Signature-256']).toBeUndefined();
     expect(mockSetOutput).toHaveBeenCalledWith('status_code', '202');
     expect(mockSetOutput).toHaveBeenCalledWith('delivery_id', expect.any(String));
     expect(mockInfo).toHaveBeenCalledWith(expect.stringContaining('Webhook delivered as'));
