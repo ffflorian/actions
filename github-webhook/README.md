@@ -16,7 +16,7 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 | `webhook_url` | Yes | - | Destination webhook URL. |
 | `secret` | No | - | Shared secret used to HMAC-sign the payload and generate `X-Hub-Signature` and `X-Hub-Signature-256`. |
 | `event_type` | No | `workflow_dispatch` | Event name sent as `X-GitHub-Event`. |
-| `hook_id` | No | - | Optional webhook ID sent as `X-GitHub-Hook-Id`. |
+| `hook_id` | No | - | Optional synthetic webhook ID sent as `X-GitHub-Hook-Id`; omit it unless your receiver expects a fixed value. |
 | `timeout_ms` | No | `10000` | Request timeout in milliseconds. |
 
 ## Outputs
@@ -29,6 +29,8 @@ Sends a GitHub-style webhook request to any HTTP endpoint.
 ## GitHub-style request
 
 This action sends the current workflow event payload as JSON and adds GitHub-style webhook headers so receivers can process it like a GitHub webhook delivery. With `secret` configured, the payload is HMAC-signed the same way GitHub signs webhook requests. Prefer validating `X-Hub-Signature-256`; `X-Hub-Signature` is included for GitHub compatibility.
+
+`hook_id` is optional. Because this action sends a GitHub-style webhook rather than forwarding an existing GitHub webhook delivery, there is usually no real GitHub-assigned hook ID to send. Leave `hook_id` unset unless your receiver explicitly expects a fixed `X-GitHub-Hook-Id` value, in which case you can configure any stable identifier that your receiver recognizes.
 
 Example header set sent by this action:
 
@@ -69,5 +71,4 @@ jobs:
           webhook_url: ${{ secrets.EXTERNAL_WEBHOOK_URL }}
           secret: ${{ secrets.EXTERNAL_WEBHOOK_SECRET }}
           event_type: workflow_dispatch
-          hook_id: '605961050'
 ```
