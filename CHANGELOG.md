@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/ffflorian/actions/compare/v1.11.0...v1.12.0) (2026-05-19)
+
+
+### Features
+
+* **github-webhook:** Add signed GitHub-style headers ([#23](https://github.com/ffflorian/actions/issues/23)) ([cf91890](https://github.com/ffflorian/actions/commit/cf918907669372b95ba01a8cc79af87384a6dcf5))
+
 # [1.11.0](https://github.com/ffflorian/actions/compare/v1.10.2...v1.11.0) (2026-05-19)
 
 
