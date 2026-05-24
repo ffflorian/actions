@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/ffflorian/actions/compare/v1.13.0...v1.14.0) (2026-05-24)
+
+
+### Features
+
+* Add coolify-deploy action ([#27](https://github.com/ffflorian/actions/issues/27)) ([0da8e0a](https://github.com/ffflorian/actions/commit/0da8e0a029d5bce028ec5f04c94b59b9675e22d4))
+
 # [1.13.0](https://github.com/ffflorian/actions/compare/v1.12.0...v1.13.0) (2026-05-24)
 
 
