@@ -3,14 +3,10 @@
 
 ### Features
 
-* **github-webhook:** Add signed GitHub-style headers ([#23](https://github.com/ffflorian/actions/issues/23)) ([cf91890](https://github.com/ffflorian/actions/commit/cf918907669372b95ba01a8cc79af87384a6dcf5))
-
 # [1.11.0](https://github.com/ffflorian/actions/compare/v1.10.2...v1.11.0) (2026-05-19)
 
 
 ### Features
-
-* add github-webhook ([#22](https://github.com/ffflorian/actions/issues/22)) ([c0325dd](https://github.com/ffflorian/actions/commit/c0325dd1feccb0a0d03797e5710fd36b3bcd594d))
 
 ## [1.10.2](https://github.com/ffflorian/actions/compare/v1.10.1...v1.10.2) (2026-05-18)
 
