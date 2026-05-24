@@ -19141,12 +19141,13 @@ function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
-async function requestJson(url, token) {
+async function requestJson(url, token, httpMethod = "GET") {
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/json"
-    }
+    },
+    method: httpMethod
   });
   const text = await response.text();
   let body = {};
@@ -19164,7 +19165,9 @@ async function requestJson(url, token) {
   };
 }
 async function waitForDeployments(domain, token, deploymentUuids, timeoutSeconds, intervalSeconds) {
-  info(`\u23F3 Waiting for ${deploymentUuids.length} deployment(s) to complete...`);
+  info(
+    `\u23F3 Waiting for ${deploymentUuids.length} deployment(${deploymentUuids.length > 1 ? "s" : ""}) to complete...`
+  );
   info(`Deployment UUIDs: ${deploymentUuids.join(" ")}`);
   let elapsedSeconds = 0;
   while (elapsedSeconds < timeoutSeconds) {
@@ -19201,10 +19204,14 @@ async function waitForDeployments(domain, token, deploymentUuids, timeoutSeconds
       `\u{1F4CA} Deployment progress: ${completedCount} completed, ${failedCount} failed, ${inProgressCount} in progress (${elapsedSeconds}s/${timeoutSeconds}s)`
     );
     if (failedCount > 0) {
-      throw new Error(`${failedCount} deployment(s) failed.`);
+      throw new Error(`${failedCount} deployment(${failedCount > 1 ? "s" : ""}) failed.`);
     }
     if (completedCount === deploymentUuids.length) {
-      info(`\u2705 All ${deploymentUuids.length} deployment(s) completed successfully.`);
+      if (deploymentUuids.length > 1) {
+        info(`\u2705 All ${deploymentUuids.length} deployments completed successfully.`);
+      } else {
+        info(`\u2705 Deployment completed successfully.`);
+      }
       return;
     }
     await sleep(intervalSeconds * 1e3);
@@ -19231,7 +19238,7 @@ async function run() {
   info("\u{1F680} Deploying to Coolify...");
   const deployUrl = buildDeployUrl(domain, force, uuid);
   info(`Making deployment request to: ${deployUrl}`);
-  const { body, status, text } = await requestJson(deployUrl, token);
+  const { body, status, text } = await requestJson(deployUrl, token, "POST");
   info(`Response status: ${status}`);
   info(`Response body: ${text}`);
   if (status !== 200) {
