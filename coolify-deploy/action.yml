@@ -1,0 +1,53 @@
+---
+name: Coolify Deploy
+description: Trigger a Coolify deployment and optionally wait for completion
+author: 'Florian Imdahl <git@ffflorian.de>'
+branding: {icon: 'upload-cloud', color: 'purple'}
+
+inputs:
+  token:
+    description: 'Coolify API token.'
+    required: true
+  domain:
+    description: 'Coolify domain without protocol.'
+    required: false
+    default: 'app.coolify.io'
+  uuid:
+    description: 'Coolify resource UUIDs to deploy. Comma-separated values are supported.'
+    required: true
+  force:
+    description: 'Force a rebuild without cache.'
+    required: false
+    default: 'false'
+  waitForDeploy:
+    description: 'Wait for the deployment to complete.'
+    required: false
+    default: 'false'
+  timeout:
+    description: 'Timeout in seconds when waiting for deployments.'
+    required: false
+    default: '300'
+  interval:
+    description: 'Polling interval in seconds when waiting for deployments.'
+    required: false
+    default: '10'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      with:
+        node-version: 26
+
+    - name: Deploy to Coolify
+      shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_DOMAIN: ${{ inputs.domain }}
+        INPUT_UUID: ${{ inputs.uuid }}
+        INPUT_FORCE: ${{ inputs.force }}
+        INPUT_WAITFORDEPLOY: ${{ inputs.waitForDeploy }}
+        INPUT_TIMEOUT: ${{ inputs.timeout }}
+        INPUT_INTERVAL: ${{ inputs.interval }}
+      run: node "${{ github.action_path }}/dist/index.js"
