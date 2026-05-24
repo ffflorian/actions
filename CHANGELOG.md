@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/ffflorian/actions/compare/v1.14.0...v1.14.1) (2026-05-24)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** Use POST for deployment requests ([6d85350](https://github.com/ffflorian/actions/commit/6d85350fe734551e67d3694a16870731ecb28f4b))
+
 # [1.14.0](https://github.com/ffflorian/actions/compare/v1.13.0...v1.14.0) (2026-05-24)
 
 
