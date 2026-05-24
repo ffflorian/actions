@@ -1,3 +1,10 @@
+## [1.14.2](https://github.com/ffflorian/actions/compare/v1.14.1...v1.14.2) (2026-05-24)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** Rebuild action ([6ba7d76](https://github.com/ffflorian/actions/commit/6ba7d76924e940686fc8813fdc3f745ae404a317))
+
 ## [1.14.1](https://github.com/ffflorian/actions/compare/v1.14.0...v1.14.1) (2026-05-24)
 
 
