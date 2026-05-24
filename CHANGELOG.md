@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/ffflorian/actions/compare/v1.12.0...v1.13.0) (2026-05-24)
+
+
+### Features
+
+* remove github-webhook action ([#26](https://github.com/ffflorian/actions/issues/26)) ([2363446](https://github.com/ffflorian/actions/commit/2363446705e627e50aec19bc4f3122c9ff8ae0e3))
+
 # [1.12.0](https://github.com/ffflorian/actions/compare/v1.11.0...v1.12.0) (2026-05-19)
 
 
