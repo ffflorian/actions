@@ -18,12 +18,17 @@ function sleep(ms: number): Promise<void> {
   });
 }
 
-async function requestJson<T>(url: string, token: string): Promise<{body: T; status: number; text: string}> {
+async function requestJson<T>(
+  url: string,
+  token: string,
+  httpMethod: string = 'GET'
+): Promise<{body: T; status: number; text: string}> {
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',
     },
+    method: httpMethod,
   });
 
   const text = await response.text();
@@ -50,7 +55,9 @@ async function waitForDeployments(
   timeoutSeconds: number,
   intervalSeconds: number
 ): Promise<void> {
-  core.info(`⏳ Waiting for ${deploymentUuids.length} deployment(s) to complete...`);
+  core.info(
+    `⏳ Waiting for ${deploymentUuids.length} deployment(${deploymentUuids.length > 1 ? 's' : ''}) to complete...`
+  );
   core.info(`Deployment UUIDs: ${deploymentUuids.join(' ')}`);
 
   let elapsedSeconds = 0;
@@ -95,11 +102,15 @@ async function waitForDeployments(
     );
 
     if (failedCount > 0) {
-      throw new Error(`${failedCount} deployment(s) failed.`);
+      throw new Error(`${failedCount} deployment(${failedCount > 1 ? 's' : ''}) failed.`);
     }
 
     if (completedCount === deploymentUuids.length) {
-      core.info(`✅ All ${deploymentUuids.length} deployment(s) completed successfully.`);
+      if (deploymentUuids.length > 1) {
+        core.info(`✅ All ${deploymentUuids.length} deployments completed successfully.`);
+      } else {
+        core.info(`✅ Deployment completed successfully.`);
+      }
       return;
     }
 
@@ -133,7 +144,7 @@ export async function run(): Promise<void> {
   const deployUrl = buildDeployUrl(domain, force, uuid);
   core.info(`Making deployment request to: ${deployUrl}`);
 
-  const {body, status, text} = await requestJson<DeployResponse>(deployUrl, token);
+  const {body, status, text} = await requestJson<DeployResponse>(deployUrl, token, 'POST');
 
   core.info(`Response status: ${status}`);
   core.info(`Response body: ${text}`);

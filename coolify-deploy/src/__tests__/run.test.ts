@@ -106,6 +106,6 @@ describe('run', () => {
     await runPromise;
 
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(mockInfo).toHaveBeenCalledWith('✅ All 1 deployment(s) completed successfully.');
+    expect(mockInfo).toHaveBeenCalledWith('✅ Deployment completed successfully.');
   });
 });
