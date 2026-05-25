@@ -42,6 +42,11 @@ jobs:
         with:
           git_author: Florian Imdahl
           git_email: git@ffflorian.de
+          publish_files: |
+            CHANGELOG.md
+            coolify-deploy/dist/index.js
+            hugo-theme-update/dist/index.js
+            yarn-update/dist/index.js
 
   hugo_theme_update_test:
     permissions:

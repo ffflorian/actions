@@ -19,7 +19,7 @@ inputs:
     description: 'The email to use for the release commit.'
     required: true
   publish_files:
-    description: 'Newline-separated list of additional files to include in the release commit.'
+    description: 'Newline-separated list of files to include in the release commit.'
     required: false
     default: ''
 
@@ -50,14 +50,10 @@ runs:
         node <<'EOF'
         const {writeFileSync} = require('node:fs');
 
-        const assets = [
-          'CHANGELOG.md',
-          'hugo-theme-update/dist/index.js',
-          'yarn-update/dist/index.js',
-          ...process.env.PUBLISH_FILES.split(/\r?\n/u)
-            .map((line) => line.trim())
-            .filter(Boolean),
-        ].filter((value, index, values) => values.indexOf(value) === index);
+        const assets = process.env.PUBLISH_FILES.split(/\r?\n/u)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .filter((value, index, values) => values.indexOf(value) === index);
 
         const config = {
           branches: ['main'],
