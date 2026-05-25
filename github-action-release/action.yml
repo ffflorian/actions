@@ -18,6 +18,10 @@ inputs:
   git_email:
     description: 'The email to use for the release commit.'
     required: true
+  publish_files:
+    description: 'Newline-separated list of files to include in the release commit.'
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -40,46 +44,57 @@ runs:
 
     - name: Create release config file
       shell: bash
+      env:
+        PUBLISH_FILES: ${{ inputs.publish_files }}
       run: |
-        cat <<'EOF' > .releaserc.json
-        {
-          "branches": ["main"],
-          "plugins": [
+        node <<'EOF'
+        const {writeFileSync} = require('node:fs');
+
+        const assets = process.env.PUBLISH_FILES.split(/\r?\n/u)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .filter((value, index, values) => values.indexOf(value) === index);
+
+        const config = {
+          branches: ['main'],
+          plugins: [
             [
-              "@semantic-release/commit-analyzer",
+              '@semantic-release/commit-analyzer',
               {
-                "preset": "angular",
-                "parserOpts": {
-                  "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
-                }
-              }
+                preset: 'angular',
+                parserOpts: {
+                  noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+                },
+              },
             ],
             [
-              "@semantic-release/release-notes-generator",
+              '@semantic-release/release-notes-generator',
               {
-                "preset": "angular",
-                "parserOpts": {
-                  "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
-                }
-              }
+                preset: 'angular',
+                parserOpts: {
+                  noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+                },
+              },
             ],
-            "@semantic-release/changelog",
+            '@semantic-release/changelog',
             [
-              "@semantic-release/github",
+              '@semantic-release/github',
               {
-                "releasedLabels": false,
-                "successCommentCondition": false
-              }
+                releasedLabels: false,
+                successCommentCondition: false,
+              },
             ],
             [
-              "@semantic-release/git",
+              '@semantic-release/git',
               {
-                "assets": ["CHANGELOG.md", "hugo-theme-update/dist/index.js", "yarn-update/dist/index.js"],
-                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-              }
-            ]
-          ]
-        }
+                assets,
+                message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+              },
+            ],
+          ],
+        };
+
+        writeFileSync('.releaserc.json', `${JSON.stringify(config, null, 2)}\n`);
         EOF
 
     - name: Create Release

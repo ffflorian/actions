@@ -11,12 +11,13 @@ Creates a GitHub Actions release using semantic-release, updates `CHANGELOG.md`,
 
 ## Inputs
 
-| Name           | Required | Default | Description                                              |
-| -------------- | -------- | ------- | -------------------------------------------------------- |
-| `dry_run`      | No       | `false` | If `true`, simulates release steps without pushing tags. |
-| `GITHUB_TOKEN` | Yes      | -       | Token used by semantic-release and git push operations.  |
-| `git_author`   | Yes      | -       | Git author/committer name used for release commits.      |
-| `git_email`    | Yes      | -       | Git author/committer email used for release commits.     |
+| Name            | Required | Default | Description                                                       |
+| --------------- | -------- | ------- | ----------------------------------------------------------------- |
+| `dry_run`       | No       | `false` | If `true`, simulates release steps without pushing tags.          |
+| `GITHUB_TOKEN`  | Yes      | -       | Token used by semantic-release and git push operations.           |
+| `git_author`    | Yes      | -       | Git author/committer name used for release commits.               |
+| `git_email`     | Yes      | -       | Git author/committer email used for release commits.              |
+| `publish_files` | No       | `''`    | Newline-separated list of files to include in the release commit. |
 
 ## Outputs
 
@@ -47,5 +48,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           git_author: Florian Imdahl
           git_email: git@ffflorian.de
+          publish_files: |
+            CHANGELOG.md
+            coolify-deploy/dist/index.js
+            hugo-theme-update/dist/index.js
+            yarn-update/dist/index.js
           dry_run: 'false'
 ```
