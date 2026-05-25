@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/ffflorian/actions/compare/v1.14.2...v1.15.0) (2026-05-25)
+
+
+### Features
+
+* **github-action-release:** Add configurable publish_files input ([#28](https://github.com/ffflorian/actions/issues/28)) ([9ec9f72](https://github.com/ffflorian/actions/commit/9ec9f72a73fdb213ff49531c88fde2242fe858f5))
+
 ## [1.14.2](https://github.com/ffflorian/actions/compare/v1.14.1...v1.14.2) (2026-05-24)
 
 
