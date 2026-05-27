@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/ffflorian/actions/compare/v1.16.0...v1.16.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* **github-action-release:** Set CHANGELOG.md as default asset ([8e0d887](https://github.com/ffflorian/actions/commit/8e0d8874e60a6885a441aee39b1e3ba3467e0417))
+
 # [1.16.0](https://github.com/ffflorian/actions/compare/v1.15.0...v1.16.0) (2026-05-27)
 
 
