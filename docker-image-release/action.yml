@@ -5,10 +5,6 @@ author: 'Florian Imdahl <git@ffflorian.de>'
 branding: {icon: 'check', color: 'green'}
 
 inputs:
-  dry_run:
-    description: 'If true, the action will simulate the release process without making any changes.'
-    required: false
-    default: 'false'
   GITHUB_TOKEN:
     description: 'GitHub token to create the release and publish the image.'
     required: true
@@ -51,19 +47,12 @@ runs:
       with:
         node-version: 26
 
-    - name: Build TypeScript actions
-      shell: bash
-      run: |
-        for dir in coolify-deploy force-release hugo-theme-update yarn-update; do
-          (cd "$dir" && yarn install --immutable && yarn build)
-        done
-
     - name: Create release config file
       shell: bash
       env:
         PUBLISH_FILES: ${{ inputs.publish_files }}
       run: |
-        node <<'NODE'
+        node <<'EOF'
         const {writeFileSync} = require('node:fs');
 
         const assets = process.env.PUBLISH_FILES.split(/\r?\n/u)
@@ -111,7 +100,7 @@ runs:
         };
 
         writeFileSync('.releaserc.json', `${JSON.stringify(config, null, 2)}\n`);
-        NODE
+        EOF
 
     - name: Create Release
       id: semantic
@@ -121,28 +110,29 @@ runs:
         GIT_COMMITTER_NAME: ${{ inputs.git_author }}
         GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
-      with:
-        dry_run: ${{ inputs.dry_run }}
 
-    - name: Setup Docker Buildx
-      if: steps.semantic.outputs.new_release_published == 'true' && inputs.dry_run != 'true'
-      uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+    - name: Log in to GitHub Container Registry
+       uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+       with:
+         registry: ghcr.io
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish Docker image (dry run)
-      if: steps.semantic.outputs.new_release_published == 'true' && inputs.dry_run == 'true'
-      shell: bash
-      run: |
-        echo "Dry run enabled, skipping docker push."
-        echo "${{ steps.docker-meta.outputs.tags }}"
-        echo "ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}"
+     - name: Extract Docker metadata
+       id: docker-meta
+       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
+       with:
+         images: ghcr.io/${{ github.repository }}
+         tags: |
+           type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+           type=sha
 
-    - name: Publish Docker image
-      if: steps.semantic.outputs.new_release_published == 'true' && inputs.dry_run != 'true'
-      uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ steps.docker-meta.outputs.tags }}
-          ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
-        labels: ${{ steps.docker-meta.outputs.labels }}
+     - name: Build and push Docker image
+       uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
+       with:
+         context: .
+         push: true
+         tags: |
+           ${{ steps.docker-meta.outputs.tags }}
+           ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+         labels: ${{ steps.docker-meta.outputs.labels }}
