@@ -21,7 +21,7 @@ inputs:
   publish_files:
     description: 'Newline-separated list of files to include in the release commit.'
     required: false
-    default: ''
+    default: 'CHANGELOG.md'
 
 runs:
   using: composite

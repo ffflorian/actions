@@ -11,13 +11,13 @@ Creates a GitHub Actions release using semantic-release, updates `CHANGELOG.md`,
 
 ## Inputs
 
-| Name            | Required | Default | Description                                                       |
-| --------------- | -------- | ------- | ----------------------------------------------------------------- |
-| `dry_run`       | No       | `false` | If `true`, simulates release steps without pushing tags.          |
-| `GITHUB_TOKEN`  | Yes      | -       | Token used by semantic-release and git push operations.           |
-| `git_author`    | Yes      | -       | Git author/committer name used for release commits.               |
-| `git_email`     | Yes      | -       | Git author/committer email used for release commits.              |
-| `publish_files` | No       | `''`    | Newline-separated list of files to include in the release commit. |
+| Name            | Required | Default        | Description                                                       |
+| --------------- | -------- | -------------- | ----------------------------------------------------------------- |
+| `dry_run`       | No       | `false`        | If `true`, simulates release steps without pushing tags.          |
+| `GITHUB_TOKEN`  | Yes      | -              | Token used by semantic-release and git push operations.           |
+| `git_author`    | Yes      | -              | Git author/committer name used for release commits.               |
+| `git_email`     | Yes      | -              | Git author/committer email used for release commits.              |
+| `publish_files` | No       | `CHANGELOG.md` | Newline-separated list of files to include in the release commit. |
 
 ## Outputs
 
