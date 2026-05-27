@@ -104,6 +104,7 @@ runs:
         GIT_AUTHOR_EMAIL: ${{ inputs.git_email }}
         GIT_COMMITTER_NAME: ${{ inputs.git_author }}
         GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
 
     - name: Extract Docker metadata
