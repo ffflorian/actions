@@ -23,6 +23,44 @@ inputs:
     required: false
     default: '${{ github.repository }}'
 
+outputs:
+  new_release_published:
+    description: 'Whether semantic-release published a new release.'
+    value: ${{ steps.semantic.outputs.new_release_published }}
+  new_release_version:
+    description: 'Version of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_version }}
+  new_release_major_version:
+    description: 'Major version of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_major_version }}
+  new_release_minor_version:
+    description: 'Minor version of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_minor_version }}
+  new_release_patch_version:
+    description: 'Patch version of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_patch_version }}
+  new_release_channel:
+    description: 'Distribution channel of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_channel }}
+  new_release_notes:
+    description: 'Release notes for the new release.'
+    value: ${{ steps.semantic.outputs.new_release_notes }}
+  new_release_git_head:
+    description: 'Git SHA of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_git_head }}
+  new_release_git_tag:
+    description: 'Git tag of the new release.'
+    value: ${{ steps.semantic.outputs.new_release_git_tag }}
+  last_release_version:
+    description: 'Version of the previous release, if any.'
+    value: ${{ steps.semantic.outputs.last_release_version }}
+  last_release_git_head:
+    description: 'Git SHA of the previous release, if any.'
+    value: ${{ steps.semantic.outputs.last_release_git_head }}
+  last_release_git_tag:
+    description: 'Git tag of the previous release, if any.'
+    value: ${{ steps.semantic.outputs.last_release_git_tag }}
+
 runs:
   using: composite
 
