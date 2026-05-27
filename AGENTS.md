@@ -1,6 +1,54 @@
-# AGENTS.md
+# AGENTS Guide
 
-This file contains conventions for AI agents and contributors working in this repository.
+This file explains how coding agents should work in this repository.
+
+## General
+
+### Approach
+
+- Think before acting. Read existing files before writing code.
+- Be concise in output but thorough in reasoning.
+- Prefer editing over rewriting whole files.
+- Do not re-read files you have already read.
+- Test your code before declaring done.
+- No sycophantic openers or closing fluff.
+- Keep solutions simple and direct.
+- User instructions always override this file.
+
+### Output
+
+- Return code first. Explanation after, only if non-obvious.
+- No inline prose. Use comments sparingly - only where logic is unclear.
+- No boilerplate unless explicitly requested.
+
+### Code Rules
+
+- Simplest working solution. No over-engineering.
+- No abstractions for single-use operations.
+- No speculative features or "you might also want..."
+- Read the file before modifying it. Never edit blind.
+- No docstrings or type annotations on code not being changed.
+- No error handling for scenarios that cannot happen.
+- Three similar lines is better than a premature abstraction.
+
+### Review Rules
+
+- State the bug. Show the fix. Stop.
+- No suggestions beyond the scope of the review.
+- No compliments on the code before or after the review.
+
+### Debugging Rules
+
+- Never speculate about a bug without reading the relevant code first.
+- State what you found, where, and the fix. One pass.
+- If cause is unclear: say so. Do not guess.
+
+### Simple Formatting
+
+- No em dashes, smart quotes, or decorative Unicode symbols.
+- Plain hyphens and straight quotes only.
+- Natural language characters (accented letters, CJK, etc.) are fine when the content requires them.
+- Code output must be copy-paste safe.
 
 ## Project Overview
 
@@ -12,23 +60,6 @@ This repository contains reusable GitHub Actions:
 - `github-action-release`: Create semantic releases and maintain major/latest tags.
 - `hugo-theme-update`: Update Hugo modules and open an automated pull request.
 - `yarn-update`: Check for yarn updates and open an automated pull request.
-
-## Repository Structure
-
-```
-.github/
-  workflows/
-    force-release.yml       # Manual workflow to force a release on this repo
-    git_mirror.yml          # Mirrors this repo to GitLab/Codeberg
-    lint_build_publish.yml  # Main CI: prettier, build, test, publish on push to main
-    yarn_update.yml         # Scheduled yarn-update check for this repo
-coolify-deploy/             # TypeScript action (composite)
-force-release/              # TypeScript action (composite)
-git-mirror/                 # Pure composite action (no Node.js)
-github-action-release/      # Pure composite action (no Node.js)
-hugo-theme-update/          # TypeScript action (composite)
-yarn-update/                # TypeScript action (node24 runtime)
-```
 
 Each TypeScript action directory contains:
 
@@ -59,15 +90,6 @@ Actions that require Node.js logic are written in TypeScript:
 - **Invocation**: composite actions run the bundle via `node "${{ github.action_path }}/dist/index.js"`. The `yarn-update` action uses `using: node24` with `main: dist/index.js` directly.
 - **Inputs**: passed as `INPUT_<NAME>` env vars (uppercase, matching the action input name) and read with `@actions/core` `getInput()`.
 - **Formatting**: enforced by Prettier via `@ffflorian/prettier-config`. No ESLint.
-
-### Per-action build scripts
-
-| Action | Entry point | Build command |
-| --- | --- | --- |
-| `coolify-deploy` | `src/main.ts` | `esbuild src/main.ts --bundle --platform=node --target=node26 --outfile=dist/index.js` |
-| `force-release` | `src/index.ts` | `esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify` |
-| `hugo-theme-update` | `src/main.ts` | `esbuild src/main.ts --bundle --platform=node --target=node26 --outfile=dist/index.js` |
-| `yarn-update` | `src/index.ts` | `esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify` |
 
 ### Validation (run before committing)
 
