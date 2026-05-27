@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/ffflorian/actions/compare/v1.18.0...v1.18.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* **docker-image-release:** Extract metadata only once ([7af7ec5](https://github.com/ffflorian/actions/commit/7af7ec502279d6ad4e075c172e87a5cf9034088f))
+
 # [1.18.0](https://github.com/ffflorian/actions/compare/v1.17.0...v1.18.0) (2026-05-27)
 
 
