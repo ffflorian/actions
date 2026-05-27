@@ -1,3 +1,10 @@
+## [1.18.5](https://github.com/ffflorian/actions/compare/v1.18.4...v1.18.5) (2026-05-27)
+
+
+### Bug Fixes
+
+* **docker-image-release:** Correct semantic-release config ([98f6878](https://github.com/ffflorian/actions/commit/98f68781b63ff983c04aa2373b6fe7ddc5167df8))
+
 ## [1.18.4](https://github.com/ffflorian/actions/compare/v1.18.3...v1.18.4) (2026-05-27)
 
 
