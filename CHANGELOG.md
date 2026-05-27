@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/ffflorian/actions/compare/v1.15.0...v1.16.0) (2026-05-27)
+
+
+### Features
+
+* **force-release:** Rewrite in TypeScript and run semantic-release ([#32](https://github.com/ffflorian/actions/issues/32)) ([28da486](https://github.com/ffflorian/actions/commit/28da486e68caec9e6829fae8ddb6773bf9896a24))
+
 # [1.15.0](https://github.com/ffflorian/actions/compare/v1.14.2...v1.15.0) (2026-05-25)
 
 
