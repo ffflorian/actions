@@ -1,3 +1,10 @@
+## [1.18.3](https://github.com/ffflorian/actions/compare/v1.18.2...v1.18.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* **docker-image-release:** Only publish Docker image if a new version was released ([677199e](https://github.com/ffflorian/actions/commit/677199e3c429c74e8033943099881f7fc6260700))
+
 ## [1.18.2](https://github.com/ffflorian/actions/compare/v1.18.1...v1.18.2) (2026-05-27)
 
 
