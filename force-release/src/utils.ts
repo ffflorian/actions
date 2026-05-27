@@ -61,18 +61,30 @@ export function findReleaseTarget(workspace: string): ReleaseTarget {
 
   const packageJsonPath = path.join(workspace, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
-    throw new Error(
-      `No release configuration found. Expected ${releaseRcPath} or ${packageJsonPath} with a release entry.`
-    );
+    const document: JsonObject = {};
+    return {
+      config: document,
+      document,
+      path: releaseRcPath,
+      source: '.releaserc.json',
+    };
   }
 
   const document = readJsonObject(packageJsonPath, 'package.json');
   const releaseConfig = document['release'];
 
+  if (releaseConfig === undefined) {
+    const newDocument: JsonObject = {};
+    return {
+      config: newDocument,
+      document: newDocument,
+      path: releaseRcPath,
+      source: '.releaserc.json',
+    };
+  }
+
   if (!isJsonObject(releaseConfig)) {
-    throw new Error(
-      `No release configuration found. Expected ${releaseRcPath} or a JSON object in package.json#release.`
-    );
+    throw new Error(`package.json#release must contain a JSON object when it is present.`);
   }
 
   return {

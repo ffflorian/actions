@@ -100,6 +100,22 @@ describe('run', () => {
     });
   });
 
+  it('creates .releaserc.json when no release config exists', async () => {
+    const workspace = createWorkspace();
+    process.env['GITHUB_WORKSPACE'] = workspace;
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
+
+    const {run} = await import('../index');
+    await run();
+
+    const releaseConfig = JSON.parse(fs.readFileSync(path.join(workspace, '.releaserc.json'), 'utf8')) as {
+      releaseRules: unknown[];
+    };
+
+    expect(releaseConfig.releaseRules).toHaveLength(9);
+    expect(mockExec).toHaveBeenCalledWith('git', ['add', '.releaserc.json'], {cwd: workspace});
+  });
+
   it('reports failures when run as the entrypoint', async () => {
     setupInputs({git_authorship: 'invalid'});
     const workspace = createWorkspace();

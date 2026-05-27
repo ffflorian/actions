@@ -48,7 +48,7 @@ permissions:
 }
 ```
 
-The action prefers `.releaserc.json` when both files exist. If that file is missing, it updates `package.json#release`. The action fails if neither release configuration is present.
+The action prefers `.releaserc.json` when both files exist. If that file is missing, it updates `package.json#release`. If neither release configuration exists, the action creates a new `.releaserc.json`.
 
 ## Usage
 

@@ -45,6 +45,26 @@ describe('findReleaseTarget', () => {
     expect(target.source).toBe('package.json');
     expect(target.config).toEqual({branches: ['main']});
   });
+
+  it('creates a new .releaserc.json target when no release config exists', () => {
+    const workspace = createWorkspace();
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
+
+    const target = findReleaseTarget(workspace);
+
+    expect(target.source).toBe('.releaserc.json');
+    expect(target.path).toBe(path.join(workspace, '.releaserc.json'));
+    expect(target.config).toEqual({});
+  });
+
+  it('fails when package.json#release is present but invalid', () => {
+    const workspace = createWorkspace();
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo', release: true}, null, 2));
+
+    expect(() => findReleaseTarget(workspace)).toThrow(
+      'package.json#release must contain a JSON object when it is present.'
+    );
+  });
 });
 
 describe('updateReleaseRules', () => {
@@ -100,5 +120,21 @@ describe('updateReleaseRules', () => {
       source: 'package.json',
     });
     expect(saved.release.releaseRules).toEqual(RELEASE_RULES);
+  });
+
+  it('creates .releaserc.json when no release config exists', () => {
+    const workspace = createWorkspace();
+    const releaseRcPath = path.join(workspace, '.releaserc.json');
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
+
+    const result = updateReleaseRules(workspace);
+    const saved = JSON.parse(fs.readFileSync(releaseRcPath, 'utf8')) as {releaseRules: unknown};
+
+    expect(result).toEqual({
+      changed: true,
+      path: releaseRcPath,
+      source: '.releaserc.json',
+    });
+    expect(saved.releaseRules).toEqual(RELEASE_RULES);
   });
 });
