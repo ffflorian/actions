@@ -7,6 +7,7 @@ A collection of GitHub Actions for use in my projects.
 | Action | Purpose | Documentation |
 | --- | --- | --- |
 | `coolify-deploy` | Trigger a Coolify deployment and optionally wait for completion. | [coolify-deploy/README.md](coolify-deploy/README.md) |
+| `docker-image-release` | Create semantic releases and publish Docker images to GHCR. | [docker-image-release/README.md](docker-image-release/README.md) |
 | `force-release` | Force a release by updating semantic-release release rules and running semantic-release. | [force-release/README.md](force-release/README.md) |
 | `git-mirror` | Mirror a repository to GitLab and/or Codeberg over SSH. | [git-mirror/README.md](git-mirror/README.md) |
 | `github-action-release` | Create semantic releases and maintain major/latest tags. | [github-action-release/README.md](github-action-release/README.md) |
@@ -28,6 +29,7 @@ jobs:
 Replace `<action-name>` with one of:
 
 - `coolify-deploy`
+- `docker-image-release`
 - `force-release`
 - `git-mirror`
 - `github-action-release`
