@@ -1,3 +1,10 @@
+## [1.18.4](https://github.com/ffflorian/actions/compare/v1.18.3...v1.18.4) (2026-05-27)
+
+
+### Bug Fixes
+
+* **github-action-release:** Correct semantic-release-config ([8fc4912](https://github.com/ffflorian/actions/commit/8fc4912701e6e2df9fcf48043aedce072980a48b))
+
 ## [1.18.3](https://github.com/ffflorian/actions/compare/v1.18.2...v1.18.3) (2026-05-27)
 
 
