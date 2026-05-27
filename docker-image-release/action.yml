@@ -108,6 +108,7 @@ runs:
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
 
     - name: Extract Docker metadata
+      if: steps.semantic.outputs.new_release_version != ''
       id: docker-meta
       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
       with:
@@ -116,6 +117,7 @@ runs:
           type=raw,value=latest,enable=true
 
     - name: Build and push Docker image
+      if: steps.semantic.outputs.new_release_version != ''
       uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
       with:
         context: .
