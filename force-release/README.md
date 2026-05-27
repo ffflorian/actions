@@ -1,22 +1,23 @@
 # Force Release Action
 
-Forces a release by committing to the repository.
+Forces a release by updating semantic-release release rules and running semantic-release.
 
 ## What It Does
 
 - Checks out the repository.
 - Configures the git author and committer.
-- Finds all `package.json` files in the repository (excluding `node_modules`) and writes a `.force-release` timestamp file into each package directory. This ensures `multi-semantic-release` detects per-package changes and triggers a release for every package.
-- Pushes the release commit to the current branch, triggering the release pipeline.
-- Immediately follows up with a second `chore:` commit that removes all `.force-release` files, so they don't stay in the repository long-term. The `chore:` prefix ensures this cleanup commit does not trigger another release.
+- Reads the repository root `.releaserc.json` or the `release` entry in the root `package.json`.
+- Replaces `releaseRules` with the following configuration so `feat` triggers a minor release and `fix`, `perf`, `revert`, `docs`, `style`, `refactor`, `ci`, and `chore` trigger patch releases.
+- Runs semantic-release using the configured command.
+- Restores the original release config file after semantic-release completes.
 
 ## Inputs
 
-| Name             | Required | Default              | Description                                       |
-| ---------------- | -------- | -------------------- | ------------------------------------------------- |
-| `GITHUB_TOKEN`   | Yes      | -                    | GitHub token used to push the release commit.     |
-| `commit_message` | No       | `fix: Force release` | The commit message for the release commit.        |
-| `git_authorship` | Yes      | -                    | Commit author/committer in format `Name <email>`. |
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| `GITHUB_TOKEN` | Yes | - | GitHub token used to check out the repository and run semantic-release. |
+| `run_command` | No | `npx --no semantic-release` | Command used to run semantic-release. |
+| `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
 
 ## Outputs
 
@@ -28,6 +29,26 @@ None
 permissions:
   contents: write
 ```
+
+## Release Rules Applied
+
+```json
+{
+  "releaseRules": [
+    {"type": "chore", "release": "patch"},
+    {"type": "ci", "release": "patch"},
+    {"type": "docs", "release": "patch"},
+    {"type": "feat", "release": "minor"},
+    {"type": "fix", "release": "patch"},
+    {"type": "perf", "release": "patch"},
+    {"type": "refactor", "release": "patch"},
+    {"type": "revert", "release": "patch"},
+    {"type": "style", "release": "patch"}
+  ]
+}
+```
+
+The action prefers `.releaserc.json` when both files exist. If that file is missing, it updates `package.json#release`. If neither release configuration exists, the action creates a new temporary `.releaserc.json` for the semantic-release run.
 
 ## Usage
 
