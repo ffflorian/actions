@@ -1,17 +1,17 @@
 ---
 name: Force Release
-description: Update semantic-release release rules and push a release commit
+description: Update semantic-release release rules and run semantic-release
 author: 'Florian Imdahl <git@ffflorian.de>'
 branding: {icon: 'git-commit', color: 'blue'}
 
 inputs:
   GITHUB_TOKEN:
-    description: 'GitHub token used to check out the repository and push the release commit.'
+    description: 'GitHub token used to check out the repository and run semantic-release.'
     required: true
-  commit_message:
-    description: 'The commit message to use for the release commit.'
+  run_command:
+    description: 'Command to execute semantic-release.'
     required: false
-    default: 'chore: Force release'
+    default: 'npx semantic-release'
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
@@ -34,6 +34,6 @@ runs:
       shell: bash
       env:
         INPUT_GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        INPUT_RUN_COMMAND: ${{ inputs.run_command }}
         INPUT_GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
       run: node "${{ github.action_path }}/dist/index.js"

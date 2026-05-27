@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import * as path from 'node:path';
-import {updateReleaseRules} from './utils.js';
+import {prepareReleaseConfig} from './utils.js';
 
 function parseGitAuthorship(gitAuthorship: string): {name: string; email: string} {
   const match = /^(.+?)\s*<(.+?)>$/.exec(gitAuthorship);
@@ -15,23 +14,37 @@ function parseGitAuthorship(gitAuthorship: string): {name: string; email: string
 }
 
 export async function run(): Promise<void> {
-  const commitMessage = core.getInput('commit_message') || 'chore: Force release';
+  const token = core.getInput('GITHUB_TOKEN', {required: true});
   const gitAuthorship = core.getInput('git_authorship', {required: true});
+  const runCommand = core.getInput('run_command') || 'npx semantic-release';
   const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
   const {name, email} = parseGitAuthorship(gitAuthorship);
-  const {changed, path: configPath, source} = updateReleaseRules(workspace);
-  const relativeConfigPath = path.relative(workspace, configPath) || path.basename(configPath);
+  const releaseConfig = prepareReleaseConfig(workspace);
 
-  core.info(`Updated release rules in ${source}.`);
-  if (!changed) {
-    core.info('releaseRules already matched the required configuration; creating an empty release commit.');
+  core.info(`Prepared release rules in ${releaseConfig.source}.`);
+  if (!releaseConfig.changed) {
+    core.info('releaseRules already matched the required configuration.');
   }
 
   await exec.exec('git', ['config', 'user.name', name], {cwd: workspace});
   await exec.exec('git', ['config', 'user.email', email], {cwd: workspace});
-  await exec.exec('git', ['add', relativeConfigPath], {cwd: workspace});
-  await exec.exec('git', ['commit', '--allow-empty', '-m', commitMessage], {cwd: workspace});
-  await exec.exec('git', ['push', 'origin', 'HEAD'], {cwd: workspace});
+  core.info(`Running release command: ${runCommand}`);
+
+  try {
+    await exec.exec('bash', ['-lc', runCommand], {
+      cwd: workspace,
+      env: {
+        ...process.env,
+        GITHUB_TOKEN: token,
+        GIT_AUTHOR_NAME: name,
+        GIT_AUTHOR_EMAIL: email,
+        GIT_COMMITTER_NAME: name,
+        GIT_COMMITTER_EMAIL: email,
+      },
+    });
+  } finally {
+    releaseConfig.restore();
+  }
 }
 
 if (require.main === module) {

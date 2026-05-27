@@ -7,7 +7,7 @@ A collection of GitHub Actions for use in my projects.
 | Action | Purpose | Documentation |
 | --- | --- | --- |
 | `coolify-deploy` | Trigger a Coolify deployment and optionally wait for completion. | [coolify-deploy/README.md](coolify-deploy/README.md) |
-| `force-release` | Force a release by updating semantic-release release rules and pushing a release commit. | [force-release/README.md](force-release/README.md) |
+| `force-release` | Force a release by updating semantic-release release rules and running semantic-release. | [force-release/README.md](force-release/README.md) |
 | `git-mirror` | Mirror a repository to GitLab and/or Codeberg over SSH. | [git-mirror/README.md](git-mirror/README.md) |
 | `github-action-release` | Create semantic releases and maintain major/latest tags. | [github-action-release/README.md](github-action-release/README.md) |
 | `hugo-theme-update` | Update Hugo module dependencies and open a pull request when updates are found. | [hugo-theme-update/README.md](hugo-theme-update/README.md) |

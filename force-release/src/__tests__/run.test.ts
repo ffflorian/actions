@@ -23,8 +23,8 @@ function createWorkspace(): string {
 function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
     GITHUB_TOKEN: 'token',
-    commit_message: 'chore: Force release',
     git_authorship: 'Florian Imdahl <git@ffflorian.de>',
+    run_command: 'npx semantic-release',
   };
 
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
@@ -48,10 +48,12 @@ afterEach(() => {
 });
 
 describe('run', () => {
-  it('updates .releaserc.json and pushes a commit', async () => {
+  it('prepares release config and runs semantic-release command', async () => {
     const workspace = createWorkspace();
     process.env['GITHUB_WORKSPACE'] = workspace;
-    fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
+    const configPath = path.join(workspace, '.releaserc.json');
+    const original = JSON.stringify({branches: ['main']}, null, 2);
+    fs.writeFileSync(configPath, original);
 
     const {run} = await import('../index');
     await run();
@@ -59,48 +61,42 @@ describe('run', () => {
     expect(mockExec.mock.calls).toEqual([
       ['git', ['config', 'user.name', 'Florian Imdahl'], {cwd: workspace}],
       ['git', ['config', 'user.email', 'git@ffflorian.de'], {cwd: workspace}],
-      ['git', ['add', '.releaserc.json'], {cwd: workspace}],
-      ['git', ['commit', '--allow-empty', '-m', 'chore: Force release'], {cwd: workspace}],
-      ['git', ['push', 'origin', 'HEAD'], {cwd: workspace}],
+      [
+        'bash',
+        ['-lc', 'npx semantic-release'],
+        {
+          cwd: workspace,
+          env: expect.objectContaining({
+            GITHUB_TOKEN: 'token',
+            GIT_AUTHOR_NAME: 'Florian Imdahl',
+            GIT_AUTHOR_EMAIL: 'git@ffflorian.de',
+            GIT_COMMITTER_NAME: 'Florian Imdahl',
+            GIT_COMMITTER_EMAIL: 'git@ffflorian.de',
+          }),
+        },
+      ],
     ]);
+    expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
-  it('creates an empty commit when releaseRules already match', async () => {
+  it('uses a custom release command input', async () => {
     const workspace = createWorkspace();
     process.env['GITHUB_WORKSPACE'] = workspace;
-    fs.writeFileSync(
-      path.join(workspace, 'package.json'),
-      JSON.stringify(
-        {
-          name: 'demo',
-          release: {
-            releaseRules: [
-              {type: 'feat', release: 'minor'},
-              {type: 'fix', release: 'patch'},
-              {type: 'perf', release: 'patch'},
-              {type: 'revert', release: 'patch'},
-              {type: 'docs', release: 'patch'},
-              {type: 'style', release: 'patch'},
-              {type: 'refactor', release: 'patch'},
-              {type: 'ci', release: 'patch'},
-              {type: 'chore', release: 'patch'},
-            ],
-          },
-        },
-        null,
-        2
-      )
-    );
+    setupInputs({run_command: 'npx semantic-release --dry-run'});
+    fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
 
     const {run} = await import('../index');
     await run();
 
-    expect(mockExec).toHaveBeenCalledWith('git', ['commit', '--allow-empty', '-m', 'chore: Force release'], {
+    expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx semantic-release --dry-run'], {
       cwd: workspace,
+      env: expect.objectContaining({
+        GITHUB_TOKEN: 'token',
+      }),
     });
   });
 
-  it('creates .releaserc.json when no release config exists', async () => {
+  it('creates and removes .releaserc.json when no release config exists', async () => {
     const workspace = createWorkspace();
     process.env['GITHUB_WORKSPACE'] = workspace;
     fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
@@ -108,12 +104,25 @@ describe('run', () => {
     const {run} = await import('../index');
     await run();
 
-    const releaseConfig = JSON.parse(fs.readFileSync(path.join(workspace, '.releaserc.json'), 'utf8')) as {
-      releaseRules: unknown[];
-    };
+    expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
+  });
 
-    expect(releaseConfig.releaseRules).toHaveLength(9);
-    expect(mockExec).toHaveBeenCalledWith('git', ['add', '.releaserc.json'], {cwd: workspace});
+  it('restores release config when semantic-release command fails', async () => {
+    const workspace = createWorkspace();
+    process.env['GITHUB_WORKSPACE'] = workspace;
+    const configPath = path.join(workspace, '.releaserc.json');
+    const original = JSON.stringify({branches: ['main']}, null, 2);
+    fs.writeFileSync(configPath, original);
+    mockExec.mockImplementation(async (command: string) => {
+      if (command === 'bash') {
+        throw new Error('semantic-release failed');
+      }
+      return 0;
+    });
+
+    const {run} = await import('../index');
+    await expect(run()).rejects.toThrow('semantic-release failed');
+    expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
   it('reports failures when run as the entrypoint', async () => {

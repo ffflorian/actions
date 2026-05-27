@@ -13,6 +13,13 @@ export interface ReleaseTarget {
   source: '.releaserc.json' | 'package.json';
 }
 
+export interface PreparedReleaseConfig {
+  changed: boolean;
+  path: string;
+  source: ReleaseTarget['source'];
+  restore: () => void;
+}
+
 export const RELEASE_RULES = [
   {type: 'feat', release: 'minor'},
   {type: 'fix', release: 'patch'},
@@ -95,12 +102,10 @@ export function findReleaseTarget(workspace: string): ReleaseTarget {
   };
 }
 
-export function updateReleaseRules(workspace: string): {
-  changed: boolean;
-  path: string;
-  source: ReleaseTarget['source'];
-} {
+export function prepareReleaseConfig(workspace: string): PreparedReleaseConfig {
   const target = findReleaseTarget(workspace);
+  const originalExists = fs.existsSync(target.path);
+  const originalContent = originalExists ? fs.readFileSync(target.path, 'utf8') : null;
   const nextRules = RELEASE_RULES.map(rule => ({...rule}));
   const changed = JSON.stringify(target.config['releaseRules']) !== JSON.stringify(nextRules);
 
@@ -111,5 +116,15 @@ export function updateReleaseRules(workspace: string): {
     changed,
     path: target.path,
     source: target.source,
+    restore: () => {
+      if (originalContent === null) {
+        if (fs.existsSync(target.path)) {
+          fs.rmSync(target.path);
+        }
+        return;
+      }
+
+      fs.writeFileSync(target.path, originalContent);
+    },
   };
 }

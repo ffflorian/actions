@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {afterEach, describe, expect, it} from 'vitest';
-import {RELEASE_RULES, findReleaseTarget, updateReleaseRules} from '../utils';
+import {RELEASE_RULES, findReleaseTarget, prepareReleaseConfig} from '../utils';
 
 const tempDirs: string[] = [];
 
@@ -67,74 +67,82 @@ describe('findReleaseTarget', () => {
   });
 });
 
-describe('updateReleaseRules', () => {
-  it('replaces releaseRules in .releaserc.json', () => {
+describe('prepareReleaseConfig', () => {
+  it('replaces releaseRules in .releaserc.json and restores it', () => {
     const workspace = createWorkspace();
     const configPath = path.join(workspace, '.releaserc.json');
-    fs.writeFileSync(
-      configPath,
-      JSON.stringify(
-        {
-          branches: ['main'],
-          releaseRules: [{type: 'build', release: 'patch'}],
-        },
-        null,
-        2
-      )
+    const original = JSON.stringify(
+      {
+        branches: ['main'],
+        releaseRules: [{type: 'build', release: 'patch'}],
+      },
+      null,
+      2
     );
+    fs.writeFileSync(configPath, original);
 
-    const result = updateReleaseRules(workspace);
+    const result = prepareReleaseConfig(workspace);
     const saved = JSON.parse(fs.readFileSync(configPath, 'utf8')) as {releaseRules: unknown};
 
     expect(result).toEqual({
       changed: true,
       path: configPath,
       source: '.releaserc.json',
+      restore: expect.any(Function),
     });
     expect(saved.releaseRules).toEqual(RELEASE_RULES);
+
+    result.restore();
+    expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
-  it('updates package.json release rules and reports unchanged configs', () => {
+  it('updates package.json release rules and restores file content', () => {
     const workspace = createWorkspace();
     const packageJsonPath = path.join(workspace, 'package.json');
-    fs.writeFileSync(
-      packageJsonPath,
-      JSON.stringify(
-        {
-          name: 'demo',
-          release: {
-            releaseRules: RELEASE_RULES,
-          },
+    const original = JSON.stringify(
+      {
+        name: 'demo',
+        release: {
+          releaseRules: RELEASE_RULES,
         },
-        null,
-        2
-      )
+      },
+      null,
+      2
     );
+    fs.writeFileSync(packageJsonPath, original);
 
-    const result = updateReleaseRules(workspace);
+    const result = prepareReleaseConfig(workspace);
     const saved = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {release: {releaseRules: unknown}};
 
     expect(result).toEqual({
       changed: false,
       path: packageJsonPath,
       source: 'package.json',
+      restore: expect.any(Function),
     });
     expect(saved.release.releaseRules).toEqual(RELEASE_RULES);
+
+    result.restore();
+    expect(fs.readFileSync(packageJsonPath, 'utf8')).toBe(original);
   });
 
-  it('creates .releaserc.json when no release config exists', () => {
+  it('creates and removes .releaserc.json when no release config exists', () => {
     const workspace = createWorkspace();
     const releaseRcPath = path.join(workspace, '.releaserc.json');
     fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
 
-    const result = updateReleaseRules(workspace);
+    const result = prepareReleaseConfig(workspace);
     const saved = JSON.parse(fs.readFileSync(releaseRcPath, 'utf8')) as {releaseRules: unknown};
 
     expect(result).toEqual({
       changed: true,
       path: releaseRcPath,
       source: '.releaserc.json',
+      restore: expect.any(Function),
     });
     expect(saved.releaseRules).toEqual(RELEASE_RULES);
+
+    result.restore();
+    expect(fs.existsSync(releaseRcPath)).toBe(false);
   });
 });

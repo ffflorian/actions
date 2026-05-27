@@ -3,7 +3,7 @@
     "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0"
   },
-  "description": "GitHub Action which updates semantic-release rules and pushes a release commit",
+  "description": "GitHub Action which updates semantic-release rules and runs semantic-release",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
     "@types/node": "25.9.1",
