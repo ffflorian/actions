@@ -81,7 +81,7 @@ runs:
               '@semantic-release/github',
               {
                 releasedLabels: false,
-                successComment: false,
+                successCommentCondition: false,
               },
             ],
             [

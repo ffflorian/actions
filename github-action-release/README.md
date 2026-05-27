@@ -28,6 +28,7 @@ None
 ```yaml
 permissions:
   contents: write
+  issues: write
 ```
 
 ## Usage

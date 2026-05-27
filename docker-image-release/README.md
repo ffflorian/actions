@@ -30,6 +30,7 @@ None
 permissions:
   contents: write
   packages: write
+  issues: write
 ```
 
 ## Usage
