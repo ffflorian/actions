@@ -18,6 +18,10 @@ inputs:
     description: 'Newline-separated list of files to include in the release commit.'
     required: false
     default: 'CHANGELOG.md'
+  image_name:
+    description: 'The name of the Docker image to publish.'
+    required: false
+    default: '${{ github.repository }}'
 
 runs:
   using: composite
@@ -116,13 +120,13 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.GITHUB_TOKEN }}
 
     - name: Extract Docker metadata
       id: docker-meta
       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
       with:
-        images: ghcr.io/${{ github.repository }}
+        images: ghcr.io/${{ inputs.image_name }}
         tags: |
           type=raw,value=latest,enable=true
 
@@ -132,6 +136,6 @@ runs:
         context: .
         push: true
         tags: |
-          ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
-          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ inputs.image_name }}:${{ steps.semantic.outputs.new_release_version }}
+          ghcr.io/${{ inputs.image_name }}:latest
         labels: ${{ steps.docker-meta.outputs.labels }}
