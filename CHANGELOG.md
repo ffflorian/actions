@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/ffflorian/actions/compare/v1.18.6...v1.19.0) (2026-05-27)
+
+
+### Features
+
+* **docker-image-release:** Expose semantic-release outputs ([#34](https://github.com/ffflorian/actions/issues/34)) ([ddc0229](https://github.com/ffflorian/actions/commit/ddc0229952ce255a0f9cf64174504be47b355054))
+
 ## [1.18.6](https://github.com/ffflorian/actions/compare/v1.18.5...v1.18.6) (2026-05-27)
 
 
