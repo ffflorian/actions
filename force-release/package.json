@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/exec": "3.0.0"
+  },
+  "description": "GitHub Action which updates semantic-release rules and pushes a release commit",
+  "devDependencies": {
+    "@ffflorian/prettier-config": "0.8.2",
+    "@types/node": "25.9.1",
+    "esbuild": "0.28.0",
+    "prettier": "3.8.3",
+    "typescript": "6.0.3",
+    "vitest": "4.1.7"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "dist/index.js",
+  "name": "force-release-action",
+  "packageManager": "yarn@4.14.1",
+  "prettier": "@ffflorian/prettier-config",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify",
+    "format:check": "prettier --list-different \"src/**/*.ts\"",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
+  },
+  "version": "1.0.0"
+}
