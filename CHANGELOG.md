@@ -1,3 +1,10 @@
+## [1.18.6](https://github.com/ffflorian/actions/compare/v1.18.5...v1.18.6) (2026-05-27)
+
+
+### Bug Fixes
+
+* Release config and readme ([6d2e516](https://github.com/ffflorian/actions/commit/6d2e5164d14eefab6cb76fd166171867242eb988))
+
 ## [1.18.5](https://github.com/ffflorian/actions/compare/v1.18.4...v1.18.5) (2026-05-27)
 
 
