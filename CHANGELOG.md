@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/ffflorian/actions/compare/v1.18.1...v1.18.2) (2026-05-27)
+
+
+### Bug Fixes
+
+* **docker-image-release,github-action-release:** Add GitHub token to environment ([2162304](https://github.com/ffflorian/actions/commit/216230437cca7f50c9b8ed0492b75be089f36f13))
+
 ## [1.18.1](https://github.com/ffflorian/actions/compare/v1.18.0...v1.18.1) (2026-05-27)
 
 
