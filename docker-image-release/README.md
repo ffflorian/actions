@@ -6,16 +6,15 @@ Creates a GitHub release using semantic-release and publishes a Docker image to 
 
 - Checks out the repository.
 - Logs in to GitHub Container Registry.
-- Extracts Docker metadata (`latest` on `main`, plus `sha` tag).
+- Extracts Docker metadata for image labels.
 - Creates a `.releaserc.json` for semantic-release.
 - Runs [semantic-release](https://github.com/semantic-release/semantic-release).
-- Publishes a Docker image with metadata tags and the new release version tag.
+- Publishes a Docker image with `latest` and the new release version tag.
 
 ## Inputs
 
 | Name            | Required | Default        | Description                                                       |
 | --------------- | -------- | -------------- | ----------------------------------------------------------------- |
-| `dry_run`       | No       | `false`        | If `true`, simulates release and docker publish steps.            |
 | `GITHUB_TOKEN`  | Yes      | -              | Token used by semantic-release and GHCR publish.                  |
 | `git_author`    | Yes      | -              | Git author/committer name used for release commits.               |
 | `git_email`     | Yes      | -              | Git author/committer email used for release commits.              |
@@ -56,5 +55,4 @@ jobs:
           git_email: git@ffflorian.de
           publish_files: |
             CHANGELOG.md
-          dry_run: 'false'
 ```
