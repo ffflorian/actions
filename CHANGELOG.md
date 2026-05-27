@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/ffflorian/actions/compare/v1.17.0...v1.18.0) (2026-05-27)
+
+
+### Features
+
+* **docker-image-release:** Add input for docker image name ([e8f6fce](https://github.com/ffflorian/actions/commit/e8f6fce325eb3650f7df5a87e041d3b9f2a73758))
+
 # [1.17.0](https://github.com/ffflorian/actions/compare/v1.16.1...v1.17.0) (2026-05-27)
 
 
