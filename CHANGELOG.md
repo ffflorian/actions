@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/ffflorian/actions/compare/v1.16.1...v1.17.0) (2026-05-27)
+
+
+### Features
+
+* **docker-image-release:** Add docker-image-release action ([#33](https://github.com/ffflorian/actions/issues/33)) ([aecb72a](https://github.com/ffflorian/actions/commit/aecb72a877d51a3a8fc65c5bd0b4d9642e9843e6))
+
 ## [1.16.1](https://github.com/ffflorian/actions/compare/v1.16.0...v1.16.1) (2026-05-27)
 
 
