@@ -26,40 +26,40 @@ inputs:
 outputs:
   new_release_published:
     description: 'Whether semantic-release published a new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_published }}
+    value: ${{ steps.semantic.outputs.new_release_published }}
   new_release_version:
     description: 'Version of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_version }}
+    value: ${{ steps.semantic.outputs.new_release_version }}
   new_release_major_version:
     description: 'Major version of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_major_version }}
+    value: ${{ steps.semantic.outputs.new_release_major_version }}
   new_release_minor_version:
     description: 'Minor version of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_minor_version }}
+    value: ${{ steps.semantic.outputs.new_release_minor_version }}
   new_release_patch_version:
     description: 'Patch version of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_patch_version }}
+    value: ${{ steps.semantic.outputs.new_release_patch_version }}
   new_release_channel:
     description: 'Distribution channel of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_channel }}
+    value: ${{ steps.semantic.outputs.new_release_channel }}
   new_release_notes:
     description: 'Release notes for the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_notes }}
+    value: ${{ steps.semantic.outputs.new_release_notes }}
   new_release_git_head:
     description: 'Git SHA of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_git_head }}
+    value: ${{ steps.semantic.outputs.new_release_git_head }}
   new_release_git_tag:
     description: 'Git tag of the new release.'
-    value: ${{ steps.semantic-result.outputs.new_release_git_tag }}
+    value: ${{ steps.semantic.outputs.new_release_git_tag }}
   last_release_version:
     description: 'Version of the previous release, if any.'
-    value: ${{ steps.semantic-result.outputs.last_release_version }}
+    value: ${{ steps.semantic.outputs.last_release_version }}
   last_release_git_head:
     description: 'Git SHA of the previous release, if any.'
-    value: ${{ steps.semantic-result.outputs.last_release_git_head }}
+    value: ${{ steps.semantic.outputs.last_release_git_head }}
   last_release_git_tag:
     description: 'Git tag of the previous release, if any.'
-    value: ${{ steps.semantic-result.outputs.last_release_git_tag }}
+    value: ${{ steps.semantic.outputs.last_release_git_tag }}
 
 runs:
   using: composite
@@ -144,40 +144,6 @@ runs:
         GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
-
-    - name: Export semantic-release outputs
-      id: semantic-result
-      shell: bash
-      env:
-        NEW_RELEASE_PUBLISHED: ${{ steps.semantic.outputs.new_release_published }}
-        NEW_RELEASE_VERSION: ${{ steps.semantic.outputs.new_release_version }}
-        NEW_RELEASE_MAJOR_VERSION: ${{ steps.semantic.outputs.new_release_major_version }}
-        NEW_RELEASE_MINOR_VERSION: ${{ steps.semantic.outputs.new_release_minor_version }}
-        NEW_RELEASE_PATCH_VERSION: ${{ steps.semantic.outputs.new_release_patch_version }}
-        NEW_RELEASE_CHANNEL: ${{ steps.semantic.outputs.new_release_channel }}
-        NEW_RELEASE_NOTES: ${{ steps.semantic.outputs.new_release_notes }}
-        NEW_RELEASE_GIT_HEAD: ${{ steps.semantic.outputs.new_release_git_head }}
-        NEW_RELEASE_GIT_TAG: ${{ steps.semantic.outputs.new_release_git_tag }}
-        LAST_RELEASE_VERSION: ${{ steps.semantic.outputs.last_release_version }}
-        LAST_RELEASE_GIT_HEAD: ${{ steps.semantic.outputs.last_release_git_head }}
-        LAST_RELEASE_GIT_TAG: ${{ steps.semantic.outputs.last_release_git_tag }}
-      run: |
-        delimiter="EOF_$(date +%s%N)"
-
-        {
-          printf 'new_release_published=%s\n' "$NEW_RELEASE_PUBLISHED"
-          printf 'new_release_version=%s\n' "$NEW_RELEASE_VERSION"
-          printf 'new_release_major_version=%s\n' "$NEW_RELEASE_MAJOR_VERSION"
-          printf 'new_release_minor_version=%s\n' "$NEW_RELEASE_MINOR_VERSION"
-          printf 'new_release_patch_version=%s\n' "$NEW_RELEASE_PATCH_VERSION"
-          printf 'new_release_channel=%s\n' "$NEW_RELEASE_CHANNEL"
-          printf 'new_release_git_head=%s\n' "$NEW_RELEASE_GIT_HEAD"
-          printf 'new_release_git_tag=%s\n' "$NEW_RELEASE_GIT_TAG"
-          printf 'last_release_version=%s\n' "$LAST_RELEASE_VERSION"
-          printf 'last_release_git_head=%s\n' "$LAST_RELEASE_GIT_HEAD"
-          printf 'last_release_git_tag=%s\n' "$LAST_RELEASE_GIT_TAG"
-          printf 'new_release_notes<<%s\n%s\n%s\n' "$delimiter" "$NEW_RELEASE_NOTES" "$delimiter"
-        } >>"$GITHUB_OUTPUT"
 
     - name: Extract Docker metadata
       if: steps.semantic.outputs.new_release_version != ''
