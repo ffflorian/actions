@@ -124,8 +124,7 @@ runs:
        with:
          images: ghcr.io/${{ github.repository }}
          tags: |
-           type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-           type=sha
+           type=raw,value=latest,enable=true
 
      - name: Build and push Docker image
        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
@@ -133,6 +132,6 @@ runs:
          context: .
          push: true
          tags: |
-           ${{ steps.docker-meta.outputs.tags }}
            ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+           ghcr.io/${{ github.repository }}:latest
          labels: ${{ steps.docker-meta.outputs.labels }}
