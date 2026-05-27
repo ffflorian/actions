@@ -16,7 +16,7 @@ function parseGitAuthorship(gitAuthorship: string): {name: string; email: string
 export async function run(): Promise<void> {
   const token = core.getInput('GITHUB_TOKEN', {required: true});
   const gitAuthorship = core.getInput('git_authorship', {required: true});
-  const runCommand = core.getInput('run_command') || 'npx semantic-release';
+  const runCommand = core.getInput('run_command') || 'npx --no semantic-release';
   const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
   const {name, email} = parseGitAuthorship(gitAuthorship);
   const releaseConfig = prepareReleaseConfig(workspace);

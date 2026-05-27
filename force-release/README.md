@@ -16,7 +16,7 @@ Forces a release by updating semantic-release release rules and running semantic
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
 | `GITHUB_TOKEN` | Yes | - | GitHub token used to check out the repository and run semantic-release. |
-| `run_command` | No | `npx semantic-release` | Command used to run semantic-release. |
+| `run_command` | No | `npx --no semantic-release` | Command used to run semantic-release. |
 | `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
 
 ## Outputs
@@ -35,15 +35,15 @@ permissions:
 ```json
 {
   "releaseRules": [
+    {"type": "chore", "release": "patch"},
+    {"type": "ci", "release": "patch"},
+    {"type": "docs", "release": "patch"},
     {"type": "feat", "release": "minor"},
     {"type": "fix", "release": "patch"},
     {"type": "perf", "release": "patch"},
-    {"type": "revert", "release": "patch"},
-    {"type": "docs", "release": "patch"},
-    {"type": "style", "release": "patch"},
     {"type": "refactor", "release": "patch"},
-    {"type": "ci", "release": "patch"},
-    {"type": "chore", "release": "patch"}
+    {"type": "revert", "release": "patch"},
+    {"type": "style", "release": "patch"}
   ]
 }
 ```

@@ -24,7 +24,7 @@ function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
     GITHUB_TOKEN: 'token',
     git_authorship: 'Florian Imdahl <git@ffflorian.de>',
-    run_command: 'npx semantic-release',
+    run_command: 'npx --no semantic-release',
   };
 
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
@@ -63,7 +63,7 @@ describe('run', () => {
       ['git', ['config', 'user.email', 'git@ffflorian.de'], {cwd: workspace}],
       [
         'bash',
-        ['-lc', 'npx semantic-release'],
+        ['-lc', 'npx --no semantic-release'],
         {
           cwd: workspace,
           env: expect.objectContaining({
@@ -82,13 +82,13 @@ describe('run', () => {
   it('uses a custom release command input', async () => {
     const workspace = createWorkspace();
     process.env['GITHUB_WORKSPACE'] = workspace;
-    setupInputs({run_command: 'npx semantic-release --dry-run'});
+    setupInputs({run_command: 'npx --no semantic-release -- --dry-run'});
     fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
 
     const {run} = await import('../index');
     await run();
 
-    expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx semantic-release --dry-run'], {
+    expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx --no semantic-release -- --dry-run'], {
       cwd: workspace,
       env: expect.objectContaining({
         GITHUB_TOKEN: 'token',

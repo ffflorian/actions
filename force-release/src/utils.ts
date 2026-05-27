@@ -2,9 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 export type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
-export interface JsonObject {
-  [key: string]: JsonValue;
-}
+export interface JsonObject extends Record<string, JsonValue> {}
 
 export interface ReleaseTarget {
   config: JsonObject;
@@ -21,15 +19,15 @@ export interface PreparedReleaseConfig {
 }
 
 export const RELEASE_RULES = [
+  {type: 'chore', release: 'patch'},
+  {type: 'ci', release: 'patch'},
+  {type: 'docs', release: 'patch'},
   {type: 'feat', release: 'minor'},
   {type: 'fix', release: 'patch'},
   {type: 'perf', release: 'patch'},
-  {type: 'revert', release: 'patch'},
-  {type: 'docs', release: 'patch'},
-  {type: 'style', release: 'patch'},
   {type: 'refactor', release: 'patch'},
-  {type: 'ci', release: 'patch'},
-  {type: 'chore', release: 'patch'},
+  {type: 'revert', release: 'patch'},
+  {type: 'style', release: 'patch'},
 ] as const;
 
 function isJsonObject(value: unknown): value is JsonObject {
