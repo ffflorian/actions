@@ -112,26 +112,26 @@ runs:
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
 
     - name: Log in to GitHub Container Registry
-       uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
-       with:
-         registry: ghcr.io
-         username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
+      uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-     - name: Extract Docker metadata
-       id: docker-meta
-       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
-       with:
-         images: ghcr.io/${{ github.repository }}
-         tags: |
-           type=raw,value=latest,enable=true
+    - name: Extract Docker metadata
+      id: docker-meta
+      uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
+      with:
+        images: ghcr.io/${{ github.repository }}
+        tags: |
+          type=raw,value=latest,enable=true
 
-     - name: Build and push Docker image
-       uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
-       with:
-         context: .
-         push: true
-         tags: |
-           ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
-           ghcr.io/${{ github.repository }}:latest
-         labels: ${{ steps.docker-meta.outputs.labels }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
+      with:
+        context: .
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+          ghcr.io/${{ github.repository }}:latest
+        labels: ${{ steps.docker-meta.outputs.labels }}
