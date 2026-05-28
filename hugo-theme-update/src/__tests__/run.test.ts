@@ -61,7 +61,7 @@ describe('run', () => {
 
   it('should fail when cooldown_days is not a valid integer', async () => {
     setupDefaultInputs({cooldown_days: 'invalid'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockSetFailed).toHaveBeenCalledWith(expect.stringContaining('cooldown_days must be a non-negative integer'));
@@ -69,7 +69,7 @@ describe('run', () => {
 
   it('should fail when cooldown_days is negative', async () => {
     setupDefaultInputs({cooldown_days: '-5'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockSetFailed).toHaveBeenCalledWith(expect.stringContaining('cooldown_days must be a non-negative integer'));
@@ -79,7 +79,7 @@ describe('run', () => {
     const recentDate = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000); // 1 day ago
     mockGetLastUpdateDate.mockResolvedValue(recentDate);
     setupDefaultInputs({cooldown_days: '7'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockInfo).toHaveBeenCalledWith(expect.stringContaining('Skipping'));
@@ -90,7 +90,7 @@ describe('run', () => {
     const oldDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
     mockGetLastUpdateDate.mockResolvedValue(oldDate);
     setupDefaultInputs({cooldown_days: '7'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockExec).toHaveBeenCalledWith('hugo', ['mod', 'get', '-u', './...']);
@@ -98,7 +98,7 @@ describe('run', () => {
 
   it('should skip creating a PR when no changes are detected', async () => {
     mockHasChanges.mockResolvedValue(false);
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockInfo).toHaveBeenCalledWith('No changes detected after Hugo module update. Nothing to do.');
@@ -107,14 +107,14 @@ describe('run', () => {
 
   it('should fail when git_authorship is not in "Name <email>" format', async () => {
     setupDefaultInputs({git_authorship: 'InvalidFormat'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockSetFailed).toHaveBeenCalledWith('git_authorship must be in format "Name <email>"');
   });
 
   it('should create a PR and set outputs when changes are present', async () => {
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockExec).toHaveBeenCalledWith('hugo', ['mod', 'get', '-u', './...']);
@@ -133,7 +133,7 @@ describe('run', () => {
 
   it('should configure git with the parsed name and email', async () => {
     setupDefaultInputs({git_authorship: 'My Bot <mybot@org.com>'});
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(mockExec).toHaveBeenCalledWith('git', ['config', 'user.name', 'My Bot']);
