@@ -32,6 +32,12 @@ permissions:
   pull-requests: write
 ```
 
+## Required Environment Variables
+
+| Name | Required | Description |
+| --- | --- | --- |
+| `GITHUB_TOKEN` | Yes | Token used to authenticate GitHub API requests and to push the update branch/create the pull request. Usually `${{ secrets.GITHUB_TOKEN }}`. |
+
 ## Usage
 
 ```yaml
@@ -50,6 +56,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ffflorian/actions/yarn-update@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           git_authorship: Florian Imdahl <git@ffflorian.de>
           release_cooldown_days: 7
