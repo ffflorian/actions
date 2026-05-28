@@ -2,6 +2,8 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
 
+export const BRANCH_PREFIX = 'chore/deps/hugo-modules-';
+
 export async function getLastUpdateDate(
   octokit: ReturnType<typeof github.getOctokit>,
   owner: string,

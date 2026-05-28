@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
-import {getLastUpdateDate, hasChanges} from './utils';
+import {getLastUpdateDate, hasChanges, BRANCH_PREFIX} from './utils';
 
 export async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
@@ -59,7 +59,6 @@ export async function run(): Promise<void> {
 
   // Create branch
   const dateSuffix = new Date().toISOString().slice(0, 10);
-  const BRANCH_PREFIX = 'chore/deps/hugo-modules-';
   const branchName = `${BRANCH_PREFIX}${dateSuffix}`;
   await exec.exec('git', ['checkout', '-b', branchName]);
 
