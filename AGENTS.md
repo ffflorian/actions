@@ -152,7 +152,7 @@ refactor/<short-description>
 
 Runs on push to `main` and on pull requests targeting `main`. Jobs:
 
-1. **`lint_build_publish`**: runs root-level Prettier (`@ffflorian/prettier-config@0.7.0` + `prettier@3.8.1`), builds all four TypeScript actions, then publishes a semantic release on push to `main` using `./github-action-release`.
+1. **`build_publish`**: builds all four TypeScript actions, then publishes a semantic release on push to `main` using `./github-action-release`.
 2. **`hugo_theme_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `hugo-theme-update/`.
 3. **`coolify_deploy_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `coolify-deploy/`.
 4. **`force_release_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `force-release/`.
