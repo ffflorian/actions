@@ -1,3 +1,16 @@
+# [1.20.0](https://github.com/ffflorian/actions/compare/v1.19.4...v1.20.0) (2026-05-28)
+
+
+### Bug Fixes
+
+* **hugo-theme-update:** fix tests ([5a9b682](https://github.com/ffflorian/actions/commit/5a9b68209501e521853fcceaa9f4a3548d53c08f))
+
+
+### Features
+
+* **hugo-theme-update:** Update PR if it already exists ([535043d](https://github.com/ffflorian/actions/commit/535043d2ea372c39e195419e940ba314c6970107))
+* **yarn-update:** Update PR if it already exists ([7e1ba30](https://github.com/ffflorian/actions/commit/7e1ba30116618906177738fafc4318d0abdb0a82))
+
 ## [1.19.4](https://github.com/ffflorian/actions/compare/v1.19.3...v1.19.4) (2026-05-28)
 
 
