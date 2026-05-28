@@ -18633,12 +18633,12 @@ var require_undici = __commonJS({
   }
 });
 
-// src/main.ts
-var main_exports = {};
-__export(main_exports, {
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
   run: () => run
 });
-module.exports = __toCommonJS(main_exports);
+module.exports = __toCommonJS(index_exports);
 
 // node_modules/@actions/core/lib/command.js
 var os = __toESM(require("os"), 1);
@@ -19135,7 +19135,7 @@ function getDeploymentIds(response) {
   return (response.deployments ?? []).map((deployment) => deployment.deployment_uuid?.trim()).filter((deploymentUuid) => Boolean(deploymentUuid));
 }
 
-// src/main.ts
+// src/index.ts
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

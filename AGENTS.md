@@ -64,7 +64,7 @@ This repository contains reusable GitHub Actions:
 Each TypeScript action directory contains:
 
 - `action.yml` — action metadata
-- `src/` — TypeScript source (`main.ts` or `index.ts`) and `__tests__/`
+- `src/` — TypeScript source (`index.ts`) and `__tests__/`
 - `dist/index.js` — bundled output, **always committed** alongside source changes
 - `package.json`, `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — Yarn 4 setup
 - `tsconfig.json`
@@ -84,7 +84,7 @@ Actions that require Node.js logic are written in TypeScript:
 
 - **Package manager**: yarn (Yarn 4). Never use npm. Each action has its own `yarn.lock`.
 - **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
-- **Source entry point**: `src/main.ts` (coolify-deploy) or `src/index.ts` (force-release, hugo-theme-update, yarn-update).
+- **Source entry point**: `src/index.ts`.
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.
 - **Runtime target**: `node26`.
 - **Invocation**: composite actions run the bundle via `node "${{ github.action_path }}/dist/index.js"`. The `yarn-update` action uses `using: node24` with `main: dist/index.js` directly.

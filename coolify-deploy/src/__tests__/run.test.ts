@@ -31,7 +31,7 @@ describe('run', () => {
 
   it('fails when uuid is missing', async () => {
     setupInputs({uuid: '  '});
-    const {run} = await import('../main');
+    const {run} = await import('..');
 
     await run();
 
@@ -40,7 +40,7 @@ describe('run', () => {
 
   it('fails when domain is empty', async () => {
     setupInputs({domain: '  '});
-    const {run} = await import('../main');
+    const {run} = await import('..');
 
     await run();
 
@@ -56,7 +56,7 @@ describe('run', () => {
       })
     );
 
-    const {run} = await import('../main');
+    const {run} = await import('..');
 
     await expect(run()).rejects.toThrow('Deployment request failed with HTTP status 500.');
   });
@@ -68,7 +68,7 @@ describe('run', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const {run} = await import('../main');
+    const {run} = await import('..');
     await run();
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -100,7 +100,7 @@ describe('run', () => {
     vi.stubGlobal('fetch', fetchMock);
     vi.useFakeTimers();
 
-    const {run} = await import('../main');
+    const {run} = await import('..');
     const runPromise = run();
     await vi.runAllTimersAsync();
     await runPromise;
