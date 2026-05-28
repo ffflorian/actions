@@ -143,7 +143,7 @@ async function run(): Promise<void> {
     if (token) {
       await createPullRequest(gitAuthorship, targetVersion, token);
     } else {
-      core.warning('GITHUB_TOKEN not set; skipping pull request creation.');
+      core.error('❌ GITHUB_TOKEN not set; unable to create pull request.');
     }
   }
 }
