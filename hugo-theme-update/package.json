@@ -18,9 +18,10 @@
   "private": true,
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --outfile=dist/index.js",
-    "format": "prettier --write src/",
+    "fix": "prettier --write src/",
     "lint": "prettier --check src/",
-    "test": "vitest run"
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
   },
   "version": "1.0.0",
   "packageManager": "yarn@4.15.0"

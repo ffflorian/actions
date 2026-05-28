@@ -144,10 +144,12 @@ describe('yarn-update index', () => {
     });
 
     expect(mocks.pullsCreate).not.toHaveBeenCalled();
-    expect(mocks.exec).toHaveBeenCalledWith(
-      'git',
-      ['push', '--force', 'https://x-access-token:token-123@github.com/ffflorian/actions', 'chore/deps/yarn-4.15.0']
-    );
+    expect(mocks.exec).toHaveBeenCalledWith('git', [
+      'push',
+      '--force',
+      'https://x-access-token:token-123@github.com/ffflorian/actions',
+      'chore/deps/yarn-4.15.0',
+    ]);
     expect(mocks.setFailed).not.toHaveBeenCalled();
   });
 });

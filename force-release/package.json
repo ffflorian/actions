@@ -22,7 +22,8 @@
   "private": true,
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify",
-    "format:check": "prettier --list-different \"src/**/*.ts\"",
+    "fix": "prettier --write src/",
+    "lint": "prettier --check src/",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
   },

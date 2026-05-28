@@ -97,8 +97,9 @@ Each TypeScript action supports the following scripts via `yarn`:
 
 ```bash
 yarn install --immutable   # install exact locked dependencies
-yarn format:check          # Prettier check (some actions expose this as `yarn lint`)
-yarn type-check            # tsc --noEmit (not available in hugo-theme-update)
+yarn lint                  # Prettier check for `src/`
+yarn fix                   # Prettier write for `src/`
+yarn type-check            # tsc --noEmit
 yarn test                  # Vitest unit tests
 yarn build                 # bundle to dist/index.js
 ```
@@ -131,8 +132,6 @@ build: build/release system changes
 ci: CI/CD configuration changes
 ```
 
-- Do not mention AI tools in commit messages.
-
 ## Branch Naming
 
 Use semantic branch names:
@@ -154,10 +153,10 @@ refactor/<short-description>
 Runs on push to `main` and on pull requests targeting `main`. Jobs:
 
 1. **`lint_build_publish`**: runs root-level Prettier (`@ffflorian/prettier-config@0.7.0` + `prettier@3.8.1`), builds all four TypeScript actions, then publishes a semantic release on push to `main` using `./github-action-release`.
-2. **`hugo_theme_update_test`**: `yarn install --immutable && yarn lint && yarn test` inside `hugo-theme-update/`.
-3. **`coolify_deploy_test`**: `yarn install --immutable && yarn format:check && yarn type-check && yarn test` inside `coolify-deploy/`.
-4. **`force_release_test`**: `yarn install --immutable && yarn format:check && yarn type-check && yarn test` inside `force-release/`.
-5. **`yarn_update_test`**: `yarn install --immutable && yarn format:check && yarn type-check && yarn test` inside `yarn-update/`.
+2. **`hugo_theme_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `hugo-theme-update/`.
+3. **`coolify_deploy_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `coolify-deploy/`.
+4. **`force_release_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `force-release/`.
+5. **`yarn_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `yarn-update/`.
 
 ### Other workflows
 
@@ -170,5 +169,4 @@ When changing release behavior, keep `lint_build_publish.yml` and `github-action
 ## PR Guidelines
 
 - Keep PR titles and descriptions focused on what changed and why.
-- Do not reference AI tools in PR titles or descriptions.
 - Document any user-facing action input/output or behavior changes in the relevant README.

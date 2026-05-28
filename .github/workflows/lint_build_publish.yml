@@ -32,6 +32,9 @@ jobs:
       - name: Run prettier
         run: yarn lint
 
+      - name: Type-check
+        run: yarn type-check
+
       - name: Run tests
         run: yarn test
 
@@ -55,7 +58,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Check formatting with Prettier
-        run: yarn format:check
+        run: yarn lint
 
       - name: Type-check
         run: yarn type-check
@@ -83,7 +86,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Check formatting with Prettier
-        run: yarn format:check
+        run: yarn lint
 
       - name: Type-check
         run: yarn type-check
@@ -111,7 +114,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Check formatting with Prettier
-        run: yarn format:check
+        run: yarn lint
 
       - name: Type-check
         run: yarn type-check
