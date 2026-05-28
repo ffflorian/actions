@@ -1,3 +1,10 @@
+## [1.19.4](https://github.com/ffflorian/actions/compare/v1.19.3...v1.19.4) (2026-05-28)
+
+
+### Bug Fixes
+
+* **hugo-theme-update,yarn-update:** git push with real force ([c656409](https://github.com/ffflorian/actions/commit/c656409264de054aa069b01d7d2c637500830465))
+
 ## [1.19.3](https://github.com/ffflorian/actions/compare/v1.19.2...v1.19.3) (2026-05-28)
 
 
