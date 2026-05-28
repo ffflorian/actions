@@ -10,47 +10,6 @@ on:
 permissions: {}
 
 jobs:
-  lint_build_publish:
-    permissions:
-      contents: write
-      issues: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-
-      - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
-        with:
-          node-version: 26
-
-      - name: Run prettier
-        run: |
-          yarn init -y
-          yarn add -D -E @ffflorian/prettier-config@0.7.0 prettier@3.8.1
-          npx --no prettier -- --list-different .
-
-      - name: Build TypeScript actions
-        run: |
-          for dir in coolify-deploy force-release hugo-theme-update yarn-update; do
-            (cd "$dir" && yarn install --immutable && yarn build)
-          done
-
-      - name: Publish all actions
-        if: github.event_name != 'pull_request'
-        uses: ./github-action-release/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          git_author: Florian Imdahl
-          git_email: git@ffflorian.de
-          publish_files: |
-            CHANGELOG.md
-            coolify-deploy/dist/index.js
-            force-release/dist/index.js
-            hugo-theme-update/dist/index.js
-            yarn-update/dist/index.js
-
   hugo_theme_update_test:
     permissions:
       contents: read
@@ -159,3 +118,49 @@ jobs:
 
       - name: Run tests
         run: yarn test
+
+  lint_build_publish:
+    permissions:
+      contents: write
+      issues: write
+    runs-on: ubuntu-latest
+    needs:
+      - hugo_theme_update_test
+      - coolify_deploy_test
+      - force_release_test
+      - yarn_update_test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 26
+
+      - name: Run prettier
+        run: |
+          yarn init -y
+          yarn add -D -E @ffflorian/prettier-config@0.7.0 prettier@3.8.1
+          npx --no prettier -- --list-different .
+
+      - name: Build TypeScript actions
+        run: |
+          for dir in coolify-deploy force-release hugo-theme-update yarn-update; do
+            (cd "$dir" && yarn install --immutable && yarn build)
+          done
+
+      - name: Publish all actions
+        if: github.event_name != 'pull_request'
+        uses: ./github-action-release/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          git_author: Florian Imdahl
+          git_email: git@ffflorian.de
+          publish_files: |
+            CHANGELOG.md
+            coolify-deploy/dist/index.js
+            force-release/dist/index.js
+            hugo-theme-update/dist/index.js
+            yarn-update/dist/index.js
