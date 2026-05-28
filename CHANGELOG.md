@@ -1,3 +1,10 @@
+## [1.19.2](https://github.com/ffflorian/actions/compare/v1.19.1...v1.19.2) (2026-05-28)
+
+
+### Bug Fixes
+
+* **yarn-update:** Fail if GITHUB_TOKEN is not set ([119738b](https://github.com/ffflorian/actions/commit/119738bdd12deb7c94ee549af9236c1a0df5850e))
+
 ## [1.19.1](https://github.com/ffflorian/actions/compare/v1.19.0...v1.19.1) (2026-05-28)
 
 
