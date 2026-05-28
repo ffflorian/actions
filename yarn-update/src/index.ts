@@ -4,6 +4,14 @@ import * as github from '@actions/github';
 import * as path from 'path';
 import {compareVersions, fetchEligibleRelease, findYarnDirs, hasGitRepository} from './utils.js';
 
+function buildPullRequestBody(targetVersion: string): string {
+  const encodedVersion = encodeURIComponent(`@yarnpkg/cli/${targetVersion}`);
+  return (
+    `This PR updates all yarn installations in this repository to version **${targetVersion}**.\n\n` +
+    `See the [release notes](https://github.com/yarnpkg/berry/releases/tag/${encodedVersion}) for more details.`
+  );
+}
+
 async function getOutput(cmd: string, args: string[], cwd: string): Promise<string> {
   let output = '';
   await exec.exec(cmd, args, {
@@ -42,21 +50,40 @@ async function createPullRequest(gitAuthorship: string, targetVersion: string, t
   const {owner, repo} = github.context.repo;
   const octokit = github.getOctokit(token);
 
-  const encodedVersion = encodeURIComponent(`@yarnpkg/cli/${targetVersion}`);
-  const body =
-    `This PR updates all yarn installations in this repository to version **${targetVersion}**.\n\n` +
-    `See the [release notes](https://github.com/yarnpkg/berry/releases/tag/${encodedVersion}) for more details.`;
-
-  await octokit.rest.pulls.create({
+  const body = buildPullRequestBody(targetVersion);
+  const head = `${owner}:${branchName}`;
+  const existingPullRequests = await octokit.rest.pulls.list({
     owner,
     repo,
-    title: commitMsg,
-    body,
-    head: branchName,
+    state: 'open',
+    head,
     base: 'main',
   });
 
-  core.info(`Pull request created: ${branchName}`);
+  const existingPullRequest = existingPullRequests.data[0];
+
+  if (existingPullRequest) {
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: existingPullRequest.number,
+      title: commitMsg,
+      body,
+    });
+
+    core.info(`Pull request already exists and was updated: #${existingPullRequest.number}`);
+  } else {
+    await octokit.rest.pulls.create({
+      owner,
+      repo,
+      title: commitMsg,
+      body,
+      head: branchName,
+      base: 'main',
+    });
+
+    core.info(`Pull request created: ${branchName}`);
+  }
 }
 
 async function run(): Promise<void> {

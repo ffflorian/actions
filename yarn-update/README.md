@@ -9,7 +9,7 @@ Checks all yarn installations in the repository and creates a pull request when 
 - Compares each yarn installation with the latest stable version.
 - Runs `yarn install --mode=update-lockfile` for each updated installation.
 - Ensures all updated installations resolve to the same stable yarn version.
-- Creates one update PR when any yarn installation changes.
+- Creates one update PR when any yarn installation changes, or updates an existing open PR for the same branch if one already exists.
 
 ## Inputs
 

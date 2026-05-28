@@ -84,9 +84,9 @@ Actions that require Node.js logic are written in TypeScript:
 
 - **Package manager**: yarn (Yarn 4). Never use npm. Each action has its own `yarn.lock`.
 - **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
-- **Source entry point**: `src/main.ts` (coolify-deploy, hugo-theme-update) or `src/index.ts` (force-release, yarn-update).
+- **Source entry point**: `src/main.ts` (coolify-deploy) or `src/index.ts` (force-release, hugo-theme-update, yarn-update).
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.
-- **Runtime target**: `node26` (except `yarn-update` which uses `node24`).
+- **Runtime target**: `node26`.
 - **Invocation**: composite actions run the bundle via `node "${{ github.action_path }}/dist/index.js"`. The `yarn-update` action uses `using: node24` with `main: dist/index.js` directly.
 - **Inputs**: passed as `INPUT_<NAME>` env vars (uppercase, matching the action input name) and read with `@actions/core` `getInput()`.
 - **Formatting**: enforced by Prettier via `@ffflorian/prettier-config`. No ESLint.
