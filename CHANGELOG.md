@@ -1,3 +1,10 @@
+## [1.19.3](https://github.com/ffflorian/actions/compare/v1.19.2...v1.19.3) (2026-05-28)
+
+
+### Bug Fixes
+
+* **yarn-update:** git push with force ([03f6299](https://github.com/ffflorian/actions/commit/03f6299a5f13de8bd2ee421148f0e3eda0a18e04))
+
 ## [1.19.2](https://github.com/ffflorian/actions/compare/v1.19.1...v1.19.2) (2026-05-28)
 
 
