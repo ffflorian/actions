@@ -24455,7 +24455,6 @@ function getOctokit(token, options, ...additionalPlugins) {
 }
 
 // src/utils.ts
-var BRANCH_PREFIX = "chore/deps/hugo-modules-";
 async function getLastUpdateDate(octokit, owner, repo) {
   try {
     const { data: prs } = await octokit.rest.pulls.list({
@@ -24533,11 +24532,12 @@ async function run() {
   await exec("git", ["config", "user.name", authorName]);
   await exec("git", ["config", "user.email", authorEmail]);
   const dateSuffix = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
-  const branchName = `${BRANCH_PREFIX}${dateSuffix}`;
+  const BRANCH_PREFIX2 = "chore/deps/hugo-modules-";
+  const branchName = `${BRANCH_PREFIX2}${dateSuffix}`;
   await exec("git", ["checkout", "-b", branchName]);
   await exec("git", ["add", "--all"]);
   await exec("git", ["commit", "-m", "chore(deps): update Hugo modules"]);
-  await exec("git", ["push", "origin", branchName]);
+  await exec("git", ["push", "--force", "origin", branchName]);
   const { data: pr } = await octokit.rest.pulls.create({
     owner,
     repo,

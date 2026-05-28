@@ -37,7 +37,7 @@ async function createPullRequest(gitAuthorship: string, targetVersion: string, t
 
   const remoteUrl = await getOutput('git', ['remote', 'get-url', 'origin'], process.cwd());
   const authedUrl = remoteUrl.replace('https://', `https://x-access-token:${token}@`);
-  await exec.exec('git', ['push', authedUrl, branchName, '--force-with-lease']);
+  await exec.exec('git', ['push', '--force', authedUrl, branchName]);
 
   const {owner, repo} = github.context.repo;
   const octokit = github.getOctokit(token);

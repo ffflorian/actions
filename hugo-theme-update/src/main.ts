@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as github from '@actions/github';
-import {BRANCH_PREFIX, getLastUpdateDate, hasChanges} from './utils';
+import {getLastUpdateDate, hasChanges} from './utils';
 
 export async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
@@ -59,6 +59,7 @@ export async function run(): Promise<void> {
 
   // Create branch
   const dateSuffix = new Date().toISOString().slice(0, 10);
+  const BRANCH_PREFIX = 'chore/deps/hugo-modules-';
   const branchName = `${BRANCH_PREFIX}${dateSuffix}`;
   await exec.exec('git', ['checkout', '-b', branchName]);
 
@@ -67,7 +68,7 @@ export async function run(): Promise<void> {
   await exec.exec('git', ['commit', '-m', 'chore(deps): update Hugo modules']);
 
   // Push branch
-  await exec.exec('git', ['push', 'origin', branchName]);
+  await exec.exec('git', ['push', '--force', 'origin', branchName]);
 
   // Create PR
   const {data: pr} = await octokit.rest.pulls.create({
