@@ -1,3 +1,10 @@
+## [1.19.1](https://github.com/ffflorian/actions/compare/v1.19.0...v1.19.1) (2026-05-28)
+
+
+### Bug Fixes
+
+* **yarn-update:** document GITHUB_TOKEN env requirement ([#35](https://github.com/ffflorian/actions/issues/35)) ([43fd95b](https://github.com/ffflorian/actions/commit/43fd95bad2813343c3b13a1454bd11b41a9f10fa))
+
 # [1.19.0](https://github.com/ffflorian/actions/compare/v1.18.6...v1.19.0) (2026-05-27)
 
 
