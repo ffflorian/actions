@@ -15,6 +15,7 @@ const {mockContext, mockOctokit} = vi.hoisted(() => {
       pulls: {
         create: vi.fn(),
         list: vi.fn(),
+        update: vi.fn(),
       },
     },
   };
@@ -57,6 +58,8 @@ describe('run', () => {
     mockOctokit.rest.pulls.create.mockResolvedValue({
       data: {number: 42, html_url: 'https://github.com/test-owner/test-repo/pull/42'},
     });
+    mockOctokit.rest.pulls.list.mockResolvedValue({data: []});
+    mockOctokit.rest.pulls.update.mockResolvedValue({});
   });
 
   it('should fail when cooldown_days is not a valid integer', async () => {
@@ -138,5 +141,33 @@ describe('run', () => {
 
     expect(mockExec).toHaveBeenCalledWith('git', ['config', 'user.name', 'My Bot']);
     expect(mockExec).toHaveBeenCalledWith('git', ['config', 'user.email', 'mybot@org.com']);
+  });
+
+  it('should update an existing open PR instead of creating a new one', async () => {
+    mockOctokit.rest.pulls.list.mockResolvedValue({
+      data: [{number: 7, html_url: 'https://github.com/test-owner/test-repo/pull/7'}],
+    });
+    const {run} = await import('..');
+    await run();
+
+    expect(mockOctokit.rest.pulls.list).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: 'test-owner',
+        repo: 'test-repo',
+        state: 'open',
+        base: 'main',
+      })
+    );
+    expect(mockOctokit.rest.pulls.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: 'test-owner',
+        repo: 'test-repo',
+        pull_number: 7,
+        title: 'chore(deps): update Hugo modules',
+      })
+    );
+    expect(mockOctokit.rest.pulls.create).not.toHaveBeenCalled();
+    expect(mockSetOutput).toHaveBeenCalledWith('pr_number', '7');
+    expect(mockSetOutput).toHaveBeenCalledWith('pr_url', 'https://github.com/test-owner/test-repo/pull/7');
   });
 });

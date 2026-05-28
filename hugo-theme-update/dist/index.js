@@ -19501,12 +19501,12 @@ var require_fast_content_type_parse = __commonJS({
   }
 });
 
-// src/main.ts
-var main_exports = {};
-__export(main_exports, {
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
   run: () => run
 });
-module.exports = __toCommonJS(main_exports);
+module.exports = __toCommonJS(index_exports);
 
 // node_modules/@actions/core/lib/command.js
 var os = __toESM(require("os"), 1);
@@ -24491,7 +24491,7 @@ async function hasChanges() {
   return output.length > 0;
 }
 
-// src/main.ts
+// src/index.ts
 async function run() {
   const gitAuthorship = getInput("git_authorship", { required: true });
   const githubToken = getInput("github_token", { required: true });
@@ -24538,21 +24538,44 @@ async function run() {
   await exec("git", ["add", "--all"]);
   await exec("git", ["commit", "-m", "chore(deps): update Hugo modules"]);
   await exec("git", ["push", "--force", "origin", branchName]);
+  const prTitle = "chore(deps): update Hugo modules";
+  const prBody = [
+    "This PR updates all Hugo modules to their latest versions.",
+    "",
+    "Changes were made by running:",
+    "```",
+    "hugo mod get -u ./...",
+    "hugo mod tidy",
+    "```"
+  ].join("\n");
+  const existingPullRequests = await octokit.rest.pulls.list({
+    owner,
+    repo,
+    state: "open",
+    head: `${owner}:${branchName}`,
+    base: "main"
+  });
+  const existingPullRequest = existingPullRequests.data[0];
+  if (existingPullRequest) {
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: existingPullRequest.number,
+      title: prTitle,
+      body: prBody
+    });
+    info(`Updated PR #${existingPullRequest.number}: ${existingPullRequest.html_url}`);
+    setOutput("pr_number", String(existingPullRequest.number));
+    setOutput("pr_url", existingPullRequest.html_url);
+    return;
+  }
   const { data: pr } = await octokit.rest.pulls.create({
     owner,
     repo,
-    title: "chore(deps): update Hugo modules",
+    title: prTitle,
     head: branchName,
     base: "main",
-    body: [
-      "This PR updates all Hugo modules to their latest versions.",
-      "",
-      "Changes were made by running:",
-      "```",
-      "hugo mod get -u ./...",
-      "hugo mod tidy",
-      "```"
-    ].join("\n")
+    body: prBody
   });
   info(`Created PR #${pr.number}: ${pr.html_url}`);
   setOutput("pr_number", String(pr.number));

@@ -70,22 +70,48 @@ export async function run(): Promise<void> {
   // Push branch
   await exec.exec('git', ['push', '--force', 'origin', branchName]);
 
-  // Create PR
+  // Create or update PR
+  const prTitle = 'chore(deps): update Hugo modules';
+  const prBody = [
+    'This PR updates all Hugo modules to their latest versions.',
+    '',
+    'Changes were made by running:',
+    '```',
+    'hugo mod get -u ./...',
+    'hugo mod tidy',
+    '```',
+  ].join('\n');
+
+  const existingPullRequests = await octokit.rest.pulls.list({
+    owner,
+    repo,
+    state: 'open',
+    head: `${owner}:${branchName}`,
+    base: 'main',
+  });
+
+  const existingPullRequest = existingPullRequests.data[0];
+  if (existingPullRequest) {
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: existingPullRequest.number,
+      title: prTitle,
+      body: prBody,
+    });
+    core.info(`Updated PR #${existingPullRequest.number}: ${existingPullRequest.html_url}`);
+    core.setOutput('pr_number', String(existingPullRequest.number));
+    core.setOutput('pr_url', existingPullRequest.html_url);
+    return;
+  }
+
   const {data: pr} = await octokit.rest.pulls.create({
     owner,
     repo,
-    title: 'chore(deps): update Hugo modules',
+    title: prTitle,
     head: branchName,
     base: 'main',
-    body: [
-      'This PR updates all Hugo modules to their latest versions.',
-      '',
-      'Changes were made by running:',
-      '```',
-      'hugo mod get -u ./...',
-      'hugo mod tidy',
-      '```',
-    ].join('\n'),
+    body: prBody,
   });
 
   core.info(`Created PR #${pr.number}: ${pr.html_url}`);
