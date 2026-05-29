@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/ffflorian/actions/compare/v1.20.0...v1.21.0) (2026-05-29)
+
+
+### Features
+
+* **force-release:** Install semantic-release while running ([8e58745](https://github.com/ffflorian/actions/commit/8e58745dc8dd357105eaada5c9f539a42370446c))
+
 # [1.20.0](https://github.com/ffflorian/actions/compare/v1.19.4...v1.20.0) (2026-05-28)
 
 
