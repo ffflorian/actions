@@ -8,6 +8,8 @@ Forces a release by updating semantic-release release rules and running semantic
 - Configures the git author and committer.
 - Installs `semantic-release`, `@semantic-release/changelog`, and `@semantic-release/git` as exact dev dependencies using yarn.
 - Reads the repository root `.releaserc.json` or the `release` entry in the root `package.json`.
+- If `.releaserc.json` is missing but `package.json#release` exists, creates a minimal temporary `.releaserc.json` with the release rules below injected into `@semantic-release/commit-analyzer`.
+- If neither release config exists, creates a full temporary `.releaserc.json` with angular presets, the release rules below, changelog/github/git plugins, and configurable git assets.
 - Replaces `releaseRules` with the following configuration so `feat` triggers a minor release and `fix`, `perf`, `revert`, `docs`, `style`, `refactor`, `ci`, and `chore` trigger patch releases.
 - Runs semantic-release using the configured command.
 - Restores the original release config file after semantic-release completes.
@@ -19,6 +21,7 @@ Forces a release by updating semantic-release release rules and running semantic
 | `GITHUB_TOKEN` | Yes | - | GitHub token used to check out the repository and run semantic-release. |
 | `run_command` | No | `npx --no semantic-release` | Command used to run semantic-release. |
 | `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
+| `assets` | No | `CHANGELOG.md` | Newline-separated asset paths used for `@semantic-release/git`. |
 
 ## Outputs
 
@@ -49,7 +52,7 @@ permissions:
 }
 ```
 
-The action prefers `.releaserc.json` when both files exist. If that file is missing, it updates `package.json#release`. If neither release configuration exists, the action creates a new temporary `.releaserc.json` for the semantic-release run.
+The action prefers `.releaserc.json` over `package.json#release` when both release configs exist. If `.releaserc.json` is missing and `package.json#release` exists, the action writes a temporary `.releaserc.json` containing only the `@semantic-release/commit-analyzer` plugin with the configured `releaseRules`. If neither release configuration exists, the action writes a full temporary `.releaserc.json` with the default semantic-release plugin stack, including angular presets, changelog/github/git plugins, and configurable git assets.
 
 ## Usage
 
@@ -69,4 +72,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           git_authorship: 'Florian Imdahl <git@ffflorian.de>'
+          assets: |
+            CHANGELOG.md
+            docs/RELEASE.md
 ```

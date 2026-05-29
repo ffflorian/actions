@@ -27,13 +27,23 @@ async function ensureSemanticReleaseDependencies(workspace: string): Promise<voi
   );
 }
 
+function parseReleaseAssets(assetsInput: string): string[] {
+  const assets = assetsInput
+    .split(/[\n,]+/)
+    .map(item => item.trim())
+    .filter(Boolean);
+
+  return assets.length > 0 ? assets : ['CHANGELOG.md'];
+}
+
 export async function run(): Promise<void> {
   const token = core.getInput('GITHUB_TOKEN', {required: true});
   const gitAuthorship = core.getInput('git_authorship', {required: true});
+  const releaseAssets = parseReleaseAssets(core.getInput('assets'));
   const runCommand = core.getInput('run_command') || 'npx --no semantic-release';
   const workspace = process.env.GITHUB_WORKSPACE ?? process.cwd();
   const {name, email} = parseGitAuthorship(gitAuthorship);
-  const releaseConfig = prepareReleaseConfig(workspace);
+  const releaseConfig = prepareReleaseConfig(workspace, releaseAssets);
 
   core.info(`Prepared release rules in ${releaseConfig.source}.`);
   if (!releaseConfig.changed) {

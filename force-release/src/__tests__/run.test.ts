@@ -25,6 +25,7 @@ function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
     GITHUB_TOKEN: 'token',
     git_authorship: 'Florian Imdahl <git@ffflorian.de>',
+    assets: 'CHANGELOG.md',
     run_command: 'npx --no semantic-release',
   };
 
@@ -129,6 +130,45 @@ describe('run', () => {
     await run();
 
     expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
+  });
+
+  it('creates a minimal .releaserc.json when package.json#release exists', async () => {
+    const workspace = createWorkspace();
+    process.env.GITHUB_WORKSPACE = workspace;
+    setupInputs({assets: 'CHANGELOG.md\ndocs/RELEASE.md'});
+    fs.writeFileSync(
+      path.join(workspace, 'package.json'),
+      JSON.stringify(
+        {
+          name: 'demo',
+          release: {
+            branches: ['main'],
+          },
+        },
+        null,
+        2
+      )
+    );
+
+    const {run} = await import('../index');
+    await run();
+
+    const appliedConfigLog = mockInfo.mock.calls.find(
+      ([message]) =>
+        typeof message === 'string' &&
+        message.includes('This is the release config which will be applied before running semantic-release:')
+    );
+
+    expect(appliedConfigLog?.[0]).toContain('"plugins": [');
+    expect(appliedConfigLog?.[0]).toContain('"@semantic-release/commit-analyzer"');
+    expect(appliedConfigLog?.[0]).not.toContain('"@semantic-release/git"');
+    expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
+    expect(JSON.parse(fs.readFileSync(path.join(workspace, 'package.json'), 'utf8'))).toEqual({
+      name: 'demo',
+      release: {
+        branches: ['main'],
+      },
+    });
   });
 
   it('restores release config when semantic-release command fails', async () => {

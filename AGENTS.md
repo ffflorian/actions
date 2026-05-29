@@ -104,7 +104,8 @@ yarn test                  # Vitest unit tests
 yarn build                 # bundle to dist/index.js
 ```
 
-After running `yarn test`, always run `yarn fix`.
+When finishing TypeScript action work, always run `yarn fix`, `CI=true yarn test`, `yarn type-check`, and `yarn build` before handing off.
+When working on a certain action, run these commands from the action's subdirectory (e.g. `force-release/`).
 
 ## Testing
 

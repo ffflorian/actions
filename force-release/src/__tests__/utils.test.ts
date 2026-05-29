@@ -43,7 +43,8 @@ describe('findReleaseTarget', () => {
     const target = findReleaseTarget(workspace);
 
     expect(target.source).toBe('package.json');
-    expect(target.config).toEqual({branches: ['main']});
+    expect(target.path).toBe(path.join(workspace, '.releaserc.json'));
+    expect(target.config).toEqual({});
   });
 
   it('creates a new .releaserc.json target when no release config exists', () => {
@@ -110,9 +111,10 @@ describe('prepareReleaseConfig', () => {
     expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
-  it('updates package.json release rules and restores file content', () => {
+  it('creates a minimal .releaserc.json when package.json#release exists', () => {
     const workspace = createWorkspace();
     const packageJsonPath = path.join(workspace, 'package.json');
+    const releaseRcPath = path.join(workspace, '.releaserc.json');
     const original = JSON.stringify(
       {
         name: 'demo',
@@ -126,53 +128,117 @@ describe('prepareReleaseConfig', () => {
     fs.writeFileSync(packageJsonPath, original);
 
     const result = prepareReleaseConfig(workspace);
-    const saved = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {
-      release: {
-        plugins: Array<string | [string, {releaseRules?: unknown}]>;
-      };
+    const savedReleaseRc = JSON.parse(fs.readFileSync(releaseRcPath, 'utf8')) as {
+      plugins: unknown;
     };
+
+    expect(result).toEqual({
+      changed: true,
+      appliedConfig: {
+        plugins: [['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}]],
+      },
+      path: releaseRcPath,
+      source: 'package.json',
+      restore: expect.any(Function),
+    });
+    expect(savedReleaseRc).toEqual({plugins: [['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}]]});
+    expect(JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))).toEqual(JSON.parse(original));
+
+    result.restore();
+    expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
+    expect(fs.readFileSync(packageJsonPath, 'utf8')).toBe(original);
+  });
+
+  it('creates a full .releaserc.json when no release config exists', () => {
+    const workspace = createWorkspace();
+    const releaseRcPath = path.join(workspace, '.releaserc.json');
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
+
+    const result = prepareReleaseConfig(workspace, ['CHANGELOG.md', 'docs/RELEASE.md']);
+    const saved = JSON.parse(fs.readFileSync(releaseRcPath, 'utf8')) as {plugins: unknown};
 
     expect(result).toEqual({
       changed: true,
       appliedConfig: expect.objectContaining({
         plugins: [
-          ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
-          '@semantic-release/github',
-          '@semantic-release/release-notes-generator',
+          [
+            '@semantic-release/commit-analyzer',
+            {
+              preset: 'angular',
+              releaseRules: RELEASE_RULES,
+              parserOpts: {
+                noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+              },
+            },
+          ],
+          [
+            '@semantic-release/release-notes-generator',
+            {
+              preset: 'angular',
+              parserOpts: {
+                noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+              },
+            },
+          ],
+          '@semantic-release/changelog',
+          [
+            '@semantic-release/github',
+            {
+              releasedLabels: false,
+              successComment: false,
+            },
+          ],
+          [
+            '@semantic-release/git',
+            {
+              assets: ['CHANGELOG.md', 'docs/RELEASE.md'],
+              message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+            },
+          ],
         ],
-      }),
-      path: packageJsonPath,
-      source: 'package.json',
-      restore: expect.any(Function),
-    });
-    expect(saved.release.plugins).toEqual([
-      ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
-      '@semantic-release/github',
-      '@semantic-release/release-notes-generator',
-    ]);
-
-    result.restore();
-    expect(fs.readFileSync(packageJsonPath, 'utf8')).toBe(original);
-  });
-
-  it('creates and removes .releaserc.json when no release config exists', () => {
-    const workspace = createWorkspace();
-    const releaseRcPath = path.join(workspace, '.releaserc.json');
-    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
-
-    const result = prepareReleaseConfig(workspace);
-    const saved = JSON.parse(fs.readFileSync(releaseRcPath, 'utf8')) as {releaseRules: unknown};
-
-    expect(result).toEqual({
-      changed: true,
-      appliedConfig: expect.objectContaining({
-        releaseRules: RELEASE_RULES,
       }),
       path: releaseRcPath,
       source: '.releaserc.json',
       restore: expect.any(Function),
     });
-    expect(saved.releaseRules).toEqual(RELEASE_RULES);
+    expect(saved).toEqual({
+      plugins: [
+        [
+          '@semantic-release/commit-analyzer',
+          {
+            preset: 'angular',
+            releaseRules: RELEASE_RULES,
+            parserOpts: {
+              noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+            },
+          },
+        ],
+        [
+          '@semantic-release/release-notes-generator',
+          {
+            preset: 'angular',
+            parserOpts: {
+              noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+            },
+          },
+        ],
+        '@semantic-release/changelog',
+        [
+          '@semantic-release/github',
+          {
+            releasedLabels: false,
+            successComment: false,
+          },
+        ],
+        [
+          '@semantic-release/git',
+          {
+            assets: ['CHANGELOG.md', 'docs/RELEASE.md'],
+            message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+          },
+        ],
+      ],
+    });
 
     result.restore();
     expect(fs.existsSync(releaseRcPath)).toBe(false);
