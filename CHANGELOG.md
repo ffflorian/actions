@@ -1,3 +1,10 @@
+## [1.21.2](https://github.com/ffflorian/actions/compare/v1.21.1...v1.21.2) (2026-05-29)
+
+
+### Bug Fixes
+
+* **force-release:** Log config before running semantic-release ([96c109c](https://github.com/ffflorian/actions/commit/96c109ce472aa9c8ecbe813808db95b11cfe5a6f))
+
 ## [1.21.1](https://github.com/ffflorian/actions/compare/v1.21.0...v1.21.1) (2026-05-29)
 
 
