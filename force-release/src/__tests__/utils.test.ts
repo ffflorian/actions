@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {afterEach, describe, expect, it} from 'vitest';
-import {RELEASE_RULES, findReleaseTarget, prepareReleaseConfig} from '../utils';
+import {RELEASE_NOTE_SECTIONS, RELEASE_RULES, findReleaseTarget, prepareReleaseConfig} from '../utils';
 
 const tempDirs: string[] = [];
 
@@ -187,7 +187,10 @@ describe('prepareReleaseConfig', () => {
           [
             '@semantic-release/release-notes-generator',
             {
-              preset: 'angular',
+              preset: 'conventionalcommits',
+              presetConfig: {
+                types: RELEASE_NOTE_SECTIONS,
+              },
               parserOpts: {
                 noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
               },
@@ -229,7 +232,10 @@ describe('prepareReleaseConfig', () => {
         [
           '@semantic-release/release-notes-generator',
           {
-            preset: 'angular',
+            preset: 'conventionalcommits',
+            presetConfig: {
+              types: RELEASE_NOTE_SECTIONS,
+            },
             parserOpts: {
               noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
             },

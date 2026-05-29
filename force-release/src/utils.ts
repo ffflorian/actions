@@ -32,6 +32,18 @@ export const RELEASE_RULES = [
   {type: 'style', release: 'patch'},
 ] as const;
 
+export const RELEASE_NOTE_SECTIONS = [
+  {type: 'feat', section: 'Features'},
+  {type: 'fix', section: 'Bug Fixes'},
+  {type: 'perf', section: 'Performance Improvements'},
+  {type: 'revert', section: 'Reverts'},
+  {type: 'docs', section: 'Documentation'},
+  {type: 'chore', section: 'Miscellaneous Chores'},
+  {type: 'refactor', section: 'Code Refactoring'},
+  {type: 'style', section: 'Styles'},
+  {type: 'ci', section: 'Continuous Integration'},
+] as const;
+
 const DEFAULT_NOTE_KEYWORDS = ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'];
 const DEFAULT_RELEASE_ASSETS = ['CHANGELOG.md'];
 
@@ -93,7 +105,10 @@ function createFullReleaseConfig(assets: string[]): JsonObject {
       [
         RELEASE_NOTES_PLUGIN,
         {
-          preset: 'angular',
+          preset: 'conventionalcommits',
+          presetConfig: {
+            types: [...RELEASE_NOTE_SECTIONS],
+          },
           parserOpts: {
             noteKeywords: DEFAULT_NOTE_KEYWORDS,
           },
