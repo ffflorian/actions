@@ -44,7 +44,7 @@ function isJsonObject(value: unknown): value is JsonObject {
 }
 
 function cloneJsonObject(value: JsonObject): JsonObject {
-  return JSON.parse(JSON.stringify(value)) as JsonObject;
+  return structuredClone(value);
 }
 
 function readJsonObject(filePath: string, label: string): JsonObject {

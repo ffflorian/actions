@@ -119,6 +119,7 @@ describe('prepareReleaseConfig', () => {
       {
         name: 'demo',
         release: {
+          branches: ['main'],
           plugins: ['@semantic-release/commit-analyzer', '@semantic-release/github'],
         },
       },
@@ -134,18 +135,20 @@ describe('prepareReleaseConfig', () => {
 
     expect(result).toEqual({
       changed: true,
-      appliedConfig: expect.objectContaining({
+      appliedConfig: {
+        branches: ['main'],
         plugins: [
           ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
           '@semantic-release/github',
           '@semantic-release/release-notes-generator',
         ],
-      }),
+      },
       path: releaseRcPath,
       source: 'package.json',
       restore: expect.any(Function),
     });
     expect(savedReleaseRc).toEqual({
+      branches: ['main'],
       plugins: [
         ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
         '@semantic-release/github',

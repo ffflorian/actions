@@ -143,6 +143,7 @@ describe('run', () => {
           name: 'demo',
           release: {
             branches: ['main'],
+            plugins: ['@semantic-release/commit-analyzer', '@semantic-release/github'],
           },
         },
         null,
@@ -160,13 +161,15 @@ describe('run', () => {
     );
 
     expect(appliedConfigLog?.[0]).toContain('"branches": [');
+    expect(appliedConfigLog?.[0]).toContain('"@semantic-release/commit-analyzer"');
     expect(appliedConfigLog?.[0]).toContain('"releaseRules"');
-    expect(appliedConfigLog?.[0]).not.toContain('"plugins": [');
+    expect(appliedConfigLog?.[0]).toContain('"plugins": [');
     expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
     expect(JSON.parse(fs.readFileSync(path.join(workspace, 'package.json'), 'utf8'))).toEqual({
       name: 'demo',
       release: {
         branches: ['main'],
+        plugins: ['@semantic-release/commit-analyzer', '@semantic-release/github'],
       },
     });
   });
