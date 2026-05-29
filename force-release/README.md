@@ -6,7 +6,7 @@ Forces a release by updating semantic-release release rules and running semantic
 
 - Checks out the repository.
 - Configures the git author and committer.
-- Installs `semantic-release` and `@semantic-release/changelog` as exact dev dependencies using yarn.
+- Installs `semantic-release`, `@semantic-release/changelog`, and `@semantic-release/git` as exact dev dependencies using yarn.
 - Reads the repository root `.releaserc.json` or the `release` entry in the root `package.json`.
 - Replaces `releaseRules` with the following configuration so `feat` triggers a minor release and `fix`, `perf`, `revert`, `docs`, `style`, `refactor`, `ci`, and `chore` trigger patch releases.
 - Runs semantic-release using the configured command.

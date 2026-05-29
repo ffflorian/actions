@@ -61,7 +61,7 @@ describe('run', () => {
     expect(mockExec.mock.calls).toEqual([
       [
         'bash',
-        ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'],
+        ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git'],
         {cwd: workspace},
       ],
       ['git', ['config', 'user.name', 'Florian Imdahl'], {cwd: workspace}],
@@ -96,7 +96,7 @@ describe('run', () => {
     expect(mockExec).toHaveBeenNthCalledWith(
       1,
       'bash',
-      ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'],
+      ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git'],
       {cwd: workspace}
     );
     expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx --no semantic-release -- --dry-run'], {
