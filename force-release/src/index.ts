@@ -17,7 +17,10 @@ async function ensureSemanticReleaseDependencies(workspace: string): Promise<voi
   core.info('Installing semantic-release dependencies with yarn.');
   await exec.exec(
     'bash',
-    ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git'],
+    [
+      '-lc',
+      'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/commit-analyzer @semantic-release/release-notes-generator',
+    ],
     {
       cwd: workspace,
     }

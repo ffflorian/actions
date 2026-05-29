@@ -68,13 +68,13 @@ describe('findReleaseTarget', () => {
 });
 
 describe('prepareReleaseConfig', () => {
-  it('replaces releaseRules in .releaserc.json and restores it', () => {
+  it('replaces commit-analyzer releaseRules in .releaserc.json plugins and restores it', () => {
     const workspace = createWorkspace();
     const configPath = path.join(workspace, '.releaserc.json');
     const original = JSON.stringify(
       {
         branches: ['main'],
-        releaseRules: [{type: 'build', release: 'patch'}],
+        plugins: [['@semantic-release/commit-analyzer', {preset: 'conventionalcommits'}], '@semantic-release/github'],
       },
       null,
       2
@@ -82,19 +82,29 @@ describe('prepareReleaseConfig', () => {
     fs.writeFileSync(configPath, original);
 
     const result = prepareReleaseConfig(workspace);
-    const saved = JSON.parse(fs.readFileSync(configPath, 'utf8')) as {releaseRules: unknown};
+    const saved = JSON.parse(fs.readFileSync(configPath, 'utf8')) as {
+      plugins: Array<string | [string, {releaseRules?: unknown; preset?: string}]>;
+    };
 
     expect(result).toEqual({
       changed: true,
       appliedConfig: expect.objectContaining({
         branches: ['main'],
-        releaseRules: RELEASE_RULES,
+        plugins: expect.arrayContaining([
+          ['@semantic-release/commit-analyzer', {preset: 'conventionalcommits', releaseRules: RELEASE_RULES}],
+          '@semantic-release/github',
+          '@semantic-release/release-notes-generator',
+        ]),
       }),
       path: configPath,
       source: '.releaserc.json',
       restore: expect.any(Function),
     });
-    expect(saved.releaseRules).toEqual(RELEASE_RULES);
+    expect(saved.plugins).toEqual([
+      ['@semantic-release/commit-analyzer', {preset: 'conventionalcommits', releaseRules: RELEASE_RULES}],
+      '@semantic-release/github',
+      '@semantic-release/release-notes-generator',
+    ]);
 
     result.restore();
     expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
@@ -107,7 +117,7 @@ describe('prepareReleaseConfig', () => {
       {
         name: 'demo',
         release: {
-          releaseRules: RELEASE_RULES,
+          plugins: ['@semantic-release/commit-analyzer', '@semantic-release/github'],
         },
       },
       null,
@@ -116,18 +126,30 @@ describe('prepareReleaseConfig', () => {
     fs.writeFileSync(packageJsonPath, original);
 
     const result = prepareReleaseConfig(workspace);
-    const saved = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {release: {releaseRules: unknown}};
+    const saved = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {
+      release: {
+        plugins: Array<string | [string, {releaseRules?: unknown}]>;
+      };
+    };
 
     expect(result).toEqual({
-      changed: false,
+      changed: true,
       appliedConfig: expect.objectContaining({
-        releaseRules: RELEASE_RULES,
+        plugins: [
+          ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
+          '@semantic-release/github',
+          '@semantic-release/release-notes-generator',
+        ],
       }),
       path: packageJsonPath,
       source: 'package.json',
       restore: expect.any(Function),
     });
-    expect(saved.release.releaseRules).toEqual(RELEASE_RULES);
+    expect(saved.release.plugins).toEqual([
+      ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
+      '@semantic-release/github',
+      '@semantic-release/release-notes-generator',
+    ]);
 
     result.restore();
     expect(fs.readFileSync(packageJsonPath, 'utf8')).toBe(original);

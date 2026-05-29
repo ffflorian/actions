@@ -31,6 +31,9 @@ export const RELEASE_RULES = [
   {type: 'style', release: 'patch'},
 ] as const;
 
+const COMMIT_ANALYZER_PLUGIN = '@semantic-release/commit-analyzer';
+const RELEASE_NOTES_PLUGIN = '@semantic-release/release-notes-generator';
+
 function isJsonObject(value: unknown): value is JsonObject {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
@@ -51,6 +54,58 @@ function readJsonObject(filePath: string, label: string): JsonObject {
   }
 
   return parsed;
+}
+
+function getPluginName(plugin: JsonValue): string | null {
+  if (typeof plugin === 'string') {
+    return plugin;
+  }
+
+  if (Array.isArray(plugin) && plugin.length > 0 && typeof plugin[0] === 'string') {
+    return plugin[0];
+  }
+
+  return null;
+}
+
+function applyForcedRules(config: JsonObject, rules: Array<{type: string; release: string}>): void {
+  const plugins = config['plugins'];
+
+  if (plugins === undefined) {
+    config['releaseRules'] = rules;
+    return;
+  }
+
+  if (!Array.isArray(plugins)) {
+    throw new Error('semantic-release config field "plugins" must be an array when present.');
+  }
+
+  const names = plugins.map(getPluginName);
+  const commitAnalyzerIndex = names.findIndex(name => name?.includes('commit-analyzer') === true);
+
+  if (commitAnalyzerIndex >= 0) {
+    const commitAnalyzer = plugins[commitAnalyzerIndex];
+    if (typeof commitAnalyzer === 'string') {
+      plugins[commitAnalyzerIndex] = [commitAnalyzer, {releaseRules: rules}];
+    } else if (Array.isArray(commitAnalyzer)) {
+      const [, options] = commitAnalyzer;
+      const nextOptions = isJsonObject(options) ? {...options} : {};
+      nextOptions['releaseRules'] = rules;
+      plugins[commitAnalyzerIndex] = [commitAnalyzer[0], nextOptions];
+    } else {
+      plugins[commitAnalyzerIndex] = [COMMIT_ANALYZER_PLUGIN, {releaseRules: rules}];
+    }
+  } else {
+    plugins.unshift([COMMIT_ANALYZER_PLUGIN, {releaseRules: rules}]);
+  }
+
+  const hasReleaseNotesGenerator = plugins
+    .map(getPluginName)
+    .some(name => name?.includes('release-notes-generator') === true);
+
+  if (!hasReleaseNotesGenerator) {
+    plugins.push(RELEASE_NOTES_PLUGIN);
+  }
 }
 
 export function findReleaseTarget(workspace: string): ReleaseTarget {
@@ -106,9 +161,10 @@ export function prepareReleaseConfig(workspace: string): PreparedReleaseConfig {
   const originalExists = fs.existsSync(target.path);
   const originalContent = originalExists ? fs.readFileSync(target.path, 'utf8') : null;
   const nextRules = RELEASE_RULES.map(rule => ({...rule}));
-  const changed = JSON.stringify(target.config['releaseRules']) !== JSON.stringify(nextRules);
+  const before = JSON.stringify(target.config);
 
-  target.config['releaseRules'] = nextRules;
+  applyForcedRules(target.config, nextRules);
+  const changed = before !== JSON.stringify(target.config);
   fs.writeFileSync(target.path, `${JSON.stringify(target.document, null, 2)}\n`);
 
   return {
