@@ -266,6 +266,9 @@ export function prepareReleaseConfig(
   const originalContent = originalExists ? fs.readFileSync(target.path, 'utf8') : null;
   const before = JSON.stringify(target.config);
 
+  // For existing configs (.releaserc.json or package.json#release), patch the
+  // existing plugin list in-place so user-configured plugins are preserved.
+  // For full-releaserc (no existing config), generate a complete config from scratch.
   if (originalExists || target.mode === 'package-release') {
     const nextRules = RELEASE_RULES.map(rule => ({...rule}));
     applyForcedRules(target.config, nextRules);
