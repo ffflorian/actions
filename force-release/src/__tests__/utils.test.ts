@@ -44,7 +44,7 @@ describe('findReleaseTarget', () => {
 
     expect(target.source).toBe('package.json');
     expect(target.path).toBe(path.join(workspace, '.releaserc.json'));
-    expect(target.config).toEqual({});
+    expect(target.config).toEqual({branches: ['main']});
   });
 
   it('creates a new .releaserc.json target when no release config exists', () => {
@@ -111,7 +111,7 @@ describe('prepareReleaseConfig', () => {
     expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
-  it('creates a minimal .releaserc.json when package.json#release exists', () => {
+  it('creates a .releaserc.json based on package.json#release when it exists', () => {
     const workspace = createWorkspace();
     const packageJsonPath = path.join(workspace, 'package.json');
     const releaseRcPath = path.join(workspace, '.releaserc.json');
@@ -134,14 +134,24 @@ describe('prepareReleaseConfig', () => {
 
     expect(result).toEqual({
       changed: true,
-      appliedConfig: {
-        plugins: [['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}]],
-      },
+      appliedConfig: expect.objectContaining({
+        plugins: [
+          ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
+          '@semantic-release/github',
+          '@semantic-release/release-notes-generator',
+        ],
+      }),
       path: releaseRcPath,
       source: 'package.json',
       restore: expect.any(Function),
     });
-    expect(savedReleaseRc).toEqual({plugins: [['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}]]});
+    expect(savedReleaseRc).toEqual({
+      plugins: [
+        ['@semantic-release/commit-analyzer', {releaseRules: RELEASE_RULES}],
+        '@semantic-release/github',
+        '@semantic-release/release-notes-generator',
+      ],
+    });
     expect(JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))).toEqual(JSON.parse(original));
 
     result.restore();

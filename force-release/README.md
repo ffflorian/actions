@@ -8,7 +8,7 @@ Forces a release by updating semantic-release release rules and running semantic
 - Configures the git author and committer.
 - Installs `semantic-release`, `@semantic-release/changelog`, and `@semantic-release/git` as exact dev dependencies using yarn.
 - Reads the repository root `.releaserc.json` or the `release` entry in the root `package.json`.
-- If `.releaserc.json` is missing but `package.json#release` exists, creates a minimal temporary `.releaserc.json` with the release rules below injected into `@semantic-release/commit-analyzer`.
+- If `.releaserc.json` is missing but `package.json#release` exists, creates a temporary `.releaserc.json` from `package.json#release` and injects the release rules below while preserving existing release plugins.
 - If neither release config exists, creates a full temporary `.releaserc.json` with angular presets, the release rules below, changelog/github/git plugins, and configurable git assets.
 - Replaces `releaseRules` with the following configuration so `feat` triggers a minor release and `fix`, `perf`, `revert`, `docs`, `style`, `refactor`, `ci`, and `chore` trigger patch releases.
 - Runs semantic-release using the configured command.
@@ -52,7 +52,7 @@ permissions:
 }
 ```
 
-The action prefers `.releaserc.json` over `package.json#release` when both release configs exist. If `.releaserc.json` is missing and `package.json#release` exists, the action writes a temporary `.releaserc.json` containing only the `@semantic-release/commit-analyzer` plugin with the configured `releaseRules`. If neither release configuration exists, the action writes a full temporary `.releaserc.json` with the default semantic-release plugin stack, including angular presets, changelog/github/git plugins, and configurable git assets.
+The action prefers `.releaserc.json` over `package.json#release` when both release configs exist. If `.releaserc.json` is missing and `package.json#release` exists, the action writes a temporary `.releaserc.json` based on `package.json#release`, then applies the configured `releaseRules`, release notes generator plugin (if missing), and git assets (if `@semantic-release/git` is configured). If neither release configuration exists, the action writes a full temporary `.releaserc.json` with the default semantic-release plugin stack, including angular presets, changelog/github/git plugins, and configurable git assets.
 
 ## Usage
 

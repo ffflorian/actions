@@ -132,7 +132,7 @@ describe('run', () => {
     expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
   });
 
-  it('creates a minimal .releaserc.json when package.json#release exists', async () => {
+  it('creates a .releaserc.json based on package.json#release when it exists', async () => {
     const workspace = createWorkspace();
     process.env.GITHUB_WORKSPACE = workspace;
     setupInputs({assets: 'CHANGELOG.md\ndocs/RELEASE.md'});
@@ -159,9 +159,9 @@ describe('run', () => {
         message.includes('This is the release config which will be applied before running semantic-release:')
     );
 
-    expect(appliedConfigLog?.[0]).toContain('"plugins": [');
-    expect(appliedConfigLog?.[0]).toContain('"@semantic-release/commit-analyzer"');
-    expect(appliedConfigLog?.[0]).not.toContain('"@semantic-release/git"');
+    expect(appliedConfigLog?.[0]).toContain('"branches": [');
+    expect(appliedConfigLog?.[0]).toContain('"releaseRules"');
+    expect(appliedConfigLog?.[0]).not.toContain('"plugins": [');
     expect(fs.existsSync(path.join(workspace, '.releaserc.json'))).toBe(false);
     expect(JSON.parse(fs.readFileSync(path.join(workspace, 'package.json'), 'utf8'))).toEqual({
       name: 'demo',

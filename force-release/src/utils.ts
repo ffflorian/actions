@@ -43,6 +43,10 @@ function isJsonObject(value: unknown): value is JsonObject {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function cloneJsonObject(value: JsonObject): JsonObject {
+  return JSON.parse(JSON.stringify(value)) as JsonObject;
+}
+
 function readJsonObject(filePath: string, label: string): JsonObject {
   let parsed: unknown;
 
@@ -71,19 +75,6 @@ function getPluginName(plugin: JsonValue): string | null {
   }
 
   return null;
-}
-
-function createMinimalReleaseConfig(): JsonObject {
-  return {
-    plugins: [
-      [
-        COMMIT_ANALYZER_PLUGIN,
-        {
-          releaseRules: [...RELEASE_RULES],
-        },
-      ],
-    ],
-  };
 }
 
 function createFullReleaseConfig(assets: string[]): JsonObject {
@@ -241,7 +232,7 @@ export function findReleaseTarget(workspace: string): ReleaseTarget {
     throw new Error(`package.json#release must contain a JSON object when it is present.`);
   }
 
-  const generatedDocument: JsonObject = {};
+  const generatedDocument = cloneJsonObject(releaseConfig);
   return {
     config: generatedDocument,
     document: generatedDocument,
@@ -260,16 +251,12 @@ export function prepareReleaseConfig(
   const originalContent = originalExists ? fs.readFileSync(target.path, 'utf8') : null;
   const before = JSON.stringify(target.config);
 
-  if (originalExists) {
+  if (originalExists || target.mode === 'package-release') {
     const nextRules = RELEASE_RULES.map(rule => ({...rule}));
     applyForcedRules(target.config, nextRules);
     applyGitAssets(target.config, assets);
   } else {
-    if (target.mode === 'package-release') {
-      Object.assign(target.config, createMinimalReleaseConfig());
-    } else {
-      Object.assign(target.config, createFullReleaseConfig(assets));
-    }
+    Object.assign(target.config, createFullReleaseConfig(assets));
   }
 
   const changed = !originalExists || before !== JSON.stringify(target.config);
