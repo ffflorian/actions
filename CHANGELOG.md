@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/ffflorian/actions/compare/v1.21.3...v1.22.0) (2026-05-29)
+
+
+### Features
+
+* **force-release:** Create full configuration ([fa96f94](https://github.com/ffflorian/actions/commit/fa96f940e87a9dcb92f050faf3c8f38154d3a5d0))
+
 ## [1.21.3](https://github.com/ffflorian/actions/compare/v1.21.2...v1.21.3) (2026-05-29)
 
 
