@@ -59,6 +59,11 @@ describe('run', () => {
     await run();
 
     expect(mockExec.mock.calls).toEqual([
+      [
+        'bash',
+        ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'],
+        {cwd: workspace},
+      ],
       ['git', ['config', 'user.name', 'Florian Imdahl'], {cwd: workspace}],
       ['git', ['config', 'user.email', 'git@ffflorian.de'], {cwd: workspace}],
       [
@@ -88,6 +93,12 @@ describe('run', () => {
     const {run} = await import('../index');
     await run();
 
+    expect(mockExec).toHaveBeenNthCalledWith(
+      1,
+      'bash',
+      ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'],
+      {cwd: workspace}
+    );
     expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx --no semantic-release -- --dry-run'], {
       cwd: workspace,
       env: expect.objectContaining({
