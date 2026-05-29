@@ -96,8 +96,8 @@ async function run(): Promise<void> {
     return;
   }
 
-  const token = process.env['GITHUB_TOKEN'];
-  const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
+  const token = process.env.GITHUB_TOKEN;
+  const workspace = process.env.GITHUB_WORKSPACE ?? process.cwd();
 
   const hasRepository = hasGitRepository(workspace);
   const yarnDirs = findYarnDirs(workspace);

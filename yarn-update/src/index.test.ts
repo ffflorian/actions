@@ -111,13 +111,13 @@ describe('yarn-update index', () => {
     mocks.pullsUpdate.mockResolvedValue({});
     mocks.pullsCreate.mockResolvedValue({});
 
-    process.env['GITHUB_TOKEN'] = 'token-123';
-    process.env['GITHUB_WORKSPACE'] = '/workspace';
+    process.env.GITHUB_TOKEN = 'token-123';
+    process.env.GITHUB_WORKSPACE = '/workspace';
   });
 
   afterEach(() => {
-    delete process.env['GITHUB_TOKEN'];
-    delete process.env['GITHUB_WORKSPACE'];
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GITHUB_WORKSPACE;
   });
 
   it('updates existing branch pull request instead of creating a new one', async () => {
