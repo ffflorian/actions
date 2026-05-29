@@ -10,6 +10,7 @@ vi.mock('@actions/exec');
 
 const mockExec = vi.mocked(exec.exec);
 const mockGetInput = vi.mocked(core.getInput);
+const mockInfo = vi.mocked(core.info);
 const mockSetFailed = vi.mocked(core.setFailed);
 
 const tempDirs: string[] = [];
@@ -37,7 +38,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  delete process.env['GITHUB_WORKSPACE'];
+  delete process.env.GITHUB_WORKSPACE;
 
   while (tempDirs.length > 0) {
     const dir = tempDirs.pop();
@@ -50,7 +51,7 @@ afterEach(() => {
 describe('run', () => {
   it('prepares release config and runs semantic-release command', async () => {
     const workspace = createWorkspace();
-    process.env['GITHUB_WORKSPACE'] = workspace;
+    process.env.GITHUB_WORKSPACE = workspace;
     const configPath = path.join(workspace, '.releaserc.json');
     const original = JSON.stringify({branches: ['main']}, null, 2);
     fs.writeFileSync(configPath, original);
@@ -81,12 +82,18 @@ describe('run', () => {
         },
       ],
     ]);
+    const appliedConfigLogs = mockInfo.mock.calls.filter(
+      ([message]) =>
+        typeof message === 'string' &&
+        message.includes('This is the release config which will be applied before running semantic-release:')
+    );
+    expect(appliedConfigLogs).toHaveLength(1);
     expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
   });
 
   it('uses a custom release command input', async () => {
     const workspace = createWorkspace();
-    process.env['GITHUB_WORKSPACE'] = workspace;
+    process.env.GITHUB_WORKSPACE = workspace;
     setupInputs({run_command: 'npx --no semantic-release -- --dry-run'});
     fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
 
@@ -109,7 +116,7 @@ describe('run', () => {
 
   it('creates and removes .releaserc.json when no release config exists', async () => {
     const workspace = createWorkspace();
-    process.env['GITHUB_WORKSPACE'] = workspace;
+    process.env.GITHUB_WORKSPACE = workspace;
     fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({name: 'demo'}, null, 2));
 
     const {run} = await import('../index');
@@ -120,7 +127,7 @@ describe('run', () => {
 
   it('restores release config when semantic-release command fails', async () => {
     const workspace = createWorkspace();
-    process.env['GITHUB_WORKSPACE'] = workspace;
+    process.env.GITHUB_WORKSPACE = workspace;
     const configPath = path.join(workspace, '.releaserc.json');
     const original = JSON.stringify({branches: ['main']}, null, 2);
     fs.writeFileSync(configPath, original);
@@ -139,7 +146,7 @@ describe('run', () => {
   it('reports failures when run as the entrypoint', async () => {
     setupInputs({git_authorship: 'invalid'});
     const workspace = createWorkspace();
-    process.env['GITHUB_WORKSPACE'] = workspace;
+    process.env.GITHUB_WORKSPACE = workspace;
     fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
 
     const {run} = await import('../index');

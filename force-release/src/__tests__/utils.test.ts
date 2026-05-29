@@ -86,6 +86,10 @@ describe('prepareReleaseConfig', () => {
 
     expect(result).toEqual({
       changed: true,
+      appliedConfig: expect.objectContaining({
+        branches: ['main'],
+        releaseRules: RELEASE_RULES,
+      }),
       path: configPath,
       source: '.releaserc.json',
       restore: expect.any(Function),
@@ -116,6 +120,9 @@ describe('prepareReleaseConfig', () => {
 
     expect(result).toEqual({
       changed: false,
+      appliedConfig: expect.objectContaining({
+        releaseRules: RELEASE_RULES,
+      }),
       path: packageJsonPath,
       source: 'package.json',
       restore: expect.any(Function),
@@ -136,6 +143,9 @@ describe('prepareReleaseConfig', () => {
 
     expect(result).toEqual({
       changed: true,
+      appliedConfig: expect.objectContaining({
+        releaseRules: RELEASE_RULES,
+      }),
       path: releaseRcPath,
       source: '.releaserc.json',
       restore: expect.any(Function),

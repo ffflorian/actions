@@ -13,6 +13,7 @@ export interface ReleaseTarget {
 
 export interface PreparedReleaseConfig {
   changed: boolean;
+  appliedConfig: JsonObject;
   path: string;
   source: ReleaseTarget['source'];
   restore: () => void;
@@ -112,6 +113,7 @@ export function prepareReleaseConfig(workspace: string): PreparedReleaseConfig {
 
   return {
     changed,
+    appliedConfig: target.config,
     path: target.path,
     source: target.source,
     restore: () => {

@@ -66,7 +66,7 @@ Each TypeScript action directory contains:
 - `action.yml` — action metadata
 - `src/` — TypeScript source (`index.ts`) and `__tests__/`
 - `dist/index.js` — bundled output, **always committed** alongside source changes
-- `package.json`, `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — Yarn 4 setup
+- `package.json`, `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — yarn 4 setup
 - `tsconfig.json`
 - `README.md` — user-facing documentation
 
@@ -82,7 +82,7 @@ Each TypeScript action directory contains:
 
 Actions that require Node.js logic are written in TypeScript:
 
-- **Package manager**: yarn (Yarn 4). Never use npm. Each action has its own `yarn.lock`.
+- **Package manager**: yarn (version 4+). Never use npm. Each action has its own `yarn.lock`.
 - **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
 - **Source entry point**: `src/index.ts`.
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.

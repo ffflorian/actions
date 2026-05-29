@@ -14,7 +14,7 @@ function parseGitAuthorship(gitAuthorship: string): {name: string; email: string
 }
 
 async function ensureSemanticReleaseDependencies(workspace: string): Promise<void> {
-  core.info('Installing semantic-release dependencies with Yarn.');
+  core.info('Installing semantic-release dependencies with yarn.');
   await exec.exec(
     'bash',
     ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git'],
@@ -28,7 +28,7 @@ export async function run(): Promise<void> {
   const token = core.getInput('GITHUB_TOKEN', {required: true});
   const gitAuthorship = core.getInput('git_authorship', {required: true});
   const runCommand = core.getInput('run_command') || 'npx --no semantic-release';
-  const workspace = process.env['GITHUB_WORKSPACE'] ?? process.cwd();
+  const workspace = process.env.GITHUB_WORKSPACE ?? process.cwd();
   const {name, email} = parseGitAuthorship(gitAuthorship);
   const releaseConfig = prepareReleaseConfig(workspace);
 
@@ -42,6 +42,10 @@ export async function run(): Promise<void> {
 
     await exec.exec('git', ['config', 'user.name', name], {cwd: workspace});
     await exec.exec('git', ['config', 'user.email', email], {cwd: workspace});
+
+    core.info(
+      `This is the release config which will be applied before running semantic-release:\n${JSON.stringify(releaseConfig.appliedConfig, null, 2)}`
+    );
     core.info(`Running release command: ${runCommand}`);
 
     await exec.exec('bash', ['-lc', runCommand], {
