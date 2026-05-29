@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/ffflorian/actions/compare/v1.21.0...v1.21.1) (2026-05-29)
+
+
+### Bug Fixes
+
+* **force-release:** Install @semantic-release/git ([ce082b8](https://github.com/ffflorian/actions/commit/ce082b803deccea682b1f7bc8c1a47ecf24c79a7))
+
 # [1.21.0](https://github.com/ffflorian/actions/compare/v1.20.0...v1.21.0) (2026-05-29)
 
 
