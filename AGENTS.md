@@ -104,6 +104,8 @@ yarn test                  # Vitest unit tests
 yarn build                 # bundle to dist/index.js
 ```
 
+After running `yarn test`, always run `yarn fix`.
+
 ## Testing
 
 - **Framework**: [Vitest](https://vitest.dev/) (not Jest).

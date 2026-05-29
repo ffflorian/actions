@@ -15,11 +15,9 @@ function parseGitAuthorship(gitAuthorship: string): {name: string; email: string
 
 async function ensureSemanticReleaseDependencies(workspace: string): Promise<void> {
   core.info('Installing semantic-release dependencies with Yarn.');
-  await exec.exec(
-    'bash',
-    ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'],
-    {cwd: workspace}
-  );
+  await exec.exec('bash', ['-lc', 'corepack yarn add --dev --exact semantic-release @semantic-release/changelog'], {
+    cwd: workspace,
+  });
 }
 
 export async function run(): Promise<void> {
