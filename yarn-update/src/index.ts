@@ -26,7 +26,13 @@ async function getOutput(cmd: string, args: string[], cwd: string): Promise<stri
   return output.trim();
 }
 
-async function createPullRequest(gitAuthorship: string, targetVersion: string, token: string): Promise<void> {
+async function createPullRequest(
+  gitAuthorship: string,
+  targetVersion: string,
+  token: string,
+  assignee?: string,
+  reviewer?: string
+): Promise<void> {
   const authorMatch = /^(.+?)\s*<(.+?)>$/.exec(gitAuthorship);
   if (!authorMatch) {
     throw new Error(`Invalid git_authorship format: "${gitAuthorship}". Expected "Name <email>".`);
@@ -62,6 +68,8 @@ async function createPullRequest(gitAuthorship: string, targetVersion: string, t
 
   const existingPullRequest = existingPullRequests.data[0];
 
+  let pullNumber: number;
+
   if (existingPullRequest) {
     await octokit.rest.pulls.update({
       owner,
@@ -71,9 +79,10 @@ async function createPullRequest(gitAuthorship: string, targetVersion: string, t
       body,
     });
 
+    pullNumber = existingPullRequest.number;
     core.info(`Pull request already exists and was updated: #${existingPullRequest.number}`);
   } else {
-    await octokit.rest.pulls.create({
+    const created = await octokit.rest.pulls.create({
       owner,
       repo,
       title: commitMsg,
@@ -82,7 +91,26 @@ async function createPullRequest(gitAuthorship: string, targetVersion: string, t
       base: 'main',
     });
 
+    pullNumber = created.data.number;
     core.info(`Pull request created: ${branchName}`);
+  }
+
+  if (assignee) {
+    await octokit.rest.issues.addAssignees({
+      owner,
+      repo,
+      issue_number: pullNumber,
+      assignees: [assignee],
+    });
+  }
+
+  if (reviewer) {
+    await octokit.rest.pulls.requestReviewers({
+      owner,
+      repo,
+      pull_number: pullNumber,
+      reviewers: [reviewer],
+    });
   }
 }
 
@@ -90,6 +118,8 @@ async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
   const cooldownInput = core.getInput('release_cooldown_days') || '0';
   const cooldownDays = parseInt(cooldownInput, 10);
+  const assignee = core.getInput('assignee') || undefined;
+  const reviewer = core.getInput('reviewer') || undefined;
 
   if (!/^\d+$/.test(cooldownInput.trim())) {
     core.setFailed(`release_cooldown_days must be a non-negative integer, got: '${cooldownInput}'.`);
@@ -168,7 +198,7 @@ async function run(): Promise<void> {
   if (updated) {
     core.setOutput('YARN_VERSION', targetVersion);
     if (token) {
-      await createPullRequest(gitAuthorship, targetVersion, token);
+      await createPullRequest(gitAuthorship, targetVersion, token, assignee, reviewer);
     } else {
       core.error('❌ GITHUB_TOKEN not set; unable to create pull request.');
     }
