@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/ffflorian/actions/compare/v1.22.0...v1.23.0) (2026-05-30)
+
+
+### Features
+
+* **yarn-update:** add optional assignee and reviewer inputs ([#38](https://github.com/ffflorian/actions/issues/38)) ([33cc7b4](https://github.com/ffflorian/actions/commit/33cc7b4e05e9a6fca58a82d1c6f86cc39192835a))
+
 # [1.22.0](https://github.com/ffflorian/actions/compare/v1.21.3...v1.22.0) (2026-05-29)
 
 
