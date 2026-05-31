@@ -5,8 +5,8 @@ author: 'Florian Imdahl <git@ffflorian.de>'
 branding: {icon: 'fast-forward', color: 'yellow'}
 
 inputs:
-  assignee:
-    description: 'GitHub username to assign to the pull request.'
+  assignees:
+    description: 'Newline- or comma-separated GitHub usernames to assign to the pull request.'
     required: false
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
@@ -15,8 +15,8 @@ inputs:
     description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 or leave unset to disable.'
     required: false
     default: '0'
-  reviewer:
-    description: 'GitHub username to request a review from on the pull request.'
+  reviewers:
+    description: 'Newline- or comma-separated GitHub usernames to request a review from on the pull request.'
     required: false
 
 outputs:

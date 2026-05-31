@@ -173,10 +173,10 @@ describe('yarn-update index', () => {
       if (name === 'release_cooldown_days') {
         return '0';
       }
-      if (name === 'assignee') {
+      if (name === 'assignees') {
         return 'octocat';
       }
-      if (name === 'reviewer') {
+      if (name === 'reviewers') {
         return 'monalisa';
       }
       return '';
@@ -224,10 +224,10 @@ describe('yarn-update index', () => {
       if (name === 'release_cooldown_days') {
         return '0';
       }
-      if (name === 'assignee') {
+      if (name === 'assignees') {
         return 'octocat';
       }
-      if (name === 'reviewer') {
+      if (name === 'reviewers') {
         return 'monalisa';
       }
       return '';

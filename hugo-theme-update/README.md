@@ -16,11 +16,11 @@ Runs `hugo mod get -u ./...` and `hugo mod tidy` on a configurable schedule, and
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
 | `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
-| `github_token` | Yes | - | GitHub token with `contents: write` and `pull-requests: write` permissions. Also needs `issues: write` when `assignee` is set. |
+| `github_token` | Yes | - | GitHub token with `contents: write` and `pull-requests: write` permissions. Also needs `issues: write` when `assignees` is set. |
 | `cooldown_days` | No | `0` | Minimum days between update PRs. When set, the action checks the last PR it created and skips if it is younger than this many days. Set to `0` or leave unset to always run. |
 | `hugo_version` | No | `latest` | Hugo version to install. |
-| `assignee` | No | - | GitHub username to assign to the created or updated pull request. |
-| `reviewer` | No | - | GitHub username to request as reviewer on the created or updated pull request. |
+| `assignees` | No | - | Newline- or comma-separated GitHub usernames to assign to the created or updated pull request. |
+| `reviewers` | No | - | Newline- or comma-separated GitHub usernames to request as reviewers on the created or updated pull request. |
 
 ## Outputs
 
@@ -35,7 +35,7 @@ Runs `hugo mod get -u ./...` and `hugo mod tidy` on a configurable schedule, and
 permissions:
   contents: write
   pull-requests: write
-  issues: write # only needed when using "assignee"
+  issues: write # only needed when using "assignees"
 ```
 
 ## Usage
@@ -56,6 +56,8 @@ jobs:
           git_authorship: Florian Imdahl <git@ffflorian.de>
           github_token: ${{ secrets.GITHUB_TOKEN }}
           cooldown_days: 7
-          assignee: ffflorian
-          reviewer: ffflorian
+          assignees: |
+            ffflorian
+          reviewers: |
+            ffflorian
 ```

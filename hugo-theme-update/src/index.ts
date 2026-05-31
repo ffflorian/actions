@@ -7,8 +7,8 @@ export async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
   const githubToken = core.getInput('github_token', {required: true});
   const cooldownDaysStr = core.getInput('cooldown_days');
-  const assignee = core.getInput('assignee').trim();
-  const reviewer = core.getInput('reviewer').trim();
+  const assignees = core.getInput('assignees').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+  const reviewers = core.getInput('reviewers').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
   const cooldownDays = parseInt(cooldownDaysStr || '0', 10);
 
   if (isNaN(cooldownDays) || cooldownDays < 0) {
@@ -100,7 +100,7 @@ export async function run(): Promise<void> {
       title: prTitle,
       body: prBody,
     });
-    await setPullRequestMetadata(octokit, owner, repo, existingPullRequest.number, assignee, reviewer);
+    await setPullRequestMetadata(octokit, owner, repo, existingPullRequest.number, assignees, reviewers);
     core.info(`Updated PR #${existingPullRequest.number}: ${existingPullRequest.html_url}`);
     core.setOutput('pr_number', String(existingPullRequest.number));
     core.setOutput('pr_url', existingPullRequest.html_url);
@@ -115,7 +115,7 @@ export async function run(): Promise<void> {
     base: 'main',
     body: prBody,
   });
-  await setPullRequestMetadata(octokit, owner, repo, pr.number, assignee, reviewer);
+  await setPullRequestMetadata(octokit, owner, repo, pr.number, assignees, reviewers);
 
   core.info(`Created PR #${pr.number}: ${pr.html_url}`);
   core.setOutput('pr_number', String(pr.number));
@@ -127,24 +127,24 @@ async function setPullRequestMetadata(
   owner: string,
   repo: string,
   pullNumber: number,
-  assignee: string,
-  reviewer: string
+  assignees: string[],
+  reviewers: string[]
 ): Promise<void> {
-  if (assignee) {
+  if (assignees.length > 0) {
     await octokit.rest.issues.addAssignees({
       owner,
       repo,
       issue_number: pullNumber,
-      assignees: [assignee],
+      assignees,
     });
   }
 
-  if (reviewer) {
+  if (reviewers.length > 0) {
     await octokit.rest.pulls.requestReviewers({
       owner,
       repo,
       pull_number: pullNumber,
-      reviewers: [reviewer],
+      reviewers,
     });
   }
 }

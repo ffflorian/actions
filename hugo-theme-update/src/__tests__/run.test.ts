@@ -42,11 +42,11 @@ const mockGetLastUpdateDate = vi.mocked(utils.getLastUpdateDate);
 
 function setupDefaultInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
-    assignee: '',
+    assignees: '',
     git_authorship: 'Test Bot <bot@example.com>',
     github_token: 'test-token',
     cooldown_days: '0',
-    reviewer: '',
+    reviewers: '',
   };
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
 }
@@ -180,7 +180,7 @@ describe('run', () => {
   });
 
   it('should set assignee and reviewer when provided', async () => {
-    setupDefaultInputs({assignee: 'octocat', reviewer: 'hubot'});
+    setupDefaultInputs({assignees: 'octocat', reviewers: 'hubot'});
     const {run} = await import('..');
     await run();
 
@@ -203,7 +203,7 @@ describe('run', () => {
   });
 
   it('should set assignee and reviewer for existing open PRs', async () => {
-    setupDefaultInputs({assignee: 'octocat', reviewer: 'hubot'});
+    setupDefaultInputs({assignees: 'octocat', reviewers: 'hubot'});
     mockOctokit.rest.pulls.list.mockResolvedValue({
       data: [{number: 7, html_url: 'https://github.com/test-owner/test-repo/pull/7'}],
     });

@@ -15,10 +15,10 @@ Checks all yarn installations in the repository and creates a pull request when 
 
 | Name | Required | Default | Description |
 | --- | --- | --- | --- |
-| `assignee` | No | - | GitHub username to assign to the pull request. |
+| `assignees` | No | - | Newline- or comma-separated GitHub usernames to assign to the pull request. |
 | `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
 | `release_cooldown_days` | No | `0` | Minimum age in days a yarn release must have before being considered for an update. When set, the action installs the newest release that is at least this many days old rather than the absolute latest. Set to `0` or leave unset to always use the latest stable release. |
-| `reviewer` | No | - | GitHub username to request a review from on the pull request. |
+| `reviewers` | No | - | Newline- or comma-separated GitHub usernames to request a review from on the pull request. |
 
 ## Outputs
 
@@ -61,8 +61,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          assignee: ffflorian
+          assignees: |
+            ffflorian
           git_authorship: Florian Imdahl <git@ffflorian.de>
           release_cooldown_days: 7
-          reviewer: ffflorian
+          reviewers: |
+            ffflorian
 ```
