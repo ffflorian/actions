@@ -7,6 +7,8 @@ export async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
   const githubToken = core.getInput('github_token', {required: true});
   const cooldownDaysStr = core.getInput('cooldown_days');
+  const assignee = core.getInput('assignee').trim();
+  const reviewer = core.getInput('reviewer').trim();
   const cooldownDays = parseInt(cooldownDaysStr || '0', 10);
 
   if (isNaN(cooldownDays) || cooldownDays < 0) {
@@ -98,6 +100,7 @@ export async function run(): Promise<void> {
       title: prTitle,
       body: prBody,
     });
+    await setPullRequestMetadata(octokit, owner, repo, existingPullRequest.number, assignee, reviewer);
     core.info(`Updated PR #${existingPullRequest.number}: ${existingPullRequest.html_url}`);
     core.setOutput('pr_number', String(existingPullRequest.number));
     core.setOutput('pr_url', existingPullRequest.html_url);
@@ -112,10 +115,38 @@ export async function run(): Promise<void> {
     base: 'main',
     body: prBody,
   });
+  await setPullRequestMetadata(octokit, owner, repo, pr.number, assignee, reviewer);
 
   core.info(`Created PR #${pr.number}: ${pr.html_url}`);
   core.setOutput('pr_number', String(pr.number));
   core.setOutput('pr_url', pr.html_url);
+}
+
+async function setPullRequestMetadata(
+  octokit: ReturnType<typeof github.getOctokit>,
+  owner: string,
+  repo: string,
+  pullNumber: number,
+  assignee: string,
+  reviewer: string
+): Promise<void> {
+  if (assignee) {
+    await octokit.rest.issues.addAssignees({
+      owner,
+      repo,
+      issue_number: pullNumber,
+      assignees: [assignee],
+    });
+  }
+
+  if (reviewer) {
+    await octokit.rest.pulls.requestReviewers({
+      owner,
+      repo,
+      pull_number: pullNumber,
+      reviewers: [reviewer],
+    });
+  }
 }
 
 if (require.main === module) {

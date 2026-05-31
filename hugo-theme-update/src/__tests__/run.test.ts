@@ -12,9 +12,13 @@ const {mockContext, mockOctokit} = vi.hoisted(() => {
   const mockContext = {repo: {owner: 'test-owner', repo: 'test-repo'}};
   const mockOctokit = {
     rest: {
+      issues: {
+        addAssignees: vi.fn(),
+      },
       pulls: {
         create: vi.fn(),
         list: vi.fn(),
+        requestReviewers: vi.fn(),
         update: vi.fn(),
       },
     },
@@ -38,9 +42,11 @@ const mockGetLastUpdateDate = vi.mocked(utils.getLastUpdateDate);
 
 function setupDefaultInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
+    assignee: '',
     git_authorship: 'Test Bot <bot@example.com>',
     github_token: 'test-token',
     cooldown_days: '0',
+    reviewer: '',
   };
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
 }
@@ -59,7 +65,9 @@ describe('run', () => {
       data: {number: 42, html_url: 'https://github.com/test-owner/test-repo/pull/42'},
     });
     mockOctokit.rest.pulls.list.mockResolvedValue({data: []});
+    mockOctokit.rest.pulls.requestReviewers.mockResolvedValue({});
     mockOctokit.rest.pulls.update.mockResolvedValue({});
+    mockOctokit.rest.issues.addAssignees.mockResolvedValue({});
   });
 
   it('should fail when cooldown_days is not a valid integer', async () => {
@@ -169,5 +177,50 @@ describe('run', () => {
     expect(mockOctokit.rest.pulls.create).not.toHaveBeenCalled();
     expect(mockSetOutput).toHaveBeenCalledWith('pr_number', '7');
     expect(mockSetOutput).toHaveBeenCalledWith('pr_url', 'https://github.com/test-owner/test-repo/pull/7');
+  });
+
+  it('should set assignee and reviewer when provided', async () => {
+    setupDefaultInputs({assignee: 'octocat', reviewer: 'hubot'});
+    const {run} = await import('..');
+    await run();
+
+    expect(mockOctokit.rest.issues.addAssignees).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: 'test-owner',
+        repo: 'test-repo',
+        issue_number: 42,
+        assignees: ['octocat'],
+      })
+    );
+    expect(mockOctokit.rest.pulls.requestReviewers).toHaveBeenCalledWith(
+      expect.objectContaining({
+        owner: 'test-owner',
+        repo: 'test-repo',
+        pull_number: 42,
+        reviewers: ['hubot'],
+      })
+    );
+  });
+
+  it('should set assignee and reviewer for existing open PRs', async () => {
+    setupDefaultInputs({assignee: 'octocat', reviewer: 'hubot'});
+    mockOctokit.rest.pulls.list.mockResolvedValue({
+      data: [{number: 7, html_url: 'https://github.com/test-owner/test-repo/pull/7'}],
+    });
+    const {run} = await import('..');
+    await run();
+
+    expect(mockOctokit.rest.issues.addAssignees).toHaveBeenCalledWith(
+      expect.objectContaining({
+        issue_number: 7,
+        assignees: ['octocat'],
+      })
+    );
+    expect(mockOctokit.rest.pulls.requestReviewers).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pull_number: 7,
+        reviewers: ['hubot'],
+      })
+    );
   });
 });

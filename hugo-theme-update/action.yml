@@ -9,7 +9,7 @@ inputs:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
   github_token:
-    description: 'GitHub token with contents: write and pull-requests: write permissions.'
+    description: 'GitHub token with contents: write and pull-requests: write permissions. Also needs issues: write when assignee is set.'
     required: true
   cooldown_days:
     description: 'Minimum days between update PRs. Set to 0 or leave unset to disable.'
@@ -19,6 +19,12 @@ inputs:
     description: 'The Hugo version to use.'
     required: false
     default: 'latest'
+  assignee:
+    description: 'Optional GitHub username to assign to the created or updated pull request.'
+    required: false
+  reviewer:
+    description: 'Optional GitHub username to request as reviewer on the created or updated pull request.'
+    required: false
 
 outputs:
   pr_number:
@@ -52,5 +58,7 @@ runs:
         INPUT_GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
         INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
         INPUT_COOLDOWN_DAYS: ${{ inputs.cooldown_days }}
+        INPUT_ASSIGNEE: ${{ inputs.assignee }}
+        INPUT_REVIEWER: ${{ inputs.reviewer }}
         GITHUB_TOKEN: ${{ inputs.github_token }}
       run: node "${{ github.action_path }}/dist/index.js"
