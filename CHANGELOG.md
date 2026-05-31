@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/ffflorian/actions/compare/v1.23.0...v1.24.0) (2026-05-31)
+
+
+### Features
+
+* **hugo-theme-update:** Add optional assignee and reviewer ([#39](https://github.com/ffflorian/actions/issues/39)) ([0f0ac5f](https://github.com/ffflorian/actions/commit/0f0ac5f7af7f42fc5d59a4b76108a21053dec1f7))
+
 # [1.23.0](https://github.com/ffflorian/actions/compare/v1.22.0...v1.23.0) (2026-05-30)
 
 
