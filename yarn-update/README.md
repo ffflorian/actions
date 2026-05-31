@@ -55,10 +55,10 @@ jobs:
       - uses: ffflorian/actions/yarn-update@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          assignees: |
-            ffflorian
           git_authorship: Florian Imdahl <git@ffflorian.de>
           release_cooldown_days: 7
+          assignees: |
+            ffflorian
           reviewers: |
             ffflorian
 ```

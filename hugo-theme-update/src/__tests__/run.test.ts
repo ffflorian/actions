@@ -44,7 +44,7 @@ function setupDefaultInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
     assignees: '',
     git_authorship: 'Test Bot <bot@example.com>',
-    github_token: 'test-token',
+    GITHUB_TOKEN: 'test-token',
     cooldown_days: '0',
     reviewers: '',
   };

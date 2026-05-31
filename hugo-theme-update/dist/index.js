@@ -24495,7 +24495,7 @@ async function hasChanges() {
 // src/index.ts
 async function run() {
   const gitAuthorship = getInput("git_authorship", { required: true });
-  const githubToken = getInput("github_token", { required: true });
+  const githubToken = getInput("GITHUB_TOKEN", { required: true });
   const cooldownDaysStr = getInput("cooldown_days");
   const assignees = getInput("assignees").split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
   const reviewers = getInput("reviewers").split(/[\n,]/).map((s) => s.trim()).filter(Boolean);

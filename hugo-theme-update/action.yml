@@ -8,7 +8,7 @@ inputs:
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
-  github_token:
+  GITHUB_TOKEN:
     description: 'GitHub token with contents: write and pull-requests: write permissions. Also needs issues: write when assignees is set (reviewers uses pull-requests: write).'
     required: true
   cooldown_days:
@@ -56,9 +56,9 @@ runs:
       shell: bash
       env:
         INPUT_GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
-        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         INPUT_COOLDOWN_DAYS: ${{ inputs.cooldown_days }}
         INPUT_ASSIGNEES: ${{ inputs.assignees }}
         INPUT_REVIEWERS: ${{ inputs.reviewers }}
-        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       run: node "${{ github.action_path }}/dist/index.js"

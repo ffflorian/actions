@@ -5,10 +5,18 @@ import {getLastUpdateDate, hasChanges, BRANCH_PREFIX} from './utils';
 
 export async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
-  const githubToken = core.getInput('github_token', {required: true});
+  const githubToken = core.getInput('GITHUB_TOKEN', {required: true});
   const cooldownDaysStr = core.getInput('cooldown_days');
-  const assignees = core.getInput('assignees').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
-  const reviewers = core.getInput('reviewers').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+  const assignees = core
+    .getInput('assignees')
+    .split(/[\n,]/)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const reviewers = core
+    .getInput('reviewers')
+    .split(/[\n,]/)
+    .map(s => s.trim())
+    .filter(Boolean);
   const cooldownDays = parseInt(cooldownDaysStr || '0', 10);
 
   if (isNaN(cooldownDays) || cooldownDays < 0) {
