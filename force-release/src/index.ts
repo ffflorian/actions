@@ -1,5 +1,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import {prepareReleaseConfig} from './utils.js';
 
 function parseGitAuthorship(gitAuthorship: string): {name: string; email: string} {
@@ -25,6 +27,27 @@ async function ensureSemanticReleaseDependencies(workspace: string): Promise<voi
       cwd: workspace,
     }
   );
+
+  core.info('Restoring package.json and lock files.');
+
+  for (const file of ['yarn.lock', 'package.json', 'package-lock.json']) {
+    const {exitCode, stderr} = await exec.getExecOutput('git', ['checkout', '--', file], {
+      cwd: workspace,
+      ignoreReturnCode: true,
+      silent: true,
+    });
+    if (exitCode !== 0) {
+      if (stderr.includes('did not match any file')) {
+        const filePath = path.join(workspace, file);
+        if (fs.existsSync(filePath)) {
+          fs.rmSync(filePath);
+          core.info(`Deleted ${file} (was not tracked before install).`);
+        }
+      } else {
+        core.warning(`git checkout -- ${file} failed: ${stderr.trim()}`);
+      }
+    }
+  }
 }
 
 function parseReleaseAssets(assetsInput: string): string[] {

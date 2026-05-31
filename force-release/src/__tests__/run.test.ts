@@ -9,6 +9,7 @@ vi.mock('@actions/core');
 vi.mock('@actions/exec');
 
 const mockExec = vi.mocked(exec.exec);
+const mockGetExecOutput = vi.mocked(exec.getExecOutput);
 const mockGetInput = vi.mocked(core.getInput);
 const mockInfo = vi.mocked(core.info);
 const mockSetFailed = vi.mocked(core.setFailed);
@@ -35,6 +36,7 @@ function setupInputs(overrides: Record<string, string> = {}): void {
 beforeEach(() => {
   vi.clearAllMocks();
   mockExec.mockResolvedValue(0);
+  mockGetExecOutput.mockResolvedValue({exitCode: 0, stdout: '', stderr: ''});
   setupInputs();
 });
 
@@ -93,6 +95,12 @@ describe('run', () => {
     );
     expect(appliedConfigLogs).toHaveLength(1);
     expect(fs.readFileSync(configPath, 'utf8')).toBe(original);
+
+    expect(mockGetExecOutput.mock.calls).toEqual([
+      ['git', ['checkout', '--', 'yarn.lock'], {cwd: workspace, ignoreReturnCode: true, silent: true}],
+      ['git', ['checkout', '--', 'package.json'], {cwd: workspace, ignoreReturnCode: true, silent: true}],
+      ['git', ['checkout', '--', 'package-lock.json'], {cwd: workspace, ignoreReturnCode: true, silent: true}],
+    ]);
   });
 
   it('uses a custom release command input', async () => {
@@ -119,6 +127,27 @@ describe('run', () => {
         GITHUB_TOKEN: 'token',
       }),
     });
+  });
+
+  it('deletes a lock file when git reports it did not match any file', async () => {
+    const workspace = createWorkspace();
+    process.env.GITHUB_WORKSPACE = workspace;
+    fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
+    const yarnLockPath = path.join(workspace, 'yarn.lock');
+    fs.writeFileSync(yarnLockPath, '');
+
+    mockGetExecOutput.mockImplementation(async (_cmd, args) => {
+      const file = (args as string[])[2];
+      if (file === 'yarn.lock') {
+        return {exitCode: 1, stdout: '', stderr: "error: pathspec 'yarn.lock' did not match any file(s) known to git"};
+      }
+      return {exitCode: 0, stdout: '', stderr: ''};
+    });
+
+    const {run} = await import('../index');
+    await run();
+
+    expect(fs.existsSync(yarnLockPath)).toBe(false);
   });
 
   it('creates and removes .releaserc.json when no release config exists', async () => {

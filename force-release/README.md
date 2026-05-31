@@ -6,7 +6,7 @@ Forces a release by updating semantic-release release rules and running semantic
 
 - Checks out the repository.
 - Configures the git author and committer.
-- Installs `semantic-release`, `@semantic-release/changelog`, and `@semantic-release/git` as exact dev dependencies using yarn.
+- Installs `semantic-release`, `@semantic-release/changelog`, `@semantic-release/git`, `@semantic-release/commit-analyzer`, and `@semantic-release/release-notes-generator` as exact dev dependencies using yarn, then restores `package.json`, `yarn.lock`, and `package-lock.json` via `git checkout` (or deletes them if they were not tracked before the install).
 - Reads the repository root `.releaserc.json` or the `release` entry in the root `package.json`.
 - If `.releaserc.json` is missing but `package.json#release` exists, creates a minimal temporary `.releaserc.json` with the release rules below injected into `@semantic-release/commit-analyzer`.
 - If neither release config exists, creates a full temporary `.releaserc.json` with angular presets, the release rules below, changelog/github/git plugins, and configurable git assets.
