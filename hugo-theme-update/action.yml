@@ -9,7 +9,7 @@ inputs:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
   github_token:
-    description: 'GitHub token with contents: write and pull-requests: write permissions. Also needs issues: write when assignee is set.'
+    description: 'GitHub token with contents: write and pull-requests: write permissions. Also needs issues: write when assignee is set (reviewer uses pull-requests: write).'
     required: true
   cooldown_days:
     description: 'Minimum days between update PRs. Set to 0 or leave unset to disable.'
