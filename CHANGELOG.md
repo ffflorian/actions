@@ -1,3 +1,13 @@
+# [1.25.0](https://github.com/ffflorian/actions/compare/v1.24.0...v1.25.0) (2026-05-31)
+
+
+### Features
+
+* **force-release:** Restore/delete package files after publish ([b541b5b](https://github.com/ffflorian/actions/commit/b541b5b3b9d3b0c2af2459f1d0ed177c65b975bf))
+* **hugo-theme-update:** Use GITHUB_TOKEN uppercase input ([87492c8](https://github.com/ffflorian/actions/commit/87492c8675f9d7e8e25515445c37bde80731017c))
+* **yarn-update,hugo-theme-update:** Use multiple assignees and reviewers ([e12b124](https://github.com/ffflorian/actions/commit/e12b124a6f456dc7c0ab803e97952ce511a697a1))
+* **yarn-update:** Use GITHUB_TOKEN input instead of env var ([8ce3171](https://github.com/ffflorian/actions/commit/8ce31712bcbe4167fb084ab4ac24339c82ee2613))
+
 # [1.24.0](https://github.com/ffflorian/actions/compare/v1.23.0...v1.24.0) (2026-05-31)
 
 
