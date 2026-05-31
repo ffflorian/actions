@@ -24497,6 +24497,8 @@ async function run() {
   const gitAuthorship = getInput("git_authorship", { required: true });
   const githubToken = getInput("github_token", { required: true });
   const cooldownDaysStr = getInput("cooldown_days");
+  const assignee = getInput("assignee").trim();
+  const reviewer = getInput("reviewer").trim();
   const cooldownDays = parseInt(cooldownDaysStr || "0", 10);
   if (isNaN(cooldownDays) || cooldownDays < 0) {
     setFailed(`cooldown_days must be a non-negative integer, got: '${cooldownDaysStr}'`);
@@ -24564,6 +24566,7 @@ async function run() {
       title: prTitle,
       body: prBody
     });
+    await setPullRequestMetadata(octokit, owner, repo, existingPullRequest.number, assignee, reviewer);
     info(`Updated PR #${existingPullRequest.number}: ${existingPullRequest.html_url}`);
     setOutput("pr_number", String(existingPullRequest.number));
     setOutput("pr_url", existingPullRequest.html_url);
@@ -24577,9 +24580,28 @@ async function run() {
     base: "main",
     body: prBody
   });
+  await setPullRequestMetadata(octokit, owner, repo, pr.number, assignee, reviewer);
   info(`Created PR #${pr.number}: ${pr.html_url}`);
   setOutput("pr_number", String(pr.number));
   setOutput("pr_url", pr.html_url);
+}
+async function setPullRequestMetadata(octokit, owner, repo, pullNumber, assignee, reviewer) {
+  if (assignee) {
+    await octokit.rest.issues.addAssignees({
+      owner,
+      repo,
+      issue_number: pullNumber,
+      assignees: [assignee]
+    });
+  }
+  if (reviewer) {
+    await octokit.rest.pulls.requestReviewers({
+      owner,
+      repo,
+      pull_number: pullNumber,
+      reviewers: [reviewer]
+    });
+  }
 }
 if (require.main === module) {
   run().catch((error2) => {
