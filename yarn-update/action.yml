@@ -11,6 +11,9 @@ inputs:
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
+  GITHUB_TOKEN:
+    description: 'GitHub token with contents: write and pull-requests: write permissions.'
+    required: true
   release_cooldown_days:
     description: 'How many days a yarn release must be old before it is eligible for an update. Set to 0 or leave unset to disable.'
     required: false

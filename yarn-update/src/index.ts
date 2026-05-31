@@ -116,17 +116,25 @@ async function createPullRequest(
 
 async function run(): Promise<void> {
   const gitAuthorship = core.getInput('git_authorship', {required: true});
+  const token = core.getInput('GITHUB_TOKEN', {required: true});
   const cooldownInput = core.getInput('release_cooldown_days') || '0';
   const cooldownDays = parseInt(cooldownInput, 10);
-  const assignees = core.getInput('assignees').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
-  const reviewers = core.getInput('reviewers').split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+  const assignees = core
+    .getInput('assignees')
+    .split(/[\n,]/)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const reviewers = core
+    .getInput('reviewers')
+    .split(/[\n,]/)
+    .map(s => s.trim())
+    .filter(Boolean);
 
   if (!/^\d+$/.test(cooldownInput.trim())) {
     core.setFailed(`release_cooldown_days must be a non-negative integer, got: '${cooldownInput}'.`);
     return;
   }
 
-  const token = process.env.GITHUB_TOKEN;
   const workspace = process.env.GITHUB_WORKSPACE ?? process.cwd();
 
   const hasRepository = hasGitRepository(workspace);
@@ -197,11 +205,7 @@ async function run(): Promise<void> {
 
   if (updated) {
     core.setOutput('YARN_VERSION', targetVersion);
-    if (token) {
-      await createPullRequest(gitAuthorship, targetVersion, token, assignees, reviewers);
-    } else {
-      core.error('❌ GITHUB_TOKEN not set; unable to create pull request.');
-    }
+    await createPullRequest(gitAuthorship, targetVersion, token, assignees, reviewers);
   }
 }
 

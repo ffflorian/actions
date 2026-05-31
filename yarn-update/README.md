@@ -17,6 +17,7 @@ Checks all yarn installations in the repository and creates a pull request when 
 | --- | --- | --- | --- |
 | `assignees` | No | - | Newline- or comma-separated GitHub usernames to assign to the pull request. |
 | `git_authorship` | Yes | - | Commit author/committer in format `Name <email>`. |
+| `GITHUB_TOKEN` | Yes | - | Token used to authenticate GitHub API requests and to push the update branch/create the pull request. Usually `${{ secrets.GITHUB_TOKEN }}`. |
 | `release_cooldown_days` | No | `0` | Minimum age in days a yarn release must have before being considered for an update. When set, the action installs the newest release that is at least this many days old rather than the absolute latest. Set to `0` or leave unset to always use the latest stable release. |
 | `reviewers` | No | - | Newline- or comma-separated GitHub usernames to request a review from on the pull request. |
 
@@ -33,12 +34,6 @@ permissions:
   contents: write
   pull-requests: write
 ```
-
-## Required Environment Variables
-
-| Name | Required | Description |
-| --- | --- | --- |
-| `GITHUB_TOKEN` | Yes | Token used to authenticate GitHub API requests and to push the update branch/create the pull request. Usually `${{ secrets.GITHUB_TOKEN }}`. |
 
 ## Usage
 
@@ -58,9 +53,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ffflorian/actions/yarn-update@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           assignees: |
             ffflorian
           git_authorship: Florian Imdahl <git@ffflorian.de>

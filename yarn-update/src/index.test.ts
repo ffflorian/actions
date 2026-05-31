@@ -109,6 +109,10 @@ describe('yarn-update index', () => {
         return '0';
       }
 
+      if (name === 'GITHUB_TOKEN') {
+        return 'token-123';
+      }
+
       return '';
     });
 
@@ -121,12 +125,10 @@ describe('yarn-update index', () => {
     mocks.issuesAddAssignees.mockResolvedValue({});
     mocks.pullsRequestReviewers.mockResolvedValue({});
 
-    process.env.GITHUB_TOKEN = 'token-123';
     process.env.GITHUB_WORKSPACE = '/workspace';
   });
 
   afterEach(() => {
-    delete process.env.GITHUB_TOKEN;
     delete process.env.GITHUB_WORKSPACE;
   });
 
