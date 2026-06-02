@@ -8,10 +8,6 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub token used to check out the repository and run semantic-release.'
     required: true
-  run_command:
-    description: 'Command to execute semantic-release.'
-    required: false
-    default: 'npx --no semantic-release'
   git_authorship:
     description: 'The authorship to use for the commit. Format: "Name <email>".'
     required: true
@@ -38,7 +34,6 @@ runs:
       shell: bash
       env:
         INPUT_GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        INPUT_RUN_COMMAND: ${{ inputs.run_command }}
         INPUT_GIT_AUTHORSHIP: ${{ inputs.git_authorship }}
         INPUT_ASSETS: ${{ inputs.assets }}
       run: node "${{ github.action_path }}/dist/index.js"

@@ -27,7 +27,6 @@ function setupInputs(overrides: Record<string, string> = {}): void {
     GITHUB_TOKEN: 'token',
     git_authorship: 'Florian Imdahl <git@ffflorian.de>',
     assets: 'CHANGELOG.md',
-    run_command: 'npx --no semantic-release',
   };
 
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
@@ -64,18 +63,25 @@ describe('run', () => {
 
     expect(mockExec.mock.calls).toEqual([
       [
-        'bash',
+        'corepack',
         [
-          '-lc',
-          'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/commit-analyzer @semantic-release/release-notes-generator',
+          'yarn',
+          'add',
+          '--dev',
+          '--exact',
+          'semantic-release@24.2.9',
+          '@semantic-release/changelog@6.0.3',
+          '@semantic-release/git@10.0.1',
+          '@semantic-release/commit-analyzer@13.0.1',
+          '@semantic-release/release-notes-generator@14.1.0',
         ],
         {cwd: workspace},
       ],
       ['git', ['config', 'user.name', 'Florian Imdahl'], {cwd: workspace}],
       ['git', ['config', 'user.email', 'git@ffflorian.de'], {cwd: workspace}],
       [
-        'bash',
-        ['-lc', 'npx --no semantic-release'],
+        'npx',
+        ['--no', 'semantic-release'],
         {
           cwd: workspace,
           env: expect.objectContaining({
@@ -101,32 +107,6 @@ describe('run', () => {
       ['git', ['checkout', '--', 'package.json'], {cwd: workspace, ignoreReturnCode: true, silent: true}],
       ['git', ['checkout', '--', 'package-lock.json'], {cwd: workspace, ignoreReturnCode: true, silent: true}],
     ]);
-  });
-
-  it('uses a custom release command input', async () => {
-    const workspace = createWorkspace();
-    process.env.GITHUB_WORKSPACE = workspace;
-    setupInputs({run_command: 'npx --no semantic-release -- --dry-run'});
-    fs.writeFileSync(path.join(workspace, '.releaserc.json'), JSON.stringify({branches: ['main']}, null, 2));
-
-    const {run} = await import('../index');
-    await run();
-
-    expect(mockExec).toHaveBeenNthCalledWith(
-      1,
-      'bash',
-      [
-        '-lc',
-        'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/commit-analyzer @semantic-release/release-notes-generator',
-      ],
-      {cwd: workspace}
-    );
-    expect(mockExec).toHaveBeenCalledWith('bash', ['-lc', 'npx --no semantic-release -- --dry-run'], {
-      cwd: workspace,
-      env: expect.objectContaining({
-        GITHUB_TOKEN: 'token',
-      }),
-    });
   });
 
   it('deletes a lock file when git reports it did not match any file', async () => {
@@ -207,7 +187,7 @@ describe('run', () => {
     const original = JSON.stringify({branches: ['main']}, null, 2);
     fs.writeFileSync(configPath, original);
     mockExec.mockImplementation(async (command: string) => {
-      if (command === 'bash') {
+      if (command === 'npx') {
         throw new Error('semantic-release failed');
       }
       return 0;

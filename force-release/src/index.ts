@@ -4,6 +4,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import {prepareReleaseConfig} from './utils.js';
 
+const SEMANTIC_RELEASE_VERSION = '24.2.9';
+const SEMANTIC_RELEASE_CHANGELOG_VERSION = '6.0.3';
+const SEMANTIC_RELEASE_GIT_VERSION = '10.0.1';
+const SEMANTIC_RELEASE_COMMIT_ANALYZER_VERSION = '13.0.1';
+const SEMANTIC_RELEASE_RELEASE_NOTES_GENERATOR_VERSION = '14.1.0';
+
 function parseGitAuthorship(gitAuthorship: string): {name: string; email: string} {
   const match = /^(.+?)\s*<(.+?)>$/.exec(gitAuthorship);
 
@@ -18,10 +24,17 @@ function parseGitAuthorship(gitAuthorship: string): {name: string; email: string
 async function ensureSemanticReleaseDependencies(workspace: string): Promise<void> {
   core.info('Installing semantic-release dependencies with yarn.');
   await exec.exec(
-    'bash',
+    'corepack',
     [
-      '-lc',
-      'corepack yarn add --dev --exact semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/commit-analyzer @semantic-release/release-notes-generator',
+      'yarn',
+      'add',
+      '--dev',
+      '--exact',
+      `semantic-release@${SEMANTIC_RELEASE_VERSION}`,
+      `@semantic-release/changelog@${SEMANTIC_RELEASE_CHANGELOG_VERSION}`,
+      `@semantic-release/git@${SEMANTIC_RELEASE_GIT_VERSION}`,
+      `@semantic-release/commit-analyzer@${SEMANTIC_RELEASE_COMMIT_ANALYZER_VERSION}`,
+      `@semantic-release/release-notes-generator@${SEMANTIC_RELEASE_RELEASE_NOTES_GENERATOR_VERSION}`,
     ],
     {
       cwd: workspace,
@@ -63,7 +76,6 @@ export async function run(): Promise<void> {
   const token = core.getInput('GITHUB_TOKEN', {required: true});
   const gitAuthorship = core.getInput('git_authorship', {required: true});
   const releaseAssets = parseReleaseAssets(core.getInput('assets'));
-  const runCommand = core.getInput('run_command') || 'npx --no semantic-release';
   const workspace = process.env.GITHUB_WORKSPACE ?? process.cwd();
   const {name, email} = parseGitAuthorship(gitAuthorship);
   const releaseConfig = prepareReleaseConfig(workspace, releaseAssets);
@@ -82,9 +94,9 @@ export async function run(): Promise<void> {
     core.info(
       `This is the release config which will be applied before running semantic-release:\n${JSON.stringify(releaseConfig.appliedConfig, null, 2)}`
     );
-    core.info(`Running release command: ${runCommand}`);
+    core.info('Running release command: npx --no semantic-release');
 
-    await exec.exec('bash', ['-lc', runCommand], {
+    await exec.exec('npx', ['--no', 'semantic-release'], {
       cwd: workspace,
       env: {
         ...process.env,

@@ -4,6 +4,7 @@ import {
   FAILURE_STATUSES,
   getDeploymentIds,
   IN_PROGRESS_STATUSES,
+  isValidDomain,
   type DeployResponse,
   type DeploymentStatusResponse,
   normalizeDomain,
@@ -69,11 +70,11 @@ async function waitForDeployments(
 
     for (const deploymentUuid of deploymentUuids) {
       const statusUrl = `https://${domain}/api/v1/deployments/${deploymentUuid}`;
-      const {body, status, text} = await requestJson<DeploymentStatusResponse>(statusUrl, token);
+      const {body, status} = await requestJson<DeploymentStatusResponse>(statusUrl, token);
 
       if (status !== 200) {
         inProgressCount += 1;
-        core.warning(`⚠️ Failed to get status for deployment ${deploymentUuid} (HTTP ${status}): ${text}`);
+        core.warning(`⚠️ Failed to get status for deployment ${deploymentUuid} (HTTP ${status}).`);
         continue;
       }
 
@@ -140,14 +141,18 @@ export async function run(): Promise<void> {
     return;
   }
 
+  if (!isValidDomain(domain)) {
+    core.setFailed(`domain input is invalid: '${domain}'.`);
+    return;
+  }
+
   core.info('🚀 Deploying to Coolify...');
   const deployUrl = buildDeployUrl(domain, force, uuid);
   core.info(`Making deployment request to: ${deployUrl}`);
 
-  const {body, status, text} = await requestJson<DeployResponse>(deployUrl, token, 'POST');
+  const {body, status} = await requestJson<DeployResponse>(deployUrl, token, 'POST');
 
   core.info(`Response status: ${status}`);
-  core.info(`Response body: ${text}`);
 
   if (status !== 200) {
     throw new Error(`Deployment request failed with HTTP status ${status}.`);

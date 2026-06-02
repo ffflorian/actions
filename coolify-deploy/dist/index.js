@@ -19103,8 +19103,18 @@ function info(message) {
 var SUCCESS_STATUSES = /* @__PURE__ */ new Set(["successful", "finished"]);
 var FAILURE_STATUSES = /* @__PURE__ */ new Set(["failed", "cancelled", "skipped"]);
 var IN_PROGRESS_STATUSES = /* @__PURE__ */ new Set(["running", "pending", "queued", "in_progress", "processing"]);
+var DOMAIN_PATTERN = /^(?:[a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(?::\d{1,5})?$/;
 function normalizeDomain(domain) {
-  return domain.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+  return domain.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "").toLowerCase();
+}
+function isValidDomain(domain) {
+  if (!DOMAIN_PATTERN.test(domain)) {
+    return false;
+  }
+  if (domain.includes("/") || domain.includes("@") || domain.includes("?") || domain.includes("#")) {
+    return false;
+  }
+  return true;
 }
 function parseBooleanInput(name, value) {
   if (value === "true") {
@@ -19176,10 +19186,10 @@ async function waitForDeployments(domain, token, deploymentUuids, timeoutSeconds
     let inProgressCount = 0;
     for (const deploymentUuid of deploymentUuids) {
       const statusUrl = `https://${domain}/api/v1/deployments/${deploymentUuid}`;
-      const { body, status, text } = await requestJson(statusUrl, token);
+      const { body, status } = await requestJson(statusUrl, token);
       if (status !== 200) {
         inProgressCount += 1;
-        warning(`\u26A0\uFE0F Failed to get status for deployment ${deploymentUuid} (HTTP ${status}): ${text}`);
+        warning(`\u26A0\uFE0F Failed to get status for deployment ${deploymentUuid} (HTTP ${status}).`);
         continue;
       }
       const deploymentStatus = body.status?.trim() ?? "";
@@ -19235,12 +19245,15 @@ async function run() {
     setFailed("domain input must not be empty.");
     return;
   }
+  if (!isValidDomain(domain)) {
+    setFailed(`domain input is invalid: '${domain}'.`);
+    return;
+  }
   info("\u{1F680} Deploying to Coolify...");
   const deployUrl = buildDeployUrl(domain, force, uuid);
   info(`Making deployment request to: ${deployUrl}`);
-  const { body, status, text } = await requestJson(deployUrl, token, "POST");
+  const { body, status } = await requestJson(deployUrl, token, "POST");
   info(`Response status: ${status}`);
-  info(`Response body: ${text}`);
   if (status !== 200) {
     throw new Error(`Deployment request failed with HTTP status ${status}.`);
   }

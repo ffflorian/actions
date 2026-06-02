@@ -26,6 +26,8 @@ export async function run(): Promise<void> {
 
   const octokit = github.getOctokit(githubToken);
   const {owner, repo} = github.context.repo;
+  const {data: repository} = await octokit.rest.repos.get({owner, repo});
+  const baseBranch = repository.default_branch;
 
   // Cooldown check: skip if last update PR was created within cooldown_days
   if (cooldownDays > 0) {
@@ -96,7 +98,7 @@ export async function run(): Promise<void> {
     repo,
     state: 'open',
     head: `${owner}:${branchName}`,
-    base: 'main',
+    base: baseBranch,
   });
 
   const existingPullRequest = existingPullRequests.data[0];
@@ -120,7 +122,7 @@ export async function run(): Promise<void> {
     repo,
     title: prTitle,
     head: branchName,
-    base: 'main',
+    base: baseBranch,
     body: prBody,
   });
   await setPullRequestMetadata(octokit, owner, repo, pr.number, assignees, reviewers);

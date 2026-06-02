@@ -24506,6 +24506,8 @@ async function run() {
   }
   const octokit = getOctokit(githubToken);
   const { owner, repo } = context2.repo;
+  const { data: repository } = await octokit.rest.repos.get({ owner, repo });
+  const baseBranch = repository.default_branch;
   if (cooldownDays > 0) {
     const lastUpdateDate = await getLastUpdateDate(octokit, owner, repo);
     if (lastUpdateDate !== null) {
@@ -24555,7 +24557,7 @@ async function run() {
     repo,
     state: "open",
     head: `${owner}:${branchName}`,
-    base: "main"
+    base: baseBranch
   });
   const existingPullRequest = existingPullRequests.data[0];
   if (existingPullRequest) {
@@ -24577,7 +24579,7 @@ async function run() {
     repo,
     title: prTitle,
     head: branchName,
-    base: "main",
+    base: baseBranch,
     body: prBody
   });
   await setPullRequestMetadata(octokit, owner, repo, pr.number, assignees, reviewers);
