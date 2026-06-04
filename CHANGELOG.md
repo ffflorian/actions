@@ -1,3 +1,10 @@
+## [1.25.2](https://github.com/ffflorian/actions/compare/v1.25.1...v1.25.2) (2026-06-04)
+
+
+### Bug Fixes
+
+* **force-release:** Use successCommentCondition in config ([dd6fd9b](https://github.com/ffflorian/actions/commit/dd6fd9b97fd14154943e3ae510867341f078cbb2))
+
 ## [1.25.1](https://github.com/ffflorian/actions/compare/v1.25.0...v1.25.1) (2026-06-04)
 
 
