@@ -113,7 +113,7 @@ function createFullReleaseConfig(assets: string[]): JsonObject {
         '@semantic-release/github',
         {
           releasedLabels: false,
-          successComment: false,
+          successCommentCondition: false,
         },
       ],
       [

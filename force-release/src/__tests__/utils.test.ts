@@ -185,7 +185,7 @@ describe('prepareReleaseConfig', () => {
             '@semantic-release/github',
             {
               releasedLabels: false,
-              successComment: false,
+              successCommentCondition: false,
             },
           ],
           [
@@ -227,7 +227,7 @@ describe('prepareReleaseConfig', () => {
           '@semantic-release/github',
           {
             releasedLabels: false,
-            successComment: false,
+            successCommentCondition: false,
           },
         ],
         [
