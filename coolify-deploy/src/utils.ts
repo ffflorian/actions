@@ -13,12 +13,26 @@ export interface DeploymentStatusResponse {
 export const SUCCESS_STATUSES = new Set(['successful', 'finished']);
 export const FAILURE_STATUSES = new Set(['failed', 'cancelled', 'skipped']);
 export const IN_PROGRESS_STATUSES = new Set(['running', 'pending', 'queued', 'in_progress', 'processing']);
+const DOMAIN_PATTERN = /^(?:[a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(?::\d{1,5})?$/;
 
 export function normalizeDomain(domain: string): string {
   return domain
     .trim()
     .replace(/^https?:\/\//, '')
-    .replace(/\/+$/, '');
+    .replace(/\/+$/, '')
+    .toLowerCase();
+}
+
+export function isValidDomain(domain: string): boolean {
+  if (!DOMAIN_PATTERN.test(domain)) {
+    return false;
+  }
+
+  if (domain.includes('/') || domain.includes('@') || domain.includes('?') || domain.includes('#')) {
+    return false;
+  }
+
+  return true;
 }
 
 export function parseBooleanInput(name: string, value: string): boolean {

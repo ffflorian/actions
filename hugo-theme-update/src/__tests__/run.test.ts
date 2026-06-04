@@ -21,6 +21,9 @@ const {mockContext, mockOctokit} = vi.hoisted(() => {
         requestReviewers: vi.fn(),
         update: vi.fn(),
       },
+      repos: {
+        get: vi.fn(),
+      },
     },
   };
   return {mockContext, mockOctokit};
@@ -67,6 +70,7 @@ describe('run', () => {
     mockOctokit.rest.pulls.list.mockResolvedValue({data: []});
     mockOctokit.rest.pulls.requestReviewers.mockResolvedValue({});
     mockOctokit.rest.pulls.update.mockResolvedValue({});
+    mockOctokit.rest.repos.get.mockResolvedValue({data: {default_branch: 'main'}});
     mockOctokit.rest.issues.addAssignees.mockResolvedValue({});
   });
 

@@ -9,7 +9,7 @@ Runs `hugo mod get -u ./...` and `hugo mod tidy` on a configurable schedule, and
 - Optionally skips the run when a previous update PR was created within `cooldown_days`.
 - Runs `hugo mod get -u ./...` to upgrade all Hugo module dependencies.
 - Runs `hugo mod tidy` to clean up `go.sum` and `go.mod`.
-- Creates one update PR when any module files have changed, or updates an existing open PR for the same branch if one already exists.
+- Creates one update PR against the repository default branch when any module files have changed, or updates an existing open PR for the same branch if one already exists.
 
 ## Inputs
 

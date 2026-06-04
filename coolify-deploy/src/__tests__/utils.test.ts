@@ -4,6 +4,7 @@ import {
   FAILURE_STATUSES,
   getDeploymentIds,
   IN_PROGRESS_STATUSES,
+  isValidDomain,
   normalizeDomain,
   parseBooleanInput,
   parsePositiveIntegerInput,
@@ -13,6 +14,14 @@ import {
 describe('normalizeDomain', () => {
   it('removes protocol and trailing slash', () => {
     expect(normalizeDomain('https://coolify.example.com/')).toBe('coolify.example.com');
+  });
+});
+
+describe('domain validation', () => {
+  it('validates supported domain formats', () => {
+    expect(isValidDomain('coolify.example.com')).toBe(true);
+    expect(isValidDomain('coolify.example.com:443')).toBe(true);
+    expect(isValidDomain('coolify.example.com/path')).toBe(false);
   });
 });
 
