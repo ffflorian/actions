@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/ffflorian/actions/compare/v1.25.0...v1.25.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* Security improvements ([#40](https://github.com/ffflorian/actions/issues/40)) ([1c22fe8](https://github.com/ffflorian/actions/commit/1c22fe8c8bde1063c512276bacf32ef41ebf79eb))
+
 # [1.25.0](https://github.com/ffflorian/actions/compare/v1.24.0...v1.25.0) (2026-05-31)
 
 
