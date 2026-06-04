@@ -12,6 +12,36 @@ updates:
       exclude:
         - 'ffflorian/*'
   - package-ecosystem: 'npm'
+    directory: '/coolify-deploy'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 99
+    assignees:
+      - ffflorian
+    ignore:
+      - dependency-name: '@types/node'
+        versions:
+          - '> 26'
+    cooldown:
+      default-days: 5
+      exclude:
+        - '@ffflorian/*'
+  - package-ecosystem: 'npm'
+    directory: '/force-release'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 99
+    assignees:
+      - ffflorian
+    ignore:
+      - dependency-name: '@types/node'
+        versions:
+          - '> 26'
+    cooldown:
+      default-days: 5
+      exclude:
+        - '@ffflorian/*'
+  - package-ecosystem: 'npm'
     directory: '/hugo-theme-update'
     schedule:
       interval: weekly
@@ -21,7 +51,11 @@ updates:
     ignore:
       - dependency-name: '@types/node'
         versions:
-          - '>26'
+          - '> 26'
+    cooldown:
+      default-days: 5
+      exclude:
+        - '@ffflorian/*'
   - package-ecosystem: 'npm'
     directory: '/yarn-update'
     schedule:
@@ -32,4 +66,8 @@ updates:
     ignore:
       - dependency-name: '@types/node'
         versions:
-          - '>26'
+          - '> 26'
+    cooldown:
+      default-days: 5
+      exclude:
+        - '@ffflorian/*'
