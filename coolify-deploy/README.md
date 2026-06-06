@@ -8,6 +8,7 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 - Supports forcing a rebuild without cache.
 - Optionally polls Coolify until all triggered deployments finish.
 - Fails when the deploy request fails, a deployment fails, or the wait timeout is reached.
+- Optionally creates a GitHub deployment and tracks its status (`in_progress` → `success` or `failure`) when `GITHUB_TOKEN` is provided.
 
 ## Inputs
 
@@ -20,6 +21,8 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 | `waitForDeploy` | No | `false` | Wait for the triggered deployments to complete. |
 | `timeout` | No | `300` | Timeout in seconds when waiting for deployments. |
 | `interval` | No | `10` | Polling interval in seconds when waiting for deployments. |
+| `GITHUB_TOKEN` | No | - | GitHub token for setting repository deployment status. |
+| `environment` | No | `production` | GitHub deployment environment name. Only used when `GITHUB_TOKEN` is provided. |
 
 ## Usage
 
@@ -35,4 +38,6 @@ jobs:
           uuid: 123e4567-e89b-12d3-a456-426614174000
           force: true
           waitForDeploy: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
 ```

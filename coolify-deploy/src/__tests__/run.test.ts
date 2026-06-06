@@ -1,11 +1,17 @@
 import * as core from '@actions/core';
+import * as github from '@actions/github';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 
 vi.mock('@actions/core');
+vi.mock('@actions/github');
 
 const mockGetInput = vi.mocked(core.getInput);
 const mockInfo = vi.mocked(core.info);
 const mockSetFailed = vi.mocked(core.setFailed);
+const mockGetOctokit = vi.mocked(github.getOctokit);
+
+const mockCreateDeployment = vi.fn();
+const mockCreateDeploymentStatus = vi.fn();
 
 function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -16,9 +22,27 @@ function setupInputs(overrides: Record<string, string> = {}): void {
     waitForDeploy: 'false',
     timeout: '300',
     interval: '10',
+    GITHUB_TOKEN: '',
+    environment: 'production',
   };
 
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
+}
+
+function setupOctokit(): void {
+  mockGetOctokit.mockReturnValue({
+    rest: {
+      repos: {
+        createDeployment: mockCreateDeployment,
+        createDeploymentStatus: mockCreateDeploymentStatus,
+      },
+    },
+  } as unknown as ReturnType<typeof github.getOctokit>);
+
+  vi.mocked(github).context = {
+    repo: {owner: 'test-owner', repo: 'test-repo'},
+    sha: 'abc123',
+  } as typeof github.context;
 }
 
 describe('run', () => {
@@ -107,5 +131,126 @@ describe('run', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(mockInfo).toHaveBeenCalledWith('✅ Deployment completed successfully.');
+  });
+
+  describe('GitHub deployment status', () => {
+    it('creates a deployment and sets in_progress then success when not waiting', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
+      setupOctokit();
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 42}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'deployment-1'}]}),
+        })
+      );
+
+      const {run} = await import('..');
+      await run();
+
+      expect(mockCreateDeployment).toHaveBeenCalledWith(
+        expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'abc123', environment: 'production'})
+      );
+      expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
+        expect.objectContaining({deployment_id: 42, state: 'in_progress'})
+      );
+      expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
+        expect.objectContaining({deployment_id: 42, state: 'success'})
+      );
+    });
+
+    it('sets failure status when deploy request fails', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
+      setupOctokit();
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 42}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 500,
+          text: async () => '{"error":"boom"}',
+        })
+      );
+
+      const {run} = await import('..');
+      await expect(run()).rejects.toThrow('Deployment request failed with HTTP status 500.');
+
+      expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
+        expect.objectContaining({deployment_id: 42, state: 'in_progress'})
+      );
+      expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
+        expect.objectContaining({deployment_id: 42, state: 'failure'})
+      );
+    });
+
+    it('sets success status after waiting for deployments', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token', waitForDeploy: 'true', timeout: '2', interval: '1'});
+      setupOctokit();
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 99}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'dep-1', message: 'queued'}]}),
+        })
+        .mockResolvedValueOnce({
+          status: 200,
+          text: async () => JSON.stringify({status: 'successful', application_name: 'my-app'}),
+        });
+      vi.stubGlobal('fetch', fetchMock);
+      vi.useFakeTimers();
+
+      const {run} = await import('..');
+      const runPromise = run();
+      await vi.runAllTimersAsync();
+      await runPromise;
+
+      expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
+        expect.objectContaining({deployment_id: 99, state: 'success'})
+      );
+    });
+
+    it('skips GitHub status when GITHUB_TOKEN is not provided', async () => {
+      setupInputs({GITHUB_TOKEN: ''});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'deployment-1'}]}),
+        })
+      );
+
+      const {run} = await import('..');
+      await run();
+
+      expect(mockGetOctokit).not.toHaveBeenCalled();
+    });
+
+    it('uses custom environment name', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token', environment: 'staging'});
+      setupOctokit();
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 7}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'deployment-1'}]}),
+        })
+      );
+
+      const {run} = await import('..');
+      await run();
+
+      expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({environment: 'staging'}));
+    });
   });
 });
