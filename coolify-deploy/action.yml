@@ -32,7 +32,7 @@ inputs:
     required: false
     default: '10'
   GITHUB_TOKEN:
-    description: 'GitHub token for setting repository deployment status. When provided, creates a GitHub deployment and updates its status after the Coolify deployment completes.'
+    description: 'GitHub token for setting repository deployment status. Requires deployments: write permission. When provided, creates a GitHub deployment and updates its status after the Coolify deployment completes.'
     required: false
     default: ''
   environment:

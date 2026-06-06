@@ -24,6 +24,15 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 | `GITHUB_TOKEN` | No | - | GitHub token for setting repository deployment status. |
 | `environment` | No | `production` | GitHub deployment environment name. Only used when `GITHUB_TOKEN` is provided. |
 
+## Permissions
+
+When `GITHUB_TOKEN` is provided, the workflow must grant `deployments: write`:
+
+```yaml
+permissions:
+  deployments: write
+```
+
 ## Usage
 
 ```yaml
