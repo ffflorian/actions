@@ -164,3 +164,6 @@ runs:
           ghcr.io/${{ inputs.image_name }}:${{ steps.semantic.outputs.new_release_version }}
           ghcr.io/${{ inputs.image_name }}:latest
         labels: ${{ steps.docker-meta.outputs.labels }}
+        build-args: |
+          VERSION=${{ steps.semantic.outputs.new_release_version }}
+          COMMIT=${{ steps.semantic.outputs.new_release_git_head }}
