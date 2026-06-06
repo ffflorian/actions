@@ -31,6 +31,14 @@ inputs:
     description: 'Polling interval in seconds when waiting for deployments.'
     required: false
     default: '10'
+  GITHUB_TOKEN:
+    description: 'GitHub token for setting repository deployment status. When provided, creates a GitHub deployment and updates its status after the Coolify deployment completes.'
+    required: false
+    default: ''
+  environment:
+    description: 'GitHub deployment environment name. Only used when GITHUB_TOKEN is provided.'
+    required: false
+    default: 'production'
 
 runs:
   using: composite
@@ -50,4 +58,6 @@ runs:
         INPUT_WAITFORDEPLOY: ${{ inputs.waitForDeploy }}
         INPUT_TIMEOUT: ${{ inputs.timeout }}
         INPUT_INTERVAL: ${{ inputs.interval }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
       run: node "${{ github.action_path }}/dist/index.js"

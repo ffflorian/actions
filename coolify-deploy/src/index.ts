@@ -1,4 +1,5 @@
 import * as core from '@actions/core';
+import * as github from '@actions/github';
 import {
   buildDeployUrl,
   FAILURE_STATUSES,
@@ -12,6 +13,9 @@ import {
   parsePositiveIntegerInput,
   SUCCESS_STATUSES,
 } from './utils';
+
+type Octokit = ReturnType<typeof github.getOctokit>;
+type GithubDeploymentState = 'in_progress' | 'success' | 'failure';
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -47,6 +51,52 @@ async function requestJson<T>(
     status: response.status,
     text,
   };
+}
+
+async function createGithubDeployment(octokit: Octokit, environment: string): Promise<number | undefined> {
+  try {
+    const {owner, repo} = github.context.repo;
+    const ref = github.context.sha;
+
+    const response = await octokit.rest.repos.createDeployment({
+      auto_merge: false,
+      environment,
+      owner,
+      ref,
+      repo,
+      required_contexts: [],
+    });
+
+    if (response.status === 201) {
+      core.info(`🚦 Created GitHub deployment (ID: ${response.data.id}).`);
+      return response.data.id;
+    }
+  } catch (error) {
+    core.warning(`Failed to create GitHub deployment: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  return undefined;
+}
+
+async function setGithubDeploymentStatus(
+  octokit: Octokit,
+  deploymentId: number,
+  state: GithubDeploymentState
+): Promise<void> {
+  try {
+    const {owner, repo} = github.context.repo;
+
+    await octokit.rest.repos.createDeploymentStatus({
+      deployment_id: deploymentId,
+      owner,
+      repo,
+      state,
+    });
+
+    core.info(`🚦 GitHub deployment status set to ${state}.`);
+  } catch (error) {
+    core.warning(`Failed to set GitHub deployment status: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 async function waitForDeployments(
@@ -130,6 +180,8 @@ export async function run(): Promise<void> {
   const waitForDeploy = parseBooleanInput('waitForDeploy', core.getInput('waitForDeploy') || 'false');
   const timeoutSeconds = parsePositiveIntegerInput('timeout', core.getInput('timeout') || '300');
   const intervalSeconds = parsePositiveIntegerInput('interval', core.getInput('interval') || '10');
+  const githubToken = core.getInput('GITHUB_TOKEN');
+  const environment = core.getInput('environment') || 'production';
 
   if (!uuid) {
     core.setFailed('uuid input is required.');
@@ -146,39 +198,64 @@ export async function run(): Promise<void> {
     return;
   }
 
-  core.info('🚀 Deploying to Coolify...');
-  const deployUrl = buildDeployUrl(domain, force, uuid);
-  core.info(`Making deployment request to: ${deployUrl}`);
+  let octokit: Octokit | undefined;
+  let githubDeploymentId: number | undefined;
 
-  const {body, status} = await requestJson<DeployResponse>(deployUrl, token, 'POST');
-
-  core.info(`Response status: ${status}`);
-
-  if (status !== 200) {
-    throw new Error(`Deployment request failed with HTTP status ${status}.`);
-  }
-
-  core.info('✅ Deployment request successful.');
-
-  if (!waitForDeploy) {
-    core.info('✅ Deployment request sent successfully (not waiting for completion).');
-    return;
-  }
-
-  const deploymentMessages = (body.deployments ?? []).map(deployment => deployment.message?.trim()).filter(Boolean);
-  if (deploymentMessages.length > 0) {
-    core.info('📋 Deployment messages:');
-    for (const message of deploymentMessages) {
-      core.info(`  • ${message}`);
+  if (githubToken) {
+    octokit = github.getOctokit(githubToken);
+    githubDeploymentId = await createGithubDeployment(octokit, environment);
+    if (githubDeploymentId !== undefined) {
+      await setGithubDeploymentStatus(octokit, githubDeploymentId, 'in_progress');
     }
   }
 
-  const deploymentUuids = getDeploymentIds(body);
-  if (deploymentUuids.length === 0) {
-    throw new Error('Could not extract deployment UUIDs from the deployment response.');
-  }
+  try {
+    core.info('🚀 Deploying to Coolify...');
+    const deployUrl = buildDeployUrl(domain, force, uuid);
+    core.info(`Making deployment request to: ${deployUrl}`);
 
-  await waitForDeployments(domain, token, deploymentUuids, timeoutSeconds, intervalSeconds);
+    const {body, status} = await requestJson<DeployResponse>(deployUrl, token, 'POST');
+
+    core.info(`Response status: ${status}`);
+
+    if (status !== 200) {
+      throw new Error(`Deployment request failed with HTTP status ${status}.`);
+    }
+
+    core.info('✅ Deployment request successful.');
+
+    if (!waitForDeploy) {
+      core.info('✅ Deployment request sent successfully (not waiting for completion).');
+      if (octokit && githubDeploymentId !== undefined) {
+        await setGithubDeploymentStatus(octokit, githubDeploymentId, 'success');
+      }
+      return;
+    }
+
+    const deploymentMessages = (body.deployments ?? []).map(deployment => deployment.message?.trim()).filter(Boolean);
+    if (deploymentMessages.length > 0) {
+      core.info('📋 Deployment messages:');
+      for (const message of deploymentMessages) {
+        core.info(`  • ${message}`);
+      }
+    }
+
+    const deploymentUuids = getDeploymentIds(body);
+    if (deploymentUuids.length === 0) {
+      throw new Error('Could not extract deployment UUIDs from the deployment response.');
+    }
+
+    await waitForDeployments(domain, token, deploymentUuids, timeoutSeconds, intervalSeconds);
+
+    if (octokit && githubDeploymentId !== undefined) {
+      await setGithubDeploymentStatus(octokit, githubDeploymentId, 'success');
+    }
+  } catch (error) {
+    if (octokit && githubDeploymentId !== undefined) {
+      await setGithubDeploymentStatus(octokit, githubDeploymentId, 'failure');
+    }
+    throw error;
+  }
 }
 
 if (require.main === module) {
