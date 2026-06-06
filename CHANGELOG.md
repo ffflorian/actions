@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/ffflorian/actions/compare/v1.26.0...v1.27.0) (2026-06-06)
+
+
+### Features
+
+* **coolify-deploy:** add GitHub deployment status reporting ([#45](https://github.com/ffflorian/actions/issues/45)) ([0b45dba](https://github.com/ffflorian/actions/commit/0b45dbab2f32ea6cc65058cb0e1162ae94401d2c))
+
 # [1.26.0](https://github.com/ffflorian/actions/compare/v1.25.2...v1.26.0) (2026-06-06)
 
 
