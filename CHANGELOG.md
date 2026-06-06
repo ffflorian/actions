@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/ffflorian/actions/compare/v1.25.2...v1.26.0) (2026-06-06)
+
+
+### Features
+
+* **docker-image-release:** pass VERSION and COMMIT as Docker build args ([#44](https://github.com/ffflorian/actions/issues/44)) ([1654724](https://github.com/ffflorian/actions/commit/165472422b0d15476fd1db1bf80d72a3f7c4d67f))
+
 ## [1.25.2](https://github.com/ffflorian/actions/compare/v1.25.1...v1.25.2) (2026-06-04)
 
 
