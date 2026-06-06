@@ -10,6 +10,17 @@ Creates a GitHub release using semantic-release and publishes a Docker image to 
 - Creates a `.releaserc.json` for semantic-release.
 - Runs [semantic-release](https://github.com/semantic-release/semantic-release).
 - Publishes a Docker image with `latest` and the new release version tag.
+- Passes `VERSION` (release version) and `COMMIT` (release git SHA) as Docker build args.
+
+To bake these into the image as environment variables, add the following to your `Dockerfile`:
+
+```dockerfile
+ARG VERSION
+ENV VERSION=$VERSION
+
+ARG COMMIT
+ENV COMMIT=$COMMIT
+```
 
 ## Inputs
 
