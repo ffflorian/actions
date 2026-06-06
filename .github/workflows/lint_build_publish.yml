@@ -1,5 +1,5 @@
 ---
-name: Lint, Build and Publish
+name: Lint, build, and publish
 
 on:
   push:
