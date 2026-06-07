@@ -23,6 +23,7 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 | `interval` | No | `10` | Polling interval in seconds when waiting for deployments. |
 | `GITHUB_TOKEN` | No | - | GitHub token for setting repository deployment status. |
 | `environment` | No | `production` | GitHub deployment environment name. Only used when `GITHUB_TOKEN` is provided. |
+| `ref` | No | current commit SHA | Git ref (branch, tag, or SHA) to record as the deployed ref in GitHub deployments. Only used when `GITHUB_TOKEN` is provided. |
 
 ## Permissions
 

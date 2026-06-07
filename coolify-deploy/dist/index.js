@@ -40704,15 +40704,15 @@ async function requestJson(url, token, httpMethod = "GET") {
     text
   };
 }
-async function createGithubDeployment(octokit, environment) {
+async function createGithubDeployment(octokit, environment, ref) {
   try {
     const { owner, repo } = github.context.repo;
-    const ref = github.context.sha;
+    const deployRef = ref || github.context.sha;
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
       environment,
       owner,
-      ref,
+      ref: deployRef,
       repo,
       required_contexts: []
     });
@@ -40804,6 +40804,7 @@ async function run() {
   const intervalSeconds = parsePositiveIntegerInput("interval", getInput("interval") || "10");
   const githubToken = getInput("GITHUB_TOKEN");
   const environment = getInput("environment") || "production";
+  const ref = getInput("ref").trim() || void 0;
   if (!uuid) {
     setFailed("uuid input is required.");
     return;
@@ -40820,7 +40821,7 @@ async function run() {
   let githubDeploymentId;
   if (githubToken) {
     octokit = github.getOctokit(githubToken);
-    githubDeploymentId = await createGithubDeployment(octokit, environment);
+    githubDeploymentId = await createGithubDeployment(octokit, environment, ref);
     if (githubDeploymentId !== void 0) {
       await setGithubDeploymentStatus(octokit, githubDeploymentId, "in_progress");
     }
