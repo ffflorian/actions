@@ -54,6 +54,7 @@ async function requestJson<T>(
 }
 
 async function getLatestReleaseTag(octokit: Octokit): Promise<string | undefined> {
+  await sleep(5000);
   try {
     const {owner, repo} = github.context.repo;
     const response = await octokit.rest.repos.getLatestRelease({owner, repo});

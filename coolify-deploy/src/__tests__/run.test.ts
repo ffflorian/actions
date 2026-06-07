@@ -138,6 +138,10 @@ describe('run', () => {
   });
 
   describe('GitHub deployment status', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
     it('creates a deployment and sets in_progress then success when not waiting', async () => {
       setupInputs({GITHUB_TOKEN: 'gh-token'});
       setupOctokit();
@@ -153,7 +157,9 @@ describe('run', () => {
       );
 
       const {run} = await import('..');
-      await run();
+      const runPromise = run();
+      await vi.runAllTimersAsync();
+      await runPromise;
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(
         expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'v1.0.0', environment: 'production'})
@@ -181,7 +187,10 @@ describe('run', () => {
       );
 
       const {run} = await import('..');
-      await expect(run()).rejects.toThrow('Deployment request failed with HTTP status 500.');
+      const runPromise = run();
+      const assertion = expect(runPromise).rejects.toThrow('Deployment request failed with HTTP status 500.');
+      await vi.runAllTimersAsync();
+      await assertion;
 
       expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
         expect.objectContaining({deployment_id: 42, state: 'in_progress'})
@@ -208,7 +217,6 @@ describe('run', () => {
           text: async () => JSON.stringify({status: 'successful', application_name: 'my-app'}),
         });
       vi.stubGlobal('fetch', fetchMock);
-      vi.useFakeTimers();
 
       const {run} = await import('..');
       const runPromise = run();
@@ -252,7 +260,9 @@ describe('run', () => {
       );
 
       const {run} = await import('..');
-      await run();
+      const runPromise = run();
+      await vi.runAllTimersAsync();
+      await runPromise;
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({environment: 'staging'}));
     });
@@ -273,7 +283,9 @@ describe('run', () => {
       );
 
       const {run} = await import('..');
-      await run();
+      const runPromise = run();
+      await vi.runAllTimersAsync();
+      await runPromise;
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'v2.3.4'}));
     });
@@ -294,7 +306,9 @@ describe('run', () => {
       );
 
       const {run} = await import('..');
-      await run();
+      const runPromise = run();
+      await vi.runAllTimersAsync();
+      await runPromise;
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'abc123'}));
       expect(mockInfo).toHaveBeenCalledWith('ℹ️ No release tag found; using commit SHA as deployment ref: abc123');
