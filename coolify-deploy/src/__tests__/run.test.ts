@@ -297,6 +297,7 @@ describe('run', () => {
       await run();
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'abc123'}));
+      expect(mockInfo).toHaveBeenCalledWith('ℹ️ No release tag found; using commit SHA as deployment ref: abc123');
     });
   });
 });

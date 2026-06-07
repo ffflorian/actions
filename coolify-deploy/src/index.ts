@@ -71,6 +71,8 @@ async function createGithubDeployment(octokit: Octokit, environment: string): Pr
 
     if (latestTag) {
       core.info(`🏷️ Using latest release tag as deployment ref: ${latestTag}`);
+    } else {
+      core.info(`ℹ️ No release tag found; using commit SHA as deployment ref: ${github.context.sha}`);
     }
 
     const response = await octokit.rest.repos.createDeployment({

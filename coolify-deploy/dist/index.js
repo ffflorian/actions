@@ -23838,6 +23838,8 @@ async function createGithubDeployment(octokit, environment) {
     const deployRef = latestTag ?? context2.sha;
     if (latestTag) {
       info(`\u{1F3F7}\uFE0F Using latest release tag as deployment ref: ${latestTag}`);
+    } else {
+      info(`\u2139\uFE0F No release tag found; using commit SHA as deployment ref: ${context2.sha}`);
     }
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
