@@ -1,3 +1,10 @@
+## [1.28.4](https://github.com/ffflorian/actions/compare/v1.28.3...v1.28.4) (2026-06-07)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** log error when tag fetch fails before falling back to SHA ([#51](https://github.com/ffflorian/actions/issues/51)) ([9bd3cef](https://github.com/ffflorian/actions/commit/9bd3cefbc8e2746ee402d05260921be3967e4576))
+
 ## [1.28.3](https://github.com/ffflorian/actions/compare/v1.28.2...v1.28.3) (2026-06-07)
 
 
