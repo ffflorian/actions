@@ -1,6 +1,6 @@
 # actions
 
-A collection of GitHub Actions for use in my projects.
+A collection of GitHub Actions for use in my projects, organized as a Yarn workspaces monorepo.
 
 ## Available actions
 
@@ -37,3 +37,20 @@ Replace `<action-name>` with one of:
 - `yarn-update`
 
 See each action README for required inputs, permissions, and complete examples.
+
+## Development
+
+Install all workspace dependencies from the repo root:
+
+```bash
+yarn install --immutable
+```
+
+Run lint, type-check, tests, and build for all actions:
+
+```bash
+yarn lint
+yarn workspaces foreach --all --parallel --exclude actions run type-check
+yarn workspaces foreach --all --parallel --exclude actions run test
+yarn workspaces foreach --all --parallel --exclude actions run build
+```
