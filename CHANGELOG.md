@@ -1,3 +1,10 @@
+## [1.28.1](https://github.com/ffflorian/actions/compare/v1.28.0...v1.28.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** update @actions/github from 6.0.1 to 9.1.1 ([#48](https://github.com/ffflorian/actions/issues/48)) ([99e5f69](https://github.com/ffflorian/actions/commit/99e5f6908998b4d57c69d76092ac3b2bd492c5f9))
+
 # [1.28.0](https://github.com/ffflorian/actions/compare/v1.27.0...v1.28.0) (2026-06-07)
 
 
