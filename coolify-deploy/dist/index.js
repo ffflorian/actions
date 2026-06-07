@@ -40704,15 +40704,28 @@ async function requestJson(url, token, httpMethod = "GET") {
     text
   };
 }
+async function getLatestReleaseTag(octokit) {
+  try {
+    const { owner, repo } = github.context.repo;
+    const response = await octokit.rest.repos.getLatestRelease({ owner, repo });
+    return response.data.tag_name;
+  } catch {
+    return void 0;
+  }
+}
 async function createGithubDeployment(octokit, environment) {
   try {
     const { owner, repo } = github.context.repo;
-    const ref = github.context.sha;
+    const latestTag = await getLatestReleaseTag(octokit);
+    const deployRef = latestTag ?? github.context.sha;
+    if (latestTag) {
+      info(`\u{1F3F7}\uFE0F Using latest release tag as deployment ref: ${latestTag}`);
+    }
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
       environment,
       owner,
-      ref,
+      ref: deployRef,
       repo,
       required_contexts: []
     });

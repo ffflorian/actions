@@ -12,6 +12,7 @@ const mockGetOctokit = vi.mocked(github.getOctokit);
 
 const mockCreateDeployment = vi.fn();
 const mockCreateDeploymentStatus = vi.fn();
+const mockGetLatestRelease = vi.fn();
 
 function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -30,11 +31,14 @@ function setupInputs(overrides: Record<string, string> = {}): void {
 }
 
 function setupOctokit(): void {
+  mockGetLatestRelease.mockResolvedValue({data: {tag_name: 'v1.0.0'}});
+
   mockGetOctokit.mockReturnValue({
     rest: {
       repos: {
         createDeployment: mockCreateDeployment,
         createDeploymentStatus: mockCreateDeploymentStatus,
+        getLatestRelease: mockGetLatestRelease,
       },
     },
   } as unknown as ReturnType<typeof github.getOctokit>);
@@ -152,7 +156,7 @@ describe('run', () => {
       await run();
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(
-        expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'abc123', environment: 'production'})
+        expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'v1.0.0', environment: 'production'})
       );
       expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
         expect.objectContaining({deployment_id: 42, state: 'in_progress'})
@@ -251,6 +255,48 @@ describe('run', () => {
       await run();
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({environment: 'staging'}));
+    });
+
+    it('uses latest release tag as deployment ref', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
+      setupOctokit();
+      mockGetLatestRelease.mockResolvedValue({data: {tag_name: 'v2.3.4'}});
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 8}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'deployment-1'}]}),
+        })
+      );
+
+      const {run} = await import('..');
+      await run();
+
+      expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'v2.3.4'}));
+    });
+
+    it('falls back to context sha when no release exists', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
+      setupOctokit();
+      mockGetLatestRelease.mockRejectedValue(new Error('Not Found'));
+      mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 9}});
+      mockCreateDeploymentStatus.mockResolvedValue({});
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          status: 200,
+          text: async () => JSON.stringify({deployments: [{deployment_uuid: 'deployment-1'}]}),
+        })
+      );
+
+      const {run} = await import('..');
+      await run();
+
+      expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'abc123'}));
     });
   });
 });

@@ -53,16 +53,31 @@ async function requestJson<T>(
   };
 }
 
+async function getLatestReleaseTag(octokit: Octokit): Promise<string | undefined> {
+  try {
+    const {owner, repo} = github.context.repo;
+    const response = await octokit.rest.repos.getLatestRelease({owner, repo});
+    return response.data.tag_name;
+  } catch {
+    return undefined;
+  }
+}
+
 async function createGithubDeployment(octokit: Octokit, environment: string): Promise<number | undefined> {
   try {
     const {owner, repo} = github.context.repo;
-    const ref = github.context.sha;
+    const latestTag = await getLatestReleaseTag(octokit);
+    const deployRef = latestTag ?? github.context.sha;
+
+    if (latestTag) {
+      core.info(`🏷️ Using latest release tag as deployment ref: ${latestTag}`);
+    }
 
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
       environment,
       owner,
-      ref,
+      ref: deployRef,
       repo,
       required_contexts: [],
     });
