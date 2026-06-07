@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/ffflorian/actions/compare/v1.27.0...v1.28.0) (2026-06-07)
+
+
+### Features
+
+* **coolify-deploy:** use latest release tag as GitHub deployment ref ([#47](https://github.com/ffflorian/actions/issues/47)) ([a449fc0](https://github.com/ffflorian/actions/commit/a449fc0aa3f03343c7c9974860288f8ad18c5879))
+
 # [1.27.0](https://github.com/ffflorian/actions/compare/v1.26.0...v1.27.0) (2026-06-06)
 
 
