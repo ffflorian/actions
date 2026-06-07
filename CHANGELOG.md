@@ -1,3 +1,10 @@
+## [1.28.3](https://github.com/ffflorian/actions/compare/v1.28.2...v1.28.3) (2026-06-07)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** wait 5s before fetching latest release tag ([#50](https://github.com/ffflorian/actions/issues/50)) ([8fe6755](https://github.com/ffflorian/actions/commit/8fe675550b5181e56cc51d1b7ce4e7c10e70880e))
+
 ## [1.28.2](https://github.com/ffflorian/actions/compare/v1.28.1...v1.28.2) (2026-06-07)
 
 
