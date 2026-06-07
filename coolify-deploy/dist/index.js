@@ -23823,6 +23823,7 @@ async function requestJson(url, token, httpMethod = "GET") {
   };
 }
 async function getLatestReleaseTag(octokit) {
+  await sleep(5e3);
   try {
     const { owner, repo } = context2.repo;
     const response = await octokit.rest.repos.getLatestRelease({ owner, repo });
