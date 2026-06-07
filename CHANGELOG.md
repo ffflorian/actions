@@ -1,3 +1,10 @@
+## [1.28.2](https://github.com/ffflorian/actions/compare/v1.28.1...v1.28.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** log when tag is unavailable and SHA is used as deployment ref ([#49](https://github.com/ffflorian/actions/issues/49)) ([cb3267b](https://github.com/ffflorian/actions/commit/cb3267ba95693e5bb03f1eff940674d972ba075a))
+
 ## [1.28.1](https://github.com/ffflorian/actions/compare/v1.28.0...v1.28.1) (2026-06-07)
 
 
