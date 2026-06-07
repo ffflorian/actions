@@ -1,0 +1,31 @@
+{
+  "name": "actions",
+  "version": "1.0.0",
+  "private": true,
+  "repository": "git@github.com:ffflorian/actions.git",
+  "author": "Florian Imdahl <git@ffflorian.de>",
+  "license": "MIT",
+  "packageManager": "yarn@4.15.0",
+  "prettier": "@ffflorian/prettier-config",
+  "workspaces": [
+    "coolify-deploy",
+    "force-release",
+    "hugo-theme-update",
+    "yarn-update"
+  ],
+  "scripts": {
+    "build": "yarn workspaces foreach --all --parallel --exclude actions run build",
+    "fix": "prettier --write .",
+    "lint": "prettier --check .",
+    "test": "yarn workspaces foreach --all --parallel --exclude actions run test",
+    "type-check": "yarn workspaces foreach --all --parallel --exclude actions run type-check"
+  },
+  "devDependencies": {
+    "@ffflorian/prettier-config": "0.8.2",
+    "@types/node": "25.9.1",
+    "esbuild": "0.28.0",
+    "prettier": "3.8.3",
+    "typescript": "6.0.3",
+    "vitest": "4.1.8"
+  }
+}

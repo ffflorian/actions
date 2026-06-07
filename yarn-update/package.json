@@ -8,7 +8,7 @@
   "description": "GitHub Action which checks for yarn updates and creates a pull request",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
-    "@types/node": "~25",
+    "@types/node": "25.9.1",
     "@types/semver": "7.7.1",
     "esbuild": "0.28.0",
     "prettier": "3.8.3",
@@ -20,8 +20,6 @@
   },
   "main": "dist/index.js",
   "name": "yarn-update-action",
-  "packageManager": "yarn@4.15.0",
-  "prettier": "@ffflorian/prettier-config",
   "private": true,
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify",

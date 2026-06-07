@@ -10,15 +10,13 @@
     "esbuild": "0.28.0",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   },
   "engines": {
     "node": ">=20"
   },
   "main": "dist/index.js",
   "name": "force-release-action",
-  "packageManager": "yarn@4.15.0",
-  "prettier": "@ffflorian/prettier-config",
   "private": true,
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --format=cjs --outfile=dist/index.js --minify",

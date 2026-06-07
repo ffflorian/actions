@@ -66,9 +66,16 @@ Each TypeScript action directory contains:
 - `action.yml` — action metadata
 - `src/` — TypeScript source (`index.ts`) and `__tests__/`
 - `dist/index.js` — bundled output, **always committed** alongside source changes
-- `package.json`, `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — yarn 4 setup
+- `package.json` — dependencies and scripts (devDependencies declared per-workspace so yarn sets up `.bin` correctly)
 - `tsconfig.json`
 - `README.md` — user-facing documentation
+
+The root of the repository is a Yarn workspaces monorepo. Shared yarn setup lives at root:
+
+- `package.json` — workspace root: declares workspaces, shared devDependencies, and root scripts
+- `yarn.lock` — single lockfile covering all workspaces
+- `.yarnrc.yml` — shared yarn configuration
+- `.yarn/releases/yarn-4.15.0.cjs` — pinned yarn binary
 
 ## Code Style
 
@@ -82,7 +89,7 @@ Each TypeScript action directory contains:
 
 Actions that require Node.js logic are written in TypeScript:
 
-- **Package manager**: yarn (version 4+). Never use npm. Each action has its own `yarn.lock`.
+- **Package manager**: yarn (version 4+). Never use npm. A single `yarn.lock` at the repo root covers all workspaces.
 - **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
 - **Source entry point**: `src/index.ts`.
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.
@@ -93,26 +100,35 @@ Actions that require Node.js logic are written in TypeScript:
 
 ### Validation (run before committing)
 
-Each TypeScript action supports the following scripts via `yarn`:
+From the **repo root**, operate on all workspaces at once:
 
 ```bash
-yarn install --immutable   # install exact locked dependencies
-yarn lint                  # Prettier check for `src/`
-yarn fix                   # Prettier write for `src/`
-yarn type-check            # tsc --noEmit
-yarn test                  # Vitest unit tests
-yarn build                 # bundle to dist/index.js
+yarn install --immutable                                           # install all workspace dependencies
+yarn lint                                                          # Prettier check across the whole repo
+yarn fix                                                           # Prettier write across the whole repo
+yarn workspaces foreach --all --parallel --exclude actions run type-check  # tsc --noEmit for all actions
+yarn workspaces foreach --all --parallel --exclude actions run test        # Vitest for all actions
+yarn workspaces foreach --all --parallel --exclude actions run build       # bundle all actions
+```
+
+Or from within a **single action's directory** (e.g. `force-release/`):
+
+```bash
+yarn lint        # Prettier check for src/
+yarn fix         # Prettier write for src/
+yarn type-check  # tsc --noEmit
+yarn test        # Vitest unit tests
+yarn build       # bundle to dist/index.js
 ```
 
 When finishing TypeScript action work, always run `yarn fix`, `CI=true yarn test`, `yarn type-check`, and `yarn build` before handing off.
-When working on a certain action, run these commands from the action's subdirectory (e.g. `force-release/`).
 
 ## Testing
 
 - **Framework**: [Vitest](https://vitest.dev/) (not Jest).
 - **Test files**: live in `<action-dir>/src/__tests__/` (e.g. `run.test.ts`, `utils.test.ts`).
 - Use `vi.hoisted()` for any values that must be defined before `vi.mock()` factory functions run.
-- Run tests with `yarn test` from the action subdirectory.
+- Run tests with `yarn test` from the action subdirectory, or `yarn workspaces foreach --all --parallel --exclude actions run test` from root.
 
 ## Development Conventions
 
@@ -155,11 +171,8 @@ refactor/<short-description>
 
 Runs on push to `main` and on pull requests targeting `main`. Jobs:
 
-1. **`build_publish`**: builds all four TypeScript actions, then publishes a semantic release on push to `main` using `./github-action-release`.
-2. **`hugo_theme_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `hugo-theme-update/`.
-3. **`coolify_deploy_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `coolify-deploy/`.
-4. **`force_release_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `force-release/`.
-5. **`yarn_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `yarn-update/`.
+1. **`test`**: installs from root, runs `yarn lint`, then type-checks and tests all workspaces in parallel via `workspaces foreach`.
+2. **`build_publish`**: installs from root, builds all workspaces via `workspaces foreach`, then publishes a semantic release on push to `main` using `./github-action-release`.
 
 ### Other workflows
 
