@@ -59,7 +59,8 @@ async function getLatestReleaseTag(octokit: Octokit): Promise<string | undefined
     const {owner, repo} = github.context.repo;
     const response = await octokit.rest.repos.getLatestRelease({owner, repo});
     return response.data.tag_name;
-  } catch {
+  } catch (error) {
+    core.warning(`Failed to fetch latest release tag: ${error instanceof Error ? error.message : String(error)}`);
     return undefined;
   }
 }
