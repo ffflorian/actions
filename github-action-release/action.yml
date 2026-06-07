@@ -38,9 +38,8 @@ runs:
     - name: Build TypeScript actions
       shell: bash
       run: |
-        for dir in force-release hugo-theme-update yarn-update; do
-          (cd "$dir" && yarn install --frozen-lockfile && yarn build)
-        done
+        yarn install --immutable
+        yarn workspaces foreach --all --parallel --exclude actions run build
 
     - name: Create release config file
       shell: bash
