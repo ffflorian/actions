@@ -8,7 +8,7 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 - Supports forcing a rebuild without cache.
 - Optionally polls Coolify until all triggered deployments finish.
 - Fails when the deploy request fails, a deployment fails, or the wait timeout is reached.
-- Optionally creates a GitHub deployment and tracks its status (`in_progress` → `success` or `failure`) when `GITHUB_TOKEN` is provided.
+- Optionally creates a GitHub deployment and tracks its status (`in_progress` → `success` or `failure`) when `GITHUB_TOKEN` is provided. The deployment ref is set to the latest published release tag, falling back to the current commit SHA if no release exists.
 
 ## Inputs
 
@@ -23,7 +23,6 @@ Triggers one or more Coolify deployments and can optionally wait until they fini
 | `interval` | No | `10` | Polling interval in seconds when waiting for deployments. |
 | `GITHUB_TOKEN` | No | - | GitHub token for setting repository deployment status. |
 | `environment` | No | `production` | GitHub deployment environment name. Only used when `GITHUB_TOKEN` is provided. |
-| `ref` | No | current commit SHA | Git ref (branch, tag, or SHA) to record as the deployed ref in GitHub deployments. Only used when `GITHUB_TOKEN` is provided. |
 
 ## Permissions
 

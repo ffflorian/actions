@@ -40704,10 +40704,23 @@ async function requestJson(url, token, httpMethod = "GET") {
     text
   };
 }
-async function createGithubDeployment(octokit, environment, ref) {
+async function getLatestReleaseTag(octokit) {
   try {
     const { owner, repo } = github.context.repo;
-    const deployRef = ref || github.context.sha;
+    const response = await octokit.rest.repos.getLatestRelease({ owner, repo });
+    return response.data.tag_name;
+  } catch {
+    return void 0;
+  }
+}
+async function createGithubDeployment(octokit, environment) {
+  try {
+    const { owner, repo } = github.context.repo;
+    const latestTag = await getLatestReleaseTag(octokit);
+    const deployRef = latestTag ?? github.context.sha;
+    if (latestTag) {
+      info(`\u{1F3F7}\uFE0F Using latest release tag as deployment ref: ${latestTag}`);
+    }
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
       environment,
@@ -40804,7 +40817,6 @@ async function run() {
   const intervalSeconds = parsePositiveIntegerInput("interval", getInput("interval") || "10");
   const githubToken = getInput("GITHUB_TOKEN");
   const environment = getInput("environment") || "production";
-  const ref = getInput("ref").trim() || void 0;
   if (!uuid) {
     setFailed("uuid input is required.");
     return;
@@ -40821,7 +40833,7 @@ async function run() {
   let githubDeploymentId;
   if (githubToken) {
     octokit = github.getOctokit(githubToken);
-    githubDeploymentId = await createGithubDeployment(octokit, environment, ref);
+    githubDeploymentId = await createGithubDeployment(octokit, environment);
     if (githubDeploymentId !== void 0) {
       await setGithubDeploymentStatus(octokit, githubDeploymentId, "in_progress");
     }

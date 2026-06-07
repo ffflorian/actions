@@ -53,14 +53,25 @@ async function requestJson<T>(
   };
 }
 
-async function createGithubDeployment(
-  octokit: Octokit,
-  environment: string,
-  ref?: string
-): Promise<number | undefined> {
+async function getLatestReleaseTag(octokit: Octokit): Promise<string | undefined> {
   try {
     const {owner, repo} = github.context.repo;
-    const deployRef = ref || github.context.sha;
+    const response = await octokit.rest.repos.getLatestRelease({owner, repo});
+    return response.data.tag_name;
+  } catch {
+    return undefined;
+  }
+}
+
+async function createGithubDeployment(octokit: Octokit, environment: string): Promise<number | undefined> {
+  try {
+    const {owner, repo} = github.context.repo;
+    const latestTag = await getLatestReleaseTag(octokit);
+    const deployRef = latestTag ?? github.context.sha;
+
+    if (latestTag) {
+      core.info(`🏷️ Using latest release tag as deployment ref: ${latestTag}`);
+    }
 
     const response = await octokit.rest.repos.createDeployment({
       auto_merge: false,
@@ -186,7 +197,6 @@ export async function run(): Promise<void> {
   const intervalSeconds = parsePositiveIntegerInput('interval', core.getInput('interval') || '10');
   const githubToken = core.getInput('GITHUB_TOKEN');
   const environment = core.getInput('environment') || 'production';
-  const ref = core.getInput('ref').trim() || undefined;
 
   if (!uuid) {
     core.setFailed('uuid input is required.');
@@ -208,7 +218,7 @@ export async function run(): Promise<void> {
 
   if (githubToken) {
     octokit = github.getOctokit(githubToken);
-    githubDeploymentId = await createGithubDeployment(octokit, environment, ref);
+    githubDeploymentId = await createGithubDeployment(octokit, environment);
     if (githubDeploymentId !== undefined) {
       await setGithubDeploymentStatus(octokit, githubDeploymentId, 'in_progress');
     }

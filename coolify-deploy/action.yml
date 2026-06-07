@@ -39,10 +39,6 @@ inputs:
     description: 'GitHub deployment environment name. Only used when GITHUB_TOKEN is provided.'
     required: false
     default: 'production'
-  ref:
-    description: 'Git ref (branch, tag, or SHA) to record as the deployed ref in GitHub deployments. Defaults to the current commit SHA. Only used when GITHUB_TOKEN is provided.'
-    required: false
-    default: ''
 
 runs:
   using: composite
@@ -64,5 +60,4 @@ runs:
         INPUT_INTERVAL: ${{ inputs.interval }}
         INPUT_GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         INPUT_ENVIRONMENT: ${{ inputs.environment }}
-        INPUT_REF: ${{ inputs.ref }}
       run: node "${{ github.action_path }}/dist/index.js"

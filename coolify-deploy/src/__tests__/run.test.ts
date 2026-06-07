@@ -12,6 +12,7 @@ const mockGetOctokit = vi.mocked(github.getOctokit);
 
 const mockCreateDeployment = vi.fn();
 const mockCreateDeploymentStatus = vi.fn();
+const mockGetLatestRelease = vi.fn();
 
 function setupInputs(overrides: Record<string, string> = {}): void {
   const defaults: Record<string, string> = {
@@ -24,18 +25,20 @@ function setupInputs(overrides: Record<string, string> = {}): void {
     interval: '10',
     GITHUB_TOKEN: '',
     environment: 'production',
-    ref: '',
   };
 
   mockGetInput.mockImplementation((name: string) => overrides[name] ?? defaults[name] ?? '');
 }
 
 function setupOctokit(): void {
+  mockGetLatestRelease.mockResolvedValue({data: {tag_name: 'v1.0.0'}});
+
   mockGetOctokit.mockReturnValue({
     rest: {
       repos: {
         createDeployment: mockCreateDeployment,
         createDeploymentStatus: mockCreateDeploymentStatus,
+        getLatestRelease: mockGetLatestRelease,
       },
     },
   } as unknown as ReturnType<typeof github.getOctokit>);
@@ -153,7 +156,7 @@ describe('run', () => {
       await run();
 
       expect(mockCreateDeployment).toHaveBeenCalledWith(
-        expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'abc123', environment: 'production'})
+        expect.objectContaining({owner: 'test-owner', repo: 'test-repo', ref: 'v1.0.0', environment: 'production'})
       );
       expect(mockCreateDeploymentStatus).toHaveBeenCalledWith(
         expect.objectContaining({deployment_id: 42, state: 'in_progress'})
@@ -254,9 +257,10 @@ describe('run', () => {
       expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({environment: 'staging'}));
     });
 
-    it('uses provided ref when creating deployment', async () => {
-      setupInputs({GITHUB_TOKEN: 'gh-token', ref: 'v1.2.3'});
+    it('uses latest release tag as deployment ref', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
       setupOctokit();
+      mockGetLatestRelease.mockResolvedValue({data: {tag_name: 'v2.3.4'}});
       mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 8}});
       mockCreateDeploymentStatus.mockResolvedValue({});
 
@@ -271,12 +275,13 @@ describe('run', () => {
       const {run} = await import('..');
       await run();
 
-      expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'v1.2.3'}));
+      expect(mockCreateDeployment).toHaveBeenCalledWith(expect.objectContaining({ref: 'v2.3.4'}));
     });
 
-    it('falls back to context sha when ref is not provided', async () => {
-      setupInputs({GITHUB_TOKEN: 'gh-token', ref: ''});
+    it('falls back to context sha when no release exists', async () => {
+      setupInputs({GITHUB_TOKEN: 'gh-token'});
       setupOctokit();
+      mockGetLatestRelease.mockRejectedValue(new Error('Not Found'));
       mockCreateDeployment.mockResolvedValue({status: 201, data: {id: 9}});
       mockCreateDeploymentStatus.mockResolvedValue({});
 
