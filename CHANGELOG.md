@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/ffflorian/actions/compare/v1.28.4...v1.29.0) (2026-06-08)
+
+
+### Features
+
+* **docker-image-release:** add optional DOCKER_TOKEN input for Docker Hub publishing ([#53](https://github.com/ffflorian/actions/issues/53)) ([0fc57af](https://github.com/ffflorian/actions/commit/0fc57af11a3d6fafc614571e2ba0b9289bf43e66))
+
 ## [1.28.4](https://github.com/ffflorian/actions/compare/v1.28.3...v1.28.4) (2026-06-07)
 
 
