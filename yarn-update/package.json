@@ -20,7 +20,7 @@
   },
   "main": "dist/index.js",
   "name": "yarn-update-action",
-  "packageManager": "yarn@4.15.0",
+  "packageManager": "yarn@4.16.0",
   "prettier": "@ffflorian/prettier-config",
   "private": true,
   "scripts": {
