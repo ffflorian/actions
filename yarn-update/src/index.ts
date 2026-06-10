@@ -45,16 +45,17 @@ async function createPullRequest(
   const branchName = `chore/deps/yarn-${targetVersion}`;
   const commitMsg = `chore(deps): bump yarn to version ${targetVersion}`;
 
-  await exec.exec('git', ['checkout', '-b', branchName]);
+  await exec.exec('git', ['checkout', '-B', branchName]);
   await exec.exec('git', ['add', '-A']);
   await exec.exec('git', ['commit', '-m', commitMsg]);
 
   const remoteUrl = await getOutput('git', ['remote', 'get-url', 'origin'], process.cwd());
   const authedUrl = remoteUrl.replace('https://', `https://x-access-token:${token}@`);
-  await exec.exec('git', ['push', '--force', authedUrl, branchName]);
+  await exec.exec('git', ['-c', 'http.https://github.com/.extraheader=', 'push', '--force', authedUrl, branchName]);
 
   const {owner, repo} = github.context.repo;
   const octokit = github.getOctokit(token);
+  const defaultBranch = (github.context.payload.repository?.default_branch as string | undefined) ?? 'main';
 
   const body = buildPullRequestBody(targetVersion);
   const head = `${owner}:${branchName}`;
@@ -63,7 +64,7 @@ async function createPullRequest(
     repo,
     state: 'open',
     head,
-    base: 'main',
+    base: defaultBranch,
   });
 
   const existingPullRequest = existingPullRequests.data[0];
@@ -88,7 +89,7 @@ async function createPullRequest(
       title: commitMsg,
       body,
       head: branchName,
-      base: 'main',
+      base: defaultBranch,
     });
 
     pullNumber = created.data.number;
