@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/ffflorian/actions/compare/v1.29.0...v1.29.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* **yarn-update:** clear actions/checkout extraheader on push, use -B, detect default branch ([#59](https://github.com/ffflorian/actions/issues/59)) ([85b702d](https://github.com/ffflorian/actions/commit/85b702db97ee1d5a0387bc0adb4cf75d5802184e))
+
 # [1.29.0](https://github.com/ffflorian/actions/compare/v1.28.4...v1.29.0) (2026-06-08)
 
 
