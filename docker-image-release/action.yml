@@ -26,6 +26,10 @@ inputs:
     description: 'The name of the Docker image to publish.'
     required: false
     default: '${{ github.repository }}'
+  dockerfiles:
+    description: 'Newline-separated list of "suffix:dockerfile" pairs for multi-image builds (e.g. "backend:backend.Dockerfile"). When set, each entry produces a separate image named "<image_name>-<suffix>". When unset, a single image is built from "Dockerfile".'
+    required: false
+    default: ''
 
 outputs:
   new_release_published:
@@ -162,37 +166,56 @@ runs:
       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
       with:
         images: ghcr.io/${{ inputs.image_name }}
-        tags: |
-          type=raw,value=latest,enable=true
 
-    - name: Prepare image tags
-      id: image-tags
+    - name: Build and push Docker image(s)
       if: steps.semantic.outputs.new_release_version != ''
       shell: bash
       env:
+        DOCKERFILES: ${{ inputs.dockerfiles }}
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         IMAGE_NAME: ${{ inputs.image_name }}
+        LABELS: ${{ steps.docker-meta.outputs.labels }}
         VERSION: ${{ steps.semantic.outputs.new_release_version }}
+        COMMIT: ${{ steps.semantic.outputs.new_release_git_head }}
       run: |
-        {
-          echo 'tags<<EOF'
-          echo "ghcr.io/${IMAGE_NAME}:${VERSION}"
-          echo "ghcr.io/${IMAGE_NAME}:latest"
-          if [ -n "${DOCKER_TOKEN}" ]; then
-            echo "docker.io/${IMAGE_NAME}:${VERSION}"
-            echo "docker.io/${IMAGE_NAME}:latest"
-          fi
-          echo 'EOF'
-        } >> "$GITHUB_OUTPUT"
+        build_and_push() {
+          local image="$1"
+          local dockerfile="$2"
 
-    - name: Build and push Docker image
-      if: steps.semantic.outputs.new_release_version != ''
-      uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.image-tags.outputs.tags }}
-        labels: ${{ steps.docker-meta.outputs.labels }}
-        build-args: |
-          VERSION=${{ steps.semantic.outputs.new_release_version }}
-          COMMIT=${{ steps.semantic.outputs.new_release_git_head }}
+          tag_args=(
+            --tag "ghcr.io/${image}:${VERSION}"
+            --tag "ghcr.io/${image}:latest"
+          )
+          if [ -n "${DOCKER_TOKEN}" ]; then
+            tag_args+=(
+              --tag "docker.io/${image}:${VERSION}"
+              --tag "docker.io/${image}:latest"
+            )
+          fi
+
+          label_args=()
+          while IFS= read -r label; do
+            [ -z "$label" ] && continue
+            label_args+=(--label "$label")
+          done <<< "${LABELS}"
+
+          docker buildx build \
+            --push \
+            --file "${dockerfile}" \
+            "${tag_args[@]}" \
+            "${label_args[@]}" \
+            --build-arg "VERSION=${VERSION}" \
+            --build-arg "COMMIT=${COMMIT}" \
+            .
+        }
+
+        if [ -z "${DOCKERFILES}" ]; then
+          build_and_push "${IMAGE_NAME}" "Dockerfile"
+        else
+          while IFS= read -r entry; do
+            [ -z "$entry" ] && continue
+            suffix="${entry%%:*}"
+            dockerfile="${entry#*:}"
+            build_and_push "${IMAGE_NAME}-${suffix}" "${dockerfile}"
+          done <<< "${DOCKERFILES}"
+        fi
