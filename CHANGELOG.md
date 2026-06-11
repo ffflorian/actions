@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/ffflorian/actions/compare/v1.29.1...v1.30.0) (2026-06-11)
+
+
+### Features
+
+* **docker-image-release:** Support multiple files in monorepos ([#62](https://github.com/ffflorian/actions/issues/62)) ([8f85b88](https://github.com/ffflorian/actions/commit/8f85b88314515b15e0932cd6e1c39fb6eb7e2f1d))
+
 ## [1.29.1](https://github.com/ffflorian/actions/compare/v1.29.0...v1.29.1) (2026-06-10)
 
 
