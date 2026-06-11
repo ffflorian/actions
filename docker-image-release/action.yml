@@ -199,14 +199,29 @@ runs:
             label_args+=(--label "$label")
           done <<< "${LABELS}"
 
-          docker buildx build \
-            --push \
-            --file "${dockerfile}" \
-            "${tag_args[@]}" \
-            "${label_args[@]}" \
-            --build-arg "VERSION=${VERSION}" \
-            --build-arg "COMMIT=${COMMIT}" \
-            .
+          local delays=(5 15 45)
+          local attempt
+          for attempt in 1 2 3 4; do
+            if docker buildx build \
+              --push \
+              --file "${dockerfile}" \
+              "${tag_args[@]}" \
+              "${label_args[@]}" \
+              --build-arg "VERSION=${VERSION}" \
+              --build-arg "COMMIT=${COMMIT}" \
+              .; then
+              return 0
+            fi
+
+            if [ "${attempt}" -lt 4 ]; then
+              local delay="${delays[$((attempt - 1))]}"
+              echo "Push attempt ${attempt}/4 for ghcr.io/${image}:${VERSION} failed, retrying in ${delay}s"
+              sleep "${delay}"
+            fi
+          done
+
+          echo "Push failed for ghcr.io/${image}:${VERSION} after 4 attempts"
+          return 1
         }
 
         if [ -z "${DOCKERFILES}" ]; then
