@@ -5,7 +5,7 @@
   "repository": "git@github.com:ffflorian/actions.git",
   "author": "Florian Imdahl <git@ffflorian.de>",
   "license": "MIT",
-  "packageManager": "yarn@4.15.0",
+  "packageManager": "yarn@4.16.0",
   "prettier": "@ffflorian/prettier-config",
   "workspaces": [
     "coolify-deploy",
@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
-    "@types/node": "25.9.1",
+    "@types/node": "~25",
     "esbuild": "0.28.0",
     "prettier": "3.8.3",
     "typescript": "6.0.3",

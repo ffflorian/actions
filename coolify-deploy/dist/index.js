@@ -23866,7 +23866,8 @@ async function getLatestReleaseTag(octokit) {
     const { owner, repo } = context2.repo;
     const response = await octokit.rest.repos.getLatestRelease({ owner, repo });
     return response.data.tag_name;
-  } catch {
+  } catch (error2) {
+    warning(`Failed to fetch latest release tag: ${error2 instanceof Error ? error2.message : String(error2)}`);
     return void 0;
   }
 }

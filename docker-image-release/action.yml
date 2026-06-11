@@ -1,6 +1,6 @@
 ---
 name: Create Docker Image Release
-description: Create a GitHub release and publish a Docker image to GHCR
+description: Create a GitHub release and publish a Docker image to GHCR and optionally Docker Hub
 author: 'Florian Imdahl <git@ffflorian.de>'
 branding: {icon: 'check', color: 'green'}
 
@@ -8,6 +8,10 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub token to create the release and publish the image.'
     required: true
+  DOCKER_TOKEN:
+    description: 'Docker Hub token. When set, the image is also published to Docker Hub.'
+    required: false
+    default: ''
   git_author:
     description: 'The author to use for the release commit.'
     required: true
@@ -22,6 +26,10 @@ inputs:
     description: 'The name of the Docker image to publish.'
     required: false
     default: '${{ github.repository }}'
+  dockerfiles:
+    description: 'Newline-separated list of "suffix:dockerfile" pairs for multi-image builds (e.g. "backend:backend.Dockerfile"). When set, each entry produces a separate image named "<image_name>-<suffix>". When unset, a single image is built from "Dockerfile".'
+    required: false
+    default: ''
 
 outputs:
   new_release_published:
@@ -74,6 +82,13 @@ runs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ inputs.GITHUB_TOKEN }}
+
+    - name: Log in to Docker Hub
+      if: inputs.DOCKER_TOKEN != ''
+      uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+      with:
+        username: ${{ github.repository_owner }}
+        password: ${{ inputs.DOCKER_TOKEN }}
 
     - name: Setup Node.js
       uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
@@ -151,19 +166,71 @@ runs:
       uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9
       with:
         images: ghcr.io/${{ inputs.image_name }}
-        tags: |
-          type=raw,value=latest,enable=true
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image(s)
       if: steps.semantic.outputs.new_release_version != ''
-      uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf
-      with:
-        context: .
-        push: true
-        tags: |
-          ghcr.io/${{ inputs.image_name }}:${{ steps.semantic.outputs.new_release_version }}
-          ghcr.io/${{ inputs.image_name }}:latest
-        labels: ${{ steps.docker-meta.outputs.labels }}
-        build-args: |
-          VERSION=${{ steps.semantic.outputs.new_release_version }}
-          COMMIT=${{ steps.semantic.outputs.new_release_git_head }}
+      shell: bash
+      env:
+        DOCKERFILES: ${{ inputs.dockerfiles }}
+        DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
+        IMAGE_NAME: ${{ inputs.image_name }}
+        LABELS: ${{ steps.docker-meta.outputs.labels }}
+        VERSION: ${{ steps.semantic.outputs.new_release_version }}
+        COMMIT: ${{ steps.semantic.outputs.new_release_git_head }}
+      run: |
+        build_and_push() {
+          local image="$1"
+          local dockerfile="$2"
+
+          tag_args=(
+            --tag "ghcr.io/${image}:${VERSION}"
+            --tag "ghcr.io/${image}:latest"
+          )
+          if [ -n "${DOCKER_TOKEN}" ]; then
+            tag_args+=(
+              --tag "docker.io/${image}:${VERSION}"
+              --tag "docker.io/${image}:latest"
+            )
+          fi
+
+          label_args=()
+          while IFS= read -r label; do
+            [ -z "$label" ] && continue
+            label_args+=(--label "$label")
+          done <<< "${LABELS}"
+
+          local delays=(5 15 45)
+          local attempt
+          for attempt in 1 2 3 4; do
+            if docker buildx build \
+              --push \
+              --file "${dockerfile}" \
+              "${tag_args[@]}" \
+              "${label_args[@]}" \
+              --build-arg "VERSION=${VERSION}" \
+              --build-arg "COMMIT=${COMMIT}" \
+              .; then
+              return 0
+            fi
+
+            if [ "${attempt}" -lt 4 ]; then
+              local delay="${delays[$((attempt - 1))]}"
+              echo "Push attempt ${attempt}/4 for ghcr.io/${image}:${VERSION} failed, retrying in ${delay}s"
+              sleep "${delay}"
+            fi
+          done
+
+          echo "Push failed for ghcr.io/${image}:${VERSION} after 4 attempts"
+          return 1
+        }
+
+        if [ -z "${DOCKERFILES}" ]; then
+          build_and_push "${IMAGE_NAME}" "Dockerfile"
+        else
+          while IFS= read -r entry; do
+            [ -z "$entry" ] && continue
+            suffix="${entry%%:*}"
+            dockerfile="${entry#*:}"
+            build_and_push "${IMAGE_NAME}-${suffix}" "${dockerfile}"
+          done <<< "${DOCKERFILES}"
+        fi

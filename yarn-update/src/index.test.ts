@@ -82,6 +82,7 @@ vi.mock('@actions/exec', () => ({
 
 vi.mock('@actions/github', () => ({
   context: {
+    payload: {repository: {default_branch: 'main'}},
     repo: {owner: 'ffflorian', repo: 'actions'},
   },
   getOctokit: mocks.getOctokit,
@@ -159,6 +160,8 @@ describe('yarn-update index', () => {
     expect(mocks.issuesAddAssignees).not.toHaveBeenCalled();
     expect(mocks.pullsRequestReviewers).not.toHaveBeenCalled();
     expect(mocks.exec).toHaveBeenCalledWith('git', [
+      '-c',
+      'http.https://github.com/.extraheader=',
       'push',
       '--force',
       'https://x-access-token:token-123@github.com/ffflorian/actions',

@@ -1,3 +1,38 @@
+## [1.30.1](https://github.com/ffflorian/actions/compare/v1.30.0...v1.30.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* retry docker push on transient registry errors ([#68](https://github.com/ffflorian/actions/issues/68)) ([e84c194](https://github.com/ffflorian/actions/commit/e84c19493a466a4b4f8c844e8ca2c83c7ecef44c))
+
+# [1.30.0](https://github.com/ffflorian/actions/compare/v1.29.1...v1.30.0) (2026-06-11)
+
+
+### Features
+
+* **docker-image-release:** Support multiple files in monorepos ([#62](https://github.com/ffflorian/actions/issues/62)) ([8f85b88](https://github.com/ffflorian/actions/commit/8f85b88314515b15e0932cd6e1c39fb6eb7e2f1d))
+
+## [1.29.1](https://github.com/ffflorian/actions/compare/v1.29.0...v1.29.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* **yarn-update:** clear actions/checkout extraheader on push, use -B, detect default branch ([#59](https://github.com/ffflorian/actions/issues/59)) ([85b702d](https://github.com/ffflorian/actions/commit/85b702db97ee1d5a0387bc0adb4cf75d5802184e))
+
+# [1.29.0](https://github.com/ffflorian/actions/compare/v1.28.4...v1.29.0) (2026-06-08)
+
+
+### Features
+
+* **docker-image-release:** add optional DOCKER_TOKEN input for Docker Hub publishing ([#53](https://github.com/ffflorian/actions/issues/53)) ([0fc57af](https://github.com/ffflorian/actions/commit/0fc57af11a3d6fafc614571e2ba0b9289bf43e66))
+
+## [1.28.4](https://github.com/ffflorian/actions/compare/v1.28.3...v1.28.4) (2026-06-07)
+
+
+### Bug Fixes
+
+* **coolify-deploy:** log error when tag fetch fails before falling back to SHA ([#51](https://github.com/ffflorian/actions/issues/51)) ([9bd3cef](https://github.com/ffflorian/actions/commit/9bd3cefbc8e2746ee402d05260921be3967e4576))
+
 ## [1.28.3](https://github.com/ffflorian/actions/compare/v1.28.2...v1.28.3) (2026-06-07)
 
 

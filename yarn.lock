@@ -302,14 +302,14 @@ __metadata:
   linkType: hard
 
 "@napi-rs/wasm-runtime@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "@napi-rs/wasm-runtime@npm:1.1.4"
+  version: 1.1.5
+  resolution: "@napi-rs/wasm-runtime@npm:1.1.5"
   dependencies:
-    "@tybys/wasm-util": "npm:^0.10.1"
+    "@tybys/wasm-util": "npm:^0.10.2"
   peerDependencies:
     "@emnapi/core": ^1.7.1
     "@emnapi/runtime": ^1.7.1
-  checksum: 10c0/2e88e1955258949ccf2d18c79975821ad38071b465ef126a5e14110977b97868867b016c1ad046e963cccc42c0bd9db6c8ff5fd1ebb61b87bb3487f339041658
+  checksum: 10c0/727f2b6ae0e68bbe5d39aeb68aa6f183314e9f03dc50bb55a962849535b2db53ecc3fbf1554d8656a54488a608df5a2634670595cf5874dc4af2ee59f817c65d
   languageName: node
   linkType: hard
 
@@ -547,7 +547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tybys/wasm-util@npm:^0.10.1":
+"@tybys/wasm-util@npm:^0.10.2":
   version: 0.10.2
   resolution: "@tybys/wasm-util@npm:0.10.2"
   dependencies:
@@ -580,12 +580,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:25.9.1":
-  version: 25.9.1
-  resolution: "@types/node@npm:25.9.1"
+"@types/node@npm:~25":
+  version: 25.9.3
+  resolution: "@types/node@npm:25.9.3"
   dependencies:
     undici-types: "npm:>=7.24.0 <7.24.7"
-  checksum: 10c0/9a04682842bebbcf21a1779dfeab9aa733d7bd7bbc0a0edb641ab3a9a3d43eac543225acf669c334f458f1956443ebc072bc3c72840c543b8b356cab5c82d456
+  checksum: 10c0/72d3aece9d42c2c641bcd3f3cb2dc2828b4bd384dfcbd910c404b8859a68bd69d50c4769ce7defd4ff5e049768e23e615f09407ea2cbbb5f44b90d75a7c6b8ca
   languageName: node
   linkType: hard
 
@@ -690,7 +690,7 @@ __metadata:
   resolution: "actions@workspace:."
   dependencies:
     "@ffflorian/prettier-config": "npm:0.8.2"
-    "@types/node": "npm:25.9.1"
+    "@types/node": "npm:~25"
     esbuild: "npm:0.28.0"
     prettier: "npm:3.8.3"
     typescript: "npm:6.0.3"
@@ -747,7 +747,7 @@ __metadata:
     "@actions/core": "npm:3.0.1"
     "@actions/github": "npm:9.1.1"
     "@ffflorian/prettier-config": "npm:0.8.2"
-    "@types/node": "npm:25.9.1"
+    "@types/node": "npm:~25"
     esbuild: "npm:0.28.0"
     prettier: "npm:3.8.3"
     typescript: "npm:6.0.3"
@@ -907,7 +907,7 @@ __metadata:
     "@actions/core": "npm:3.0.1"
     "@actions/exec": "npm:3.0.0"
     "@ffflorian/prettier-config": "npm:0.8.2"
-    "@types/node": "npm:25.9.1"
+    "@types/node": "npm:~25"
     esbuild: "npm:0.28.0"
     prettier: "npm:3.8.3"
     typescript: "npm:6.0.3"
@@ -949,7 +949,7 @@ __metadata:
     "@actions/exec": "npm:3.0.0"
     "@actions/github": "npm:9.1.1"
     "@ffflorian/prettier-config": "npm:0.8.2"
-    "@types/node": "npm:25.9.1"
+    "@types/node": "npm:~25"
     esbuild: "npm:0.28.0"
     prettier: "npm:3.8.3"
     typescript: "npm:6.0.3"
@@ -1269,21 +1269,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.8.1":
-  version: 7.8.1
-  resolution: "semver@npm:7.8.1"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/92d6871d6347e1f99d0ba396a70f2545ccf2a032cda3d378fa0699edf7506b5c6d266aed55c8b88e72bd91a30d2351e4f39db479375374430fcdc4b58f4e3c1a
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.5":
+"semver@npm:7.8.2":
   version: 7.8.2
   resolution: "semver@npm:7.8.2"
   bin:
     semver: bin/semver.js
   checksum: 10c0/8e8c193fa75b938e5b3ccf6707c6447e4b34f73e493e72b03f3185393489f45e049144052f624217c346d6c6e0a301dda8eeab2f14413e337218ecb1cbd2de16
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.5":
+  version: 7.8.4
+  resolution: "semver@npm:7.8.4"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/81b7c296fd7927b80f67fa516b75fa1017caac8167795320de28e76ccbc6f7f01763c30ecd10d6a0d8fd089708ab0548a5aebb94b0870e99c2a2b4600a46389b
   languageName: node
   linkType: hard
 
@@ -1577,11 +1577,11 @@ __metadata:
     "@actions/exec": "npm:3.0.0"
     "@actions/github": "npm:9.1.1"
     "@ffflorian/prettier-config": "npm:0.8.2"
-    "@types/node": "npm:25.9.1"
+    "@types/node": "npm:~25"
     "@types/semver": "npm:7.7.1"
     esbuild: "npm:0.28.0"
     prettier: "npm:3.8.3"
-    semver: "npm:7.8.1"
+    semver: "npm:7.8.2"
     typescript: "npm:6.0.3"
     vitest: "npm:4.1.8"
   languageName: unknown

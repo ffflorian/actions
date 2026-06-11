@@ -90,7 +90,7 @@ The root of the repository is a Yarn workspaces monorepo. Shared yarn setup live
 Actions that require Node.js logic are written in TypeScript:
 
 - **Package manager**: yarn (version 4+). Never use npm. A single `yarn.lock` at the repo root covers all workspaces.
-- **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
+- **Dependency versions**: pin all to exact versions (no `^` or `~` ranges). Exception: `@types/node` uses the `~25` range so it tracks Node 25 type updates without churn.
 - **Source entry point**: `src/index.ts`.
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.
 - **Runtime target**: `node26`.
