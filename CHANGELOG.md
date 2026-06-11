@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/ffflorian/actions/compare/v1.30.0...v1.30.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* retry docker push on transient registry errors ([#68](https://github.com/ffflorian/actions/issues/68)) ([e84c194](https://github.com/ffflorian/actions/commit/e84c19493a466a4b4f8c844e8ca2c83c7ecef44c))
+
 # [1.30.0](https://github.com/ffflorian/actions/compare/v1.29.1...v1.30.0) (2026-06-11)
 
 
