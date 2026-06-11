@@ -1,5 +1,4 @@
----
-name: Lint, build, and publish
+name: Main
 
 on:
   push:
