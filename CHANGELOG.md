@@ -1,3 +1,10 @@
+## [1.30.2](https://github.com/ffflorian/actions/compare/v1.30.1...v1.30.2) (2026-06-16)
+
+
+### Bug Fixes
+
+* **deps:** bump the npm_and_yarn group across 2 directories with 1 update ([#70](https://github.com/ffflorian/actions/issues/70)) ([c2ed9d0](https://github.com/ffflorian/actions/commit/c2ed9d00688dd8fb3fd8cdbde3a04a2b3511943a))
+
 ## [1.30.1](https://github.com/ffflorian/actions/compare/v1.30.0...v1.30.1) (2026-06-11)
 
 
