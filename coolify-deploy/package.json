@@ -6,7 +6,7 @@
   "description": "GitHub Action which triggers Coolify deployments",
   "devDependencies": {
     "@ffflorian/prettier-config": "0.8.2",
-    "@types/node": "25.9.2",
+    "@types/node": "25.9.3",
     "esbuild": "0.28.1",
     "prettier": "3.8.3",
     "typescript": "6.0.3",
