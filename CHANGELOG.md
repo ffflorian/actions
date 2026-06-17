@@ -1,3 +1,10 @@
+## [1.30.4](https://github.com/ffflorian/actions/compare/v1.30.3...v1.30.4) (2026-06-17)
+
+
+### Bug Fixes
+
+* **deps:** bump semver from 7.8.2 to 7.8.4 in /yarn-update ([#77](https://github.com/ffflorian/actions/issues/77)) ([5f8d55c](https://github.com/ffflorian/actions/commit/5f8d55ca046cec04db1fa23734787bbf31937140))
+
 ## [1.30.3](https://github.com/ffflorian/actions/compare/v1.30.2...v1.30.3) (2026-06-16)
 
 
