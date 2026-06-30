@@ -7,7 +7,7 @@
   },
   "description": "GitHub Action which checks for yarn updates and creates a pull request",
   "devDependencies": {
-    "@ffflorian/prettier-config": "0.8.2",
+    "@ffflorian/prettier-config": "1.0.0",
     "@types/node": "~26",
     "@types/semver": "7.7.1",
     "esbuild": "0.28.1",
