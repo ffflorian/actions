@@ -6,7 +6,7 @@
   },
   "description": "GitHub Action which updates Hugo modules and creates a pull request",
   "devDependencies": {
-    "@ffflorian/prettier-config": "0.8.2",
+    "@ffflorian/prettier-config": "1.0.0",
     "@types/node": "~26",
     "esbuild": "0.28.1",
     "prettier": "3.8.4",
