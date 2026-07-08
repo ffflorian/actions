@@ -26,6 +26,9 @@ updates:
       - /force-release
       - /hugo-theme-update
       - /yarn-update
+    groups:
+      cross-directory-deps:
+        group-by: dependency-name
     ignore:
       - dependency-name: '@types/node'
         update-types:
