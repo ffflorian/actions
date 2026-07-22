@@ -1,3 +1,13 @@
+## [1.30.7](https://github.com/ffflorian/actions/compare/v1.30.6...v1.30.7) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump tar from 7.5.16 to 7.5.21 in /coolify-deploy ([#108](https://github.com/ffflorian/actions/issues/108)) ([549e892](https://github.com/ffflorian/actions/commit/549e89253d1a2e367a5ea93e3fc12d6b2b2417d5))
+* **deps:** bump tar from 7.5.16 to 7.5.21 in /force-release ([#107](https://github.com/ffflorian/actions/issues/107)) [ci skip] ([1dbb3c1](https://github.com/ffflorian/actions/commit/1dbb3c14d4655ce1dd67e748f6896e59cba8f277))
+* **deps:** bump tar from 7.5.16 to 7.5.21 in /hugo-theme-update ([#106](https://github.com/ffflorian/actions/issues/106)) [ci skip] ([83c407d](https://github.com/ffflorian/actions/commit/83c407d7f0e4c0d0eb08ef8c4968f0be19e686f1))
+* **deps:** bump tar from 7.5.16 to 7.5.21 in /yarn-update ([#105](https://github.com/ffflorian/actions/issues/105)) [ci skip] ([ec6f9e2](https://github.com/ffflorian/actions/commit/ec6f9e2774f83b831324167de35a0ee12af1d612))
+
 ## [1.30.6](https://github.com/ffflorian/actions/compare/v1.30.5...v1.30.6) (2026-07-01)
 
 
