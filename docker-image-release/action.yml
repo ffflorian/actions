@@ -75,6 +75,13 @@ runs:
   steps:
     - name: Checkout repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        # Explicit ref (rather than the default, which pins to the triggering
+        # commit's SHA) so this checks out the current branch tip. Otherwise,
+        # if another job already pushed a commit to the branch earlier in the
+        # same workflow run, semantic-release sees the checked-out commit as
+        # behind the remote branch and refuses to release.
+        ref: ${{ github.ref_name }}
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
