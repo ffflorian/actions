@@ -1,3 +1,10 @@
+## [1.30.8](https://github.com/ffflorian/actions/compare/v1.30.7...v1.30.8) (2026-07-30)
+
+
+### Bug Fixes
+
+* **docker-image-release:** Checkout latest ref ([#111](https://github.com/ffflorian/actions/issues/111)) ([8e93ab5](https://github.com/ffflorian/actions/commit/8e93ab5bd9cf4624cdd4536402634e1b8da195f2))
+
 ## [1.30.7](https://github.com/ffflorian/actions/compare/v1.30.6...v1.30.7) (2026-07-22)
 
 
