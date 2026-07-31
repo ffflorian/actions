@@ -10,7 +10,7 @@
     "@types/node": "~26",
     "esbuild": "0.28.1",
     "prettier": "3.9.6",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "4.1.10"
   },
   "name": "hugo-theme-update-action",
@@ -24,5 +24,5 @@
     "type-check": "tsc --noEmit"
   },
   "version": "1.0.0",
-  "packageManager": "yarn@4.17.0"
+  "packageManager": "yarn@4.18.0"
 }
