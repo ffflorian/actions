@@ -1,3 +1,17 @@
+## [1.30.9](https://github.com/ffflorian/actions/compare/v1.30.8...v1.30.9) (2026-08-05)
+
+
+### Bug Fixes
+
+* **deps:** bump postcss from 8.5.15 to 8.5.25 in /coolify-deploy ([#118](https://github.com/ffflorian/actions/issues/118)) [ci skip] ([9876a1f](https://github.com/ffflorian/actions/commit/9876a1f6ea0e552aab3deee5d429831dabc7319e))
+* **deps:** bump postcss from 8.5.15 to 8.5.25 in /force-release ([#117](https://github.com/ffflorian/actions/issues/117)) [ci skip] ([ace22ae](https://github.com/ffflorian/actions/commit/ace22aed6c8c80226e5f0b4cc7c68046dbc7a3f6))
+* **deps:** bump postcss from 8.5.15 to 8.5.25 in /hugo-theme-update ([#115](https://github.com/ffflorian/actions/issues/115)) [ci skip] ([9024930](https://github.com/ffflorian/actions/commit/90249302fcd69bc8b4bd3ff8bc9f5cf2d160a57c))
+* **deps:** bump postcss from 8.5.15 to 8.5.25 in /yarn-update ([#114](https://github.com/ffflorian/actions/issues/114)) [ci skip] ([284254b](https://github.com/ffflorian/actions/commit/284254b1e8c8948300f388168c0631363f216394))
+* **deps:** bump undici from 6.27.0 to 6.28.0 in /coolify-deploy ([#121](https://github.com/ffflorian/actions/issues/121)) [ci skip] ([6bf8062](https://github.com/ffflorian/actions/commit/6bf8062815676400d40db77061f2eef92814a665))
+* **deps:** bump undici from 6.27.0 to 6.28.0 in /force-release ([#120](https://github.com/ffflorian/actions/issues/120)) [ci skip] ([1952066](https://github.com/ffflorian/actions/commit/1952066dadca84e704ceca4a8802d31004bf0a71))
+* **deps:** bump undici from 6.27.0 to 6.28.0 in /hugo-theme-update ([#119](https://github.com/ffflorian/actions/issues/119)) [ci skip] ([62cc001](https://github.com/ffflorian/actions/commit/62cc001a0a60ba81e732ebe436cd2344df88b4b1))
+* **deps:** bump undici from 6.27.0 to 6.28.0 in /yarn-update ([#116](https://github.com/ffflorian/actions/issues/116)) ([34ae00c](https://github.com/ffflorian/actions/commit/34ae00c3f91ce17056934e02eab2013090eac398))
+
 ## [1.30.8](https://github.com/ffflorian/actions/compare/v1.30.7...v1.30.8) (2026-07-30)
 
 
