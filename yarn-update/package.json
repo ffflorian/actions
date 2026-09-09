@@ -13,7 +13,8 @@
     "esbuild": "0.28.2",
     "prettier": "3.9.6",
     "typescript": "7.0.2",
-    "vitest": "4.1.11"
+    "vite": "8.2.2",
+    "vitest": "5.0.0"
   },
   "engines": {
     "node": ">=20"
