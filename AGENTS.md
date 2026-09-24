@@ -89,7 +89,7 @@ Actions that require Node.js logic are written in TypeScript:
 - **Runtime target**: `node26`.
 - **Invocation**: composite actions run the bundle via `node "${{ github.action_path }}/dist/index.js"`. The `yarn-update` action uses `using: node24` with `main: dist/index.js` directly.
 - **Inputs**: passed as `INPUT_<NAME>` env vars (uppercase, matching the action input name) and read with `@actions/core` `getInput()`.
-- **Formatting**: enforced by Prettier via `@ffflorian/prettier-config`. No ESLint.
+- **Formatting**: enforced by oxfmt via `@ffflorian/oxfmt-config`. No ESLint.
 
 ### Validation (run before committing)
 
@@ -97,8 +97,8 @@ Each TypeScript action supports the following scripts via `yarn`:
 
 ```bash
 yarn install --immutable   # install exact locked dependencies
-yarn lint                  # Prettier check for `src/`
-yarn fix                   # Prettier write for `src/`
+yarn lint                  # oxfmt check for `.`
+yarn fix                   # oxfmt write for `.`
 yarn type-check            # tsc --noEmit
 yarn test                  # Vitest unit tests
 yarn build                 # bundle to dist/index.js
