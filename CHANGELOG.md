@@ -1,3 +1,13 @@
+## [1.30.10](https://github.com/ffflorian/actions/compare/v1.30.9...v1.30.10) (2026-09-29)
+
+
+### Bug Fixes
+
+* **deps:** bump undici from 6.28.0 to 6.29.0 in /coolify-deploy ([#139](https://github.com/ffflorian/actions/issues/139)) ([078de07](https://github.com/ffflorian/actions/commit/078de0732ef59408f3cda9b36da749416f10e2ab))
+* **deps:** bump undici from 6.28.0 to 6.29.0 in /force-release ([#138](https://github.com/ffflorian/actions/issues/138)) [ci skip] ([ef8044b](https://github.com/ffflorian/actions/commit/ef8044b131796af730148f99d9556a86d43dd7c7))
+* **deps:** bump undici from 6.28.0 to 6.29.0 in /hugo-theme-update ([#137](https://github.com/ffflorian/actions/issues/137)) [ci skip] ([499b96e](https://github.com/ffflorian/actions/commit/499b96e4d121e55b19e074790d08deb30cac9853))
+* **deps:** bump undici from 6.28.0 to 6.29.0 in /yarn-update ([#136](https://github.com/ffflorian/actions/issues/136)) [ci skip] ([776db72](https://github.com/ffflorian/actions/commit/776db72cb0549d52effb075f5c7050a9f6e8774d))
+
 ## [1.30.9](https://github.com/ffflorian/actions/compare/v1.30.8...v1.30.9) (2026-08-05)
 
 
