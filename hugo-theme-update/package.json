@@ -11,7 +11,7 @@
     "esbuild": "0.28.2",
     "oxfmt": "0.70.0",
     "typescript": "7.0.2",
-    "vite": "8.3.1",
+    "vite": "8.3.2",
     "vitest": "5.0.1"
   },
   "name": "hugo-theme-update-action",
