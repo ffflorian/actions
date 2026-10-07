@@ -1,3 +1,10 @@
+## [1.30.11](https://github.com/ffflorian/actions/compare/v1.30.10...v1.30.11) (2026-10-07)
+
+
+### Bug Fixes
+
+* **deps:** bump source-map-js from 1.2.1 to 1.2.2 in /coolify-deploy ([#148](https://github.com/ffflorian/actions/issues/148)) ([c6ae673](https://github.com/ffflorian/actions/commit/c6ae673ca06d28983b452d4449d1c7a8c0cf6fae))
+
 ## [1.30.10](https://github.com/ffflorian/actions/compare/v1.30.9...v1.30.10) (2026-09-29)
 
 
