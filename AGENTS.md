@@ -61,12 +61,22 @@ This repository contains reusable GitHub Actions:
 - `hugo-theme-update`: Update Hugo modules and open an automated pull request.
 - `yarn-update`: Check for yarn updates and open an automated pull request.
 
+The TypeScript actions (`coolify-deploy`, `force-release`, `hugo-theme-update`, `yarn-update`) form an [Nx](https://nx.dev/) monorepo using yarn workspaces. The workspaces stay in their top-level directories so the published action paths (`ffflorian/actions/<action>@v1`) do not change.
+
+The repository root contains the shared setup:
+
+- `package.json` — workspace list, shared dev dependencies (`nx`, `oxfmt`, `lefthook`) and root scripts
+- `nx.json` — Nx configuration (task caching)
+- `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — single yarn 4 setup for all workspaces
+- `oxfmt.config.ts` — formatting configuration for the whole repository
+- `lefthook.yml` — pre-commit formatting hook
+
 Each TypeScript action directory contains:
 
 - `action.yml` — action metadata
 - `src/` — TypeScript source (`index.ts`) and `__tests__/`
 - `dist/index.js` — bundled output, **always committed** alongside source changes
-- `package.json`, `yarn.lock`, `.yarnrc.yml`, `.yarn/releases/` — yarn 4 setup
+- `package.json` — action dependencies and `build`, `test`, `type-check` scripts
 - `tsconfig.json`
 - `README.md` — user-facing documentation
 
@@ -82,37 +92,37 @@ Each TypeScript action directory contains:
 
 Actions that require Node.js logic are written in TypeScript:
 
-- **Package manager**: yarn (version 4+). Never use npm. Each action has its own `yarn.lock`.
+- **Package manager**: yarn (version 4+) with workspaces. Never use npm. There is a single root `yarn.lock`.
+- **Task runner**: Nx (`nx run-many`) runs `build`, `test` and `type-check` across all workspaces.
 - **Dependency versions**: pin all to exact versions (no `^` or `~` ranges).
 - **Source entry point**: `src/index.ts`.
 - **Bundle**: built with `esbuild` into `dist/index.js`; always regenerate with `yarn build` after source changes.
 - **Runtime target**: `node26`.
 - **Invocation**: composite actions run the bundle via `node "${{ github.action_path }}/dist/index.js"`. The `yarn-update` action uses `using: node24` with `main: dist/index.js` directly.
 - **Inputs**: passed as `INPUT_<NAME>` env vars (uppercase, matching the action input name) and read with `@actions/core` `getInput()`.
-- **Formatting**: enforced by oxfmt via `@ffflorian/oxfmt-config`. No ESLint.
+- **Formatting**: enforced by oxfmt via `@ffflorian/oxfmt-config`, configured once in the root `oxfmt.config.ts`. No ESLint.
 
 ### Validation (run before committing)
 
-Each TypeScript action supports the following scripts via `yarn`:
+Run from the repository root:
 
 ```bash
-yarn install --immutable   # install exact locked dependencies
-yarn lint                  # oxfmt check for `.`
-yarn fix                   # oxfmt write for `.`
-yarn type-check            # tsc --noEmit
-yarn test                  # Vitest unit tests
-yarn build                 # bundle to dist/index.js
+yarn install --immutable   # install exact locked dependencies for all workspaces
+yarn lint                  # oxfmt check for the whole repository
+yarn fix                   # oxfmt write for the whole repository
+yarn type-check            # tsc --noEmit in all workspaces (via Nx)
+yarn test                  # Vitest unit tests in all workspaces (via Nx)
+yarn build                 # bundle every action to dist/index.js (via Nx)
 ```
 
-When finishing TypeScript action work, always run `yarn fix`, `CI=true yarn test`, `yarn type-check`, and `yarn build` before handing off.
-When working on a certain action, run these commands from the action's subdirectory (e.g. `force-release/`).
+When finishing TypeScript action work, always run `yarn fix`, `CI=true yarn test`, `yarn type-check`, and `yarn build` before handing off. To target a single action, use Nx (e.g. `yarn nx run force-release-action:test`) or run `yarn test`, `yarn type-check` or `yarn build` from the action's subdirectory.
 
 ## Testing
 
 - **Framework**: [Vitest](https://vitest.dev/) (not Jest).
 - **Test files**: live in `<action-dir>/src/__tests__/` (e.g. `run.test.ts`, `utils.test.ts`).
 - Use `vi.hoisted()` for any values that must be defined before `vi.mock()` factory functions run.
-- Run tests with `yarn test` from the action subdirectory.
+- Run tests with `yarn test` from the repository root or the action subdirectory.
 
 ## Development Conventions
 
@@ -151,15 +161,9 @@ refactor/<short-description>
 
 ## CI/CD
 
-### Lint, build, and publish (`.github/workflows/lint_build_publish.yml`)
+### Build, test, and publish (`.github/workflows/main.yml`)
 
-Runs on push to `main` and on pull requests targeting `main`. Jobs:
-
-1. **`build_publish`**: builds all four TypeScript actions, then publishes a semantic release on push to `main` using `./github-action-release`.
-2. **`hugo_theme_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `hugo-theme-update/`.
-3. **`coolify_deploy_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `coolify-deploy/`.
-4. **`force_release_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `force-release/`.
-5. **`yarn_update_test`**: `yarn install --immutable && yarn lint && yarn type-check && yarn test` inside `yarn-update/`.
+Runs on push to `main` and on pull requests targeting `main`. A single job **`build_test_publish`** runs `yarn install --immutable`, `yarn lint`, `yarn type-check`, `yarn test` and `yarn build` from the repository root, then publishes a semantic release on push to `main` using `./github-action-release`.
 
 ### Other workflows
 
@@ -167,7 +171,7 @@ Runs on push to `main` and on pull requests targeting `main`. Jobs:
 - **`git_mirror.yml`**: mirrors this repository to GitLab/Codeberg.
 - **`yarn_update.yml`**: scheduled monthly + manual; runs `./yarn-update` to open a PR when a newer yarn is available.
 
-When changing release behavior, keep `lint_build_publish.yml` and `github-action-release/action.yml` aligned.
+When changing release behavior, keep `main.yml` and `github-action-release/action.yml` aligned.
 
 ## PR Guidelines
 

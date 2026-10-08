@@ -25,15 +25,15 @@ ENV COMMIT=$COMMIT
 
 ## Inputs
 
-| Name            | Required | Default                    | Description                                                                                              |
-| --------------- | -------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`  | Yes      | -                          | Token used by semantic-release and GHCR publish.                                                         |
-| `DOCKER_TOKEN`  | No       | -                          | Docker Hub token. When set, the image is also published to Docker Hub using `github.repository_owner` as the username. |
-| `git_author`    | Yes      | -                          | Git author/committer name used for release commits.                                                      |
-| `git_email`     | Yes      | -                          | Git author/committer email used for release commits.                                                     |
-| `publish_files` | No       | `CHANGELOG.md`             | Newline-separated list of files to include in the release commit.                                        |
-| `image_name`    | No       | `${{ github.repository }}` | Base name of the Docker image to publish.                                                                |
-| `dockerfiles`   | No       | -                          | Newline-separated list of `suffix:dockerfile` pairs for monorepo multi-image builds. When set, each entry produces a separate image named `<image_name>-<suffix>`. When unset, a single image is built from `Dockerfile`. |
+| Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| `GITHUB_TOKEN` | Yes | - | Token used by semantic-release and GHCR publish. |
+| `DOCKER_TOKEN` | No | - | Docker Hub token. When set, the image is also published to Docker Hub using `github.repository_owner` as the username. |
+| `git_author` | Yes | - | Git author/committer name used for release commits. |
+| `git_email` | Yes | - | Git author/committer email used for release commits. |
+| `publish_files` | No | `CHANGELOG.md` | Newline-separated list of files to include in the release commit. |
+| `image_name` | No | `${{ github.repository }}` | Base name of the Docker image to publish. |
+| `dockerfiles` | No | - | Newline-separated list of `suffix:dockerfile` pairs for monorepo multi-image builds. When set, each entry produces a separate image named `<image_name>-<suffix>`. When unset, a single image is built from `Dockerfile`. |
 
 ## Outputs
 

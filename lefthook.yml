@@ -1,0 +1,9 @@
+pre-commit:
+  parallel: false
+  commands:
+    oxfmt:
+      glob: '*.{js,ts,md,json,yml,yaml}'
+      exclude:
+        - CLAUDE.md
+        - .claude
+      run: npx --no oxfmt {staged_files} && git add {staged_files}
