@@ -37,3 +37,15 @@ Replace `<action-name>` with one of:
 - `yarn-update`
 
 See each action README for required inputs, permissions, and complete examples.
+
+## Development
+
+The TypeScript actions are managed as an [Nx](https://nx.dev/) monorepo with yarn workspaces. From the repository root:
+
+```bash
+yarn install
+yarn lint
+yarn type-check
+yarn test
+yarn build
+```
