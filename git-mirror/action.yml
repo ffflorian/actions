@@ -31,13 +31,13 @@ runs:
 
   steps:
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      uses: actions/checkout@v6.0.2
       with:
         fetch-depth: 0
 
     - name: Mirror to GitLab
       if: ${{ inputs.GITLAB_SECRET }}
-      uses: cynicsketch/mirror-action@b1e3c960aead673763e5ccb22007129401a15917
+      uses: cynicsketch/mirror-action@v0.0.1
       with:
         REMOTE: ${{ inputs.GITLAB_REMOTE }}
         REMOTE_NAME: 'gitlab-mirror'
@@ -47,7 +47,7 @@ runs:
 
     - name: Mirror to Codeberg
       if: ${{ inputs.CODEBERG_SECRET }}
-      uses: cynicsketch/mirror-action@b1e3c960aead673763e5ccb22007129401a15917
+      uses: cynicsketch/mirror-action@v0.0.1
       with:
         REMOTE: ${{ inputs.CODEBERG_REMOTE }}
         REMOTE_NAME: 'codeberg-mirror'
