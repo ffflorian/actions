@@ -22,6 +22,11 @@ updates:
       exclude:
         - '@ffflorian/*'
     directory: /
+    groups:
+      nx:
+        patterns:
+          - '@nx/*'
+          - nx
     ignore:
       - dependency-name: '@types/node'
         update-types:
