@@ -34,6 +34,7 @@ runs:
       uses: actions/checkout@v6.0.2
       with:
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Mirror to GitLab
       if: ${{ inputs.GITLAB_SECRET }}
