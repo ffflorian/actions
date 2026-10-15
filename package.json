@@ -6,7 +6,7 @@
     "@nx/js": "23.3.0",
     "lefthook": "2.1.16",
     "nx": "23.3.0",
-    "oxfmt": "0.71.0"
+    "oxfmt": "0.72.0"
   },
   "license": "GPL-3.0",
   "name": "actions",
