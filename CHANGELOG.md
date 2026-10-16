@@ -1,3 +1,10 @@
+## [1.30.12](https://github.com/ffflorian/actions/compare/v1.30.11...v1.30.12) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** Bump undici to 6.29.1 and 8.12.2 ([1b6a871](https://github.com/ffflorian/actions/commit/1b6a87115f060cd99119ab11beeefc7a074d98d8))
+
 ## [1.30.11](https://github.com/ffflorian/actions/compare/v1.30.10...v1.30.11) (2026-10-07)
 
 
