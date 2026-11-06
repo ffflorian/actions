@@ -10,6 +10,7 @@ Creates a GitHub release using semantic-release and publishes a Docker image to 
 - Extracts Docker metadata for image labels.
 - Creates a `.releaserc.json` for semantic-release.
 - Runs [semantic-release](https://github.com/semantic-release/semantic-release).
+  - Releases are only triggered by `feat`, `fix`, `perf` and breaking-change commits (Angular rules), but the release notes list all conventional commit types since the last release (`chore`, `refactor`, `docs`, etc.).
 - Publishes a Docker image (or multiple images for monorepos) with `latest` and the new release version tag to GHCR and, optionally, Docker Hub.
 - Passes `VERSION` (release version) and `COMMIT` (release git SHA) as Docker build args.
 

@@ -130,7 +130,22 @@ runs:
             [
               '@semantic-release/release-notes-generator',
               {
-                preset: 'angular',
+                preset: 'conventionalcommits',
+                presetConfig: {
+                  types: [
+                    {type: 'feat', section: 'Features'},
+                    {type: 'fix', section: 'Bug Fixes'},
+                    {type: 'perf', section: 'Performance Improvements'},
+                    {type: 'revert', section: 'Reverts'},
+                    {type: 'refactor', section: 'Code Refactoring'},
+                    {type: 'docs', section: 'Documentation'},
+                    {type: 'build', section: 'Build System'},
+                    {type: 'ci', section: 'Continuous Integration'},
+                    {type: 'test', section: 'Tests'},
+                    {type: 'style', section: 'Styles'},
+                    {type: 'chore', section: 'Miscellaneous Chores'},
+                  ],
+                },
                 parserOpts: {
                   noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
                 },
@@ -166,6 +181,9 @@ runs:
         GIT_COMMITTER_EMAIL: ${{ inputs.git_email }}
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
+      with:
+        extra_plugins: |
+          conventional-changelog-conventionalcommits@9.3.1
 
     - name: Extract Docker metadata
       if: steps.semantic.outputs.new_release_version != ''
