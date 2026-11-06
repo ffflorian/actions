@@ -1,3 +1,10 @@
+## [1.30.13](https://github.com/ffflorian/actions/compare/v1.30.12...v1.30.13) (2026-11-06)
+
+
+### Bug Fixes
+
+* **docker-image-release:** include all commit types in release notes ([#168](https://github.com/ffflorian/actions/issues/168)) ([c85837d](https://github.com/ffflorian/actions/commit/c85837dde981dc19d782a943eccf736c24f9a1b2))
+
 ## [1.30.12](https://github.com/ffflorian/actions/compare/v1.30.11...v1.30.12) (2026-10-16)
 
 
