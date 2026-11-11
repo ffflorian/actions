@@ -1,3 +1,10 @@
+## [1.30.14](https://github.com/ffflorian/actions/compare/v1.30.13...v1.30.14) (2026-11-11)
+
+
+### Bug Fixes
+
+* **deps:** bump semver from 7.8.5 to 7.8.6 ([#170](https://github.com/ffflorian/actions/issues/170)) ([5744ea1](https://github.com/ffflorian/actions/commit/5744ea1d2fa5f2e9c3038aadc580ecbffdec1993))
+
 ## [1.30.13](https://github.com/ffflorian/actions/compare/v1.30.12...v1.30.13) (2026-11-06)
 
 
