@@ -3,9 +3,9 @@
   "description": "A collection of GitHub Actions for use in my projects.",
   "devDependencies": {
     "@ffflorian/oxfmt-config": "1.3.0",
-    "@nx/js": "24.0.2",
+    "@nx/js": "24.0.4",
     "lefthook": "2.2.2",
-    "nx": "24.0.2",
+    "nx": "24.0.4",
     "oxfmt": "0.76.0"
   },
   "license": "GPL-3.0",
